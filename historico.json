@@ -1,0 +1,2866 @@
+[
+  {
+    "id": "hist-2023-01-Gasto-Alquiler-13",
+    "fecha": "2023-01-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 850.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2023-01-Gasto-Compras-37",
+    "fecha": "2023-01-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 828.81,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2023-01-Gasto-Ropa-49",
+    "fecha": "2023-01-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 295.82,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2023-01-Gasto-Salidas-81",
+    "fecha": "2023-01-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 160.1,
+    "detalle": "Importado de Presupuesto.xlsx (ENTRETENIMIENTO)"
+  },
+  {
+    "id": "hist-2023-01-Gasto-Salud-93",
+    "fecha": "2023-01-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 109.0,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2023-01-Gasto-Servicios-69",
+    "fecha": "2023-01-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 99.93,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2023-01-Gasto-Supermercado-25",
+    "fecha": "2023-01-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 587.34,
+    "detalle": "Importado de Presupuesto.xlsx (COMIDA)"
+  },
+  {
+    "id": "hist-2023-01-Gasto-Transporte-57",
+    "fecha": "2023-01-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 74.4,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2023-01-Ingreso-Sueldo-1",
+    "fecha": "2023-01-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 1818.3,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2023-02-Gasto-Alquiler-14",
+    "fecha": "2023-02-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 850.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2023-02-Gasto-Compras-38",
+    "fecha": "2023-02-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 224.49,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2023-02-Gasto-Ropa-50",
+    "fecha": "2023-02-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 120.12,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2023-02-Gasto-Salidas-82",
+    "fecha": "2023-02-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 524.1,
+    "detalle": "Importado de Presupuesto.xlsx (ENTRETENIMIENTO)"
+  },
+  {
+    "id": "hist-2023-02-Gasto-Salud-94",
+    "fecha": "2023-02-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 108.0,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2023-02-Gasto-Servicios-70",
+    "fecha": "2023-02-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 2.99,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2023-02-Gasto-Supermercado-26",
+    "fecha": "2023-02-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 628.51,
+    "detalle": "Importado de Presupuesto.xlsx (COMIDA)"
+  },
+  {
+    "id": "hist-2023-02-Gasto-Transporte-58",
+    "fecha": "2023-02-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 51.85,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2023-02-Ingreso-Sueldo-2",
+    "fecha": "2023-02-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 1093.82,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2023-03-Gasto-Alquiler-15",
+    "fecha": "2023-03-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 850.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2023-03-Gasto-Compras-39",
+    "fecha": "2023-03-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 488.47,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2023-03-Gasto-Ropa-51",
+    "fecha": "2023-03-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 13.99,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2023-03-Gasto-Salidas-83",
+    "fecha": "2023-03-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 405.35,
+    "detalle": "Importado de Presupuesto.xlsx (ENTRETENIMIENTO)"
+  },
+  {
+    "id": "hist-2023-03-Gasto-Salud-95",
+    "fecha": "2023-03-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 107.08,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2023-03-Gasto-Servicios-71",
+    "fecha": "2023-03-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 180.5,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2023-03-Gasto-Supermercado-27",
+    "fecha": "2023-03-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 515.14,
+    "detalle": "Importado de Presupuesto.xlsx (COMIDA)"
+  },
+  {
+    "id": "hist-2023-03-Gasto-Transporte-59",
+    "fecha": "2023-03-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 28.94,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2023-03-Ingreso-Sueldo-3",
+    "fecha": "2023-03-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 2612.41,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2023-04-Gasto-Alquiler-16",
+    "fecha": "2023-04-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 850.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2023-04-Gasto-Compras-40",
+    "fecha": "2023-04-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 153.0,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2023-04-Gasto-Salidas-84",
+    "fecha": "2023-04-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 177.8,
+    "detalle": "Importado de Presupuesto.xlsx (ENTRETENIMIENTO)"
+  },
+  {
+    "id": "hist-2023-04-Gasto-Salud-96",
+    "fecha": "2023-04-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 108.0,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2023-04-Gasto-Servicios-72",
+    "fecha": "2023-04-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 129.65,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2023-04-Gasto-Supermercado-28",
+    "fecha": "2023-04-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 604.6,
+    "detalle": "Importado de Presupuesto.xlsx (COMIDA)"
+  },
+  {
+    "id": "hist-2023-04-Gasto-Transporte-60",
+    "fecha": "2023-04-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 17.5,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2023-04-Ingreso-Sueldo-4",
+    "fecha": "2023-04-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3079.94,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2023-05-Gasto-Alquiler-17",
+    "fecha": "2023-05-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 850.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2023-05-Gasto-Compras-41",
+    "fecha": "2023-05-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 246.63,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2023-05-Gasto-Salidas-85",
+    "fecha": "2023-05-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 240.26,
+    "detalle": "Importado de Presupuesto.xlsx (ENTRETENIMIENTO)"
+  },
+  {
+    "id": "hist-2023-05-Gasto-Salud-97",
+    "fecha": "2023-05-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 108.0,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2023-05-Gasto-Servicios-73",
+    "fecha": "2023-05-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 84.75,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2023-05-Gasto-Supermercado-29",
+    "fecha": "2023-05-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 629.93,
+    "detalle": "Importado de Presupuesto.xlsx (COMIDA)"
+  },
+  {
+    "id": "hist-2023-05-Gasto-Transporte-61",
+    "fecha": "2023-05-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 53.5,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2023-05-Ingreso-Sueldo-5",
+    "fecha": "2023-05-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3084.92,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2023-06-Gasto-Alquiler-18",
+    "fecha": "2023-06-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 850.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2023-06-Gasto-Compras-42",
+    "fecha": "2023-06-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 939.54,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2023-06-Gasto-Salidas-86",
+    "fecha": "2023-06-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 61.6,
+    "detalle": "Importado de Presupuesto.xlsx (ENTRETENIMIENTO)"
+  },
+  {
+    "id": "hist-2023-06-Gasto-Salud-98",
+    "fecha": "2023-06-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 108.0,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2023-06-Gasto-Servicios-74",
+    "fecha": "2023-06-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 93.23,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2023-06-Gasto-Supermercado-30",
+    "fecha": "2023-06-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 560.24,
+    "detalle": "Importado de Presupuesto.xlsx (COMIDA)"
+  },
+  {
+    "id": "hist-2023-06-Gasto-Transporte-62",
+    "fecha": "2023-06-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 190.69,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2023-06-Gasto-Viajes-105",
+    "fecha": "2023-06-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 185.12,
+    "detalle": "Importado de Presupuesto.xlsx (VACACIONES)"
+  },
+  {
+    "id": "hist-2023-06-Ingreso-Sueldo-6",
+    "fecha": "2023-06-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3207.32,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2023-07-Gasto-Alquiler-19",
+    "fecha": "2023-07-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 850.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2023-07-Gasto-Compras-43",
+    "fecha": "2023-07-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 161.99,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2023-07-Gasto-Ropa-52",
+    "fecha": "2023-07-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 221.32,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2023-07-Gasto-Salidas-87",
+    "fecha": "2023-07-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 124.5,
+    "detalle": "Importado de Presupuesto.xlsx (ENTRETENIMIENTO)"
+  },
+  {
+    "id": "hist-2023-07-Gasto-Salud-99",
+    "fecha": "2023-07-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 115.67,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2023-07-Gasto-Servicios-75",
+    "fecha": "2023-07-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 140.16,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2023-07-Gasto-Supermercado-31",
+    "fecha": "2023-07-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 577.75,
+    "detalle": "Importado de Presupuesto.xlsx (COMIDA)"
+  },
+  {
+    "id": "hist-2023-07-Gasto-Transporte-63",
+    "fecha": "2023-07-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 103.24,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2023-07-Gasto-Viajes-106",
+    "fecha": "2023-07-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 1731.16,
+    "detalle": "Importado de Presupuesto.xlsx (VACACIONES)"
+  },
+  {
+    "id": "hist-2023-07-Ingreso-Sueldo-7",
+    "fecha": "2023-07-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 2860.98,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2023-08-Gasto-Alquiler-20",
+    "fecha": "2023-08-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 850.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2023-08-Gasto-Compras-44",
+    "fecha": "2023-08-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 292.0,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2023-08-Gasto-Ropa-53",
+    "fecha": "2023-08-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 117.0,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2023-08-Gasto-Salidas-88",
+    "fecha": "2023-08-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 60.85,
+    "detalle": "Importado de Presupuesto.xlsx (ENTRETENIMIENTO)"
+  },
+  {
+    "id": "hist-2023-08-Gasto-Salud-100",
+    "fecha": "2023-08-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 111.44,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2023-08-Gasto-Servicios-76",
+    "fecha": "2023-08-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 108.0,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2023-08-Gasto-Supermercado-32",
+    "fecha": "2023-08-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 501.44,
+    "detalle": "Importado de Presupuesto.xlsx (COMIDA)"
+  },
+  {
+    "id": "hist-2023-08-Gasto-Transporte-64",
+    "fecha": "2023-08-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 17.5,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2023-08-Gasto-Viajes-107",
+    "fecha": "2023-08-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 1132.13,
+    "detalle": "Importado de Presupuesto.xlsx (VACACIONES)"
+  },
+  {
+    "id": "hist-2023-08-Ingreso-Sueldo-8",
+    "fecha": "2023-08-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3198.7,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2023-09-Gasto-Alquiler-21",
+    "fecha": "2023-09-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 850.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2023-09-Gasto-Compras-45",
+    "fecha": "2023-09-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 371.7,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2023-09-Gasto-Salidas-89",
+    "fecha": "2023-09-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 1825.76,
+    "detalle": "Importado de Presupuesto.xlsx (ENTRETENIMIENTO)"
+  },
+  {
+    "id": "hist-2023-09-Gasto-Salud-101",
+    "fecha": "2023-09-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 131.5,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2023-09-Gasto-Servicios-77",
+    "fecha": "2023-09-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 151.65,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2023-09-Gasto-Supermercado-33",
+    "fecha": "2023-09-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 541.56,
+    "detalle": "Importado de Presupuesto.xlsx (COMIDA)"
+  },
+  {
+    "id": "hist-2023-09-Gasto-Transporte-65",
+    "fecha": "2023-09-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 171.29,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2023-09-Gasto-Viajes-108",
+    "fecha": "2023-09-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 253.82,
+    "detalle": "Importado de Presupuesto.xlsx (VACACIONES)"
+  },
+  {
+    "id": "hist-2023-09-Ingreso-Sueldo-9",
+    "fecha": "2023-09-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 2578.0,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2023-10-Gasto-Alquiler-22",
+    "fecha": "2023-10-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 850.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2023-10-Gasto-Compras-46",
+    "fecha": "2023-10-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 320.0,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2023-10-Gasto-Ropa-54",
+    "fecha": "2023-10-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 215.0,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2023-10-Gasto-Salidas-90",
+    "fecha": "2023-10-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 178.2,
+    "detalle": "Importado de Presupuesto.xlsx (ENTRETENIMIENTO)"
+  },
+  {
+    "id": "hist-2023-10-Gasto-Salud-102",
+    "fecha": "2023-10-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 122.3,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2023-10-Gasto-Servicios-78",
+    "fecha": "2023-10-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 101.0,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2023-10-Gasto-Supermercado-34",
+    "fecha": "2023-10-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 536.51,
+    "detalle": "Importado de Presupuesto.xlsx (COMIDA)"
+  },
+  {
+    "id": "hist-2023-10-Gasto-Transporte-66",
+    "fecha": "2023-10-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 17.5,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2023-10-Ingreso-Sueldo-10",
+    "fecha": "2023-10-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 2836.79,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2023-11-Gasto-Alquiler-23",
+    "fecha": "2023-11-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 850.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2023-11-Gasto-Compras-47",
+    "fecha": "2023-11-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 400.44,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2023-11-Gasto-Ropa-55",
+    "fecha": "2023-11-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 55.0,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2023-11-Gasto-Salidas-91",
+    "fecha": "2023-11-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 106.1,
+    "detalle": "Importado de Presupuesto.xlsx (ENTRETENIMIENTO)"
+  },
+  {
+    "id": "hist-2023-11-Gasto-Salud-103",
+    "fecha": "2023-11-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 127.2,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2023-11-Gasto-Servicios-79",
+    "fecha": "2023-11-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 175.6,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2023-11-Gasto-Supermercado-35",
+    "fecha": "2023-11-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 287.22,
+    "detalle": "Importado de Presupuesto.xlsx (COMIDA)"
+  },
+  {
+    "id": "hist-2023-11-Gasto-Transporte-67",
+    "fecha": "2023-11-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 35.19,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2023-11-Gasto-Viajes-109",
+    "fecha": "2023-11-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 178.0,
+    "detalle": "Importado de Presupuesto.xlsx (VACACIONES)"
+  },
+  {
+    "id": "hist-2023-11-Ingreso-Sueldo-11",
+    "fecha": "2023-11-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3137.11,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2023-12-Gasto-Alquiler-24",
+    "fecha": "2023-12-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 850.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2023-12-Gasto-Compras-48",
+    "fecha": "2023-12-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 421.14,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2023-12-Gasto-Ropa-56",
+    "fecha": "2023-12-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 87.31,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2023-12-Gasto-Salidas-92",
+    "fecha": "2023-12-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 62.1,
+    "detalle": "Importado de Presupuesto.xlsx (ENTRETENIMIENTO)"
+  },
+  {
+    "id": "hist-2023-12-Gasto-Salud-104",
+    "fecha": "2023-12-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 108.0,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2023-12-Gasto-Servicios-80",
+    "fecha": "2023-12-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 105.06,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2023-12-Gasto-Supermercado-36",
+    "fecha": "2023-12-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 684.67,
+    "detalle": "Importado de Presupuesto.xlsx (COMIDA)"
+  },
+  {
+    "id": "hist-2023-12-Gasto-Transporte-68",
+    "fecha": "2023-12-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 54.6,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2023-12-Gasto-Viajes-110",
+    "fecha": "2023-12-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 284.65,
+    "detalle": "Importado de Presupuesto.xlsx (VACACIONES)"
+  },
+  {
+    "id": "hist-2023-12-Ingreso-Sueldo-12",
+    "fecha": "2023-12-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3100.33,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2024-01-Gasto-Alquiler-123",
+    "fecha": "2024-01-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 879.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2024-01-Gasto-Compras-147",
+    "fecha": "2024-01-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 653.97,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2024-01-Gasto-Ropa-159",
+    "fecha": "2024-01-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 193.5,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2024-01-Gasto-Salidas-193",
+    "fecha": "2024-01-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 123.6,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2024-01-Gasto-Salud-205",
+    "fecha": "2024-01-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 179.0,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2024-01-Gasto-Servicios-181",
+    "fecha": "2024-01-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 601.19,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2024-01-Gasto-Supermercado-135",
+    "fecha": "2024-01-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 495.32,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2024-01-Gasto-Transporte-169",
+    "fecha": "2024-01-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 156.5,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2024-01-Gasto-Viajes-217",
+    "fecha": "2024-01-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 2444.0,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2024-01-Ingreso-Sueldo-111",
+    "fecha": "2024-01-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3189.79,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2024-02-Gasto-Alquiler-124",
+    "fecha": "2024-02-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 879.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2024-02-Gasto-Compras-148",
+    "fecha": "2024-02-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 142.91,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2024-02-Gasto-Ropa-160",
+    "fecha": "2024-02-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 140.9,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2024-02-Gasto-Salidas-194",
+    "fecha": "2024-02-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 152.5,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2024-02-Gasto-Salud-206",
+    "fecha": "2024-02-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 114.0,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2024-02-Gasto-Servicios-182",
+    "fecha": "2024-02-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 140.5,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2024-02-Gasto-Supermercado-136",
+    "fecha": "2024-02-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 356.5,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2024-02-Gasto-Transporte-170",
+    "fecha": "2024-02-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 25.5,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2024-02-Ingreso-Sueldo-112",
+    "fecha": "2024-02-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3361.81,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2024-03-Gasto-Alquiler-125",
+    "fecha": "2024-03-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 879.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2024-03-Gasto-Compras-149",
+    "fecha": "2024-03-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 895.93,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2024-03-Gasto-Ropa-161",
+    "fecha": "2024-03-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 108.0,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2024-03-Gasto-Salidas-195",
+    "fecha": "2024-03-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 355.12,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2024-03-Gasto-Salud-207",
+    "fecha": "2024-03-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 114.0,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2024-03-Gasto-Servicios-183",
+    "fecha": "2024-03-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 213.36,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2024-03-Gasto-Supermercado-137",
+    "fecha": "2024-03-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 540.93,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2024-03-Gasto-Transporte-171",
+    "fecha": "2024-03-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 146.1,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2024-03-Ingreso-Sueldo-113",
+    "fecha": "2024-03-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3328.92,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2024-04-Gasto-Alquiler-126",
+    "fecha": "2024-04-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 879.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2024-04-Gasto-Compras-150",
+    "fecha": "2024-04-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 760.0,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2024-04-Gasto-Ropa-162",
+    "fecha": "2024-04-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 46.0,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2024-04-Gasto-Salidas-196",
+    "fecha": "2024-04-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 405.4,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2024-04-Gasto-Salud-208",
+    "fecha": "2024-04-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 123.0,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2024-04-Gasto-Servicios-184",
+    "fecha": "2024-04-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 108.0,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2024-04-Gasto-Supermercado-138",
+    "fecha": "2024-04-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 523.43,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2024-04-Gasto-Transporte-172",
+    "fecha": "2024-04-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 56.5,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2024-04-Ingreso-Sueldo-114",
+    "fecha": "2024-04-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3411.23,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2024-05-Gasto-Alquiler-127",
+    "fecha": "2024-05-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 879.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2024-05-Gasto-Compras-151",
+    "fecha": "2024-05-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 214.38,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2024-05-Gasto-Ropa-163",
+    "fecha": "2024-05-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 62.0,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2024-05-Gasto-Salidas-197",
+    "fecha": "2024-05-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 146.37,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2024-05-Gasto-Salud-209",
+    "fecha": "2024-05-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 148.48,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2024-05-Gasto-Servicios-185",
+    "fecha": "2024-05-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 177.02,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2024-05-Gasto-Supermercado-139",
+    "fecha": "2024-05-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 526.23,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2024-05-Gasto-Transporte-173",
+    "fecha": "2024-05-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 35.0,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2024-05-Ingreso-Sueldo-115",
+    "fecha": "2024-05-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3550.4,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2024-06-Gasto-Alquiler-128",
+    "fecha": "2024-06-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 879.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2024-06-Gasto-Compras-152",
+    "fecha": "2024-06-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 359.35,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2024-06-Gasto-Ropa-164",
+    "fecha": "2024-06-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 86.0,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2024-06-Gasto-Salidas-198",
+    "fecha": "2024-06-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 113.8,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2024-06-Gasto-Salud-210",
+    "fecha": "2024-06-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 123.66,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2024-06-Gasto-Servicios-186",
+    "fecha": "2024-06-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 114.19,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2024-06-Gasto-Supermercado-140",
+    "fecha": "2024-06-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 606.58,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2024-06-Gasto-Transporte-174",
+    "fecha": "2024-06-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 12.3,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2024-06-Ingreso-Sueldo-116",
+    "fecha": "2024-06-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3199.04,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2024-07-Gasto-Alquiler-129",
+    "fecha": "2024-07-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 879.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2024-07-Gasto-Compras-153",
+    "fecha": "2024-07-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 466.93,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2024-07-Gasto-Ropa-165",
+    "fecha": "2024-07-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 310.0,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2024-07-Gasto-Salidas-199",
+    "fecha": "2024-07-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 226.9,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2024-07-Gasto-Salud-211",
+    "fecha": "2024-07-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 142.6,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2024-07-Gasto-Servicios-187",
+    "fecha": "2024-07-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 138.7,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2024-07-Gasto-Supermercado-141",
+    "fecha": "2024-07-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 531.35,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2024-07-Gasto-Transporte-175",
+    "fecha": "2024-07-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 80.97,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2024-07-Gasto-Viajes-218",
+    "fecha": "2024-07-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 355.65,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2024-07-Ingreso-Sueldo-117",
+    "fecha": "2024-07-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 4892.8,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2024-08-Gasto-Alquiler-130",
+    "fecha": "2024-08-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 879.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2024-08-Gasto-Compras-154",
+    "fecha": "2024-08-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 420.57,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2024-08-Gasto-Ropa-166",
+    "fecha": "2024-08-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 28.0,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2024-08-Gasto-Salidas-200",
+    "fecha": "2024-08-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 16.1,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2024-08-Gasto-Salud-212",
+    "fecha": "2024-08-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 146.52,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2024-08-Gasto-Servicios-188",
+    "fecha": "2024-08-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 167.69,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2024-08-Gasto-Supermercado-142",
+    "fecha": "2024-08-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 104.54,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2024-08-Gasto-Transporte-176",
+    "fecha": "2024-08-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 21.95,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2024-08-Gasto-Viajes-219",
+    "fecha": "2024-08-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 790.72,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2024-08-Ingreso-Sueldo-118",
+    "fecha": "2024-08-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 2876.53,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2024-09-Gasto-Alquiler-131",
+    "fecha": "2024-09-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 879.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2024-09-Gasto-Compras-155",
+    "fecha": "2024-09-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 220.62,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2024-09-Gasto-Salidas-201",
+    "fecha": "2024-09-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 218.8,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2024-09-Gasto-Salud-213",
+    "fecha": "2024-09-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 220.82,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2024-09-Gasto-Servicios-189",
+    "fecha": "2024-09-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 193.73,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2024-09-Gasto-Supermercado-143",
+    "fecha": "2024-09-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 516.3,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2024-09-Gasto-Transporte-177",
+    "fecha": "2024-09-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 96.3,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2024-09-Gasto-Viajes-220",
+    "fecha": "2024-09-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 214.0,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2024-09-Ingreso-Sueldo-119",
+    "fecha": "2024-09-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 2485.4,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2024-10-Gasto-Alquiler-132",
+    "fecha": "2024-10-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 879.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2024-10-Gasto-Compras-156",
+    "fecha": "2024-10-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 383.99,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2024-10-Gasto-Salidas-202",
+    "fecha": "2024-10-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 82.85,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2024-10-Gasto-Salud-214",
+    "fecha": "2024-10-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 113.52,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2024-10-Gasto-Servicios-190",
+    "fecha": "2024-10-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 72.53,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2024-10-Gasto-Supermercado-144",
+    "fecha": "2024-10-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 495.44,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2024-10-Gasto-Transporte-178",
+    "fecha": "2024-10-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 26.25,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2024-10-Gasto-Viajes-221",
+    "fecha": "2024-10-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 38.0,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2024-10-Ingreso-Sueldo-120",
+    "fecha": "2024-10-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 4096.29,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2024-11-Gasto-Alquiler-133",
+    "fecha": "2024-11-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 879.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2024-11-Gasto-Compras-157",
+    "fecha": "2024-11-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 295.97,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2024-11-Gasto-Ropa-167",
+    "fecha": "2024-11-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 88.99,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2024-11-Gasto-Salidas-203",
+    "fecha": "2024-11-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 150.35,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2024-11-Gasto-Salud-215",
+    "fecha": "2024-11-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 113.52,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2024-11-Gasto-Servicios-191",
+    "fecha": "2024-11-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 193.26,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2024-11-Gasto-Supermercado-145",
+    "fecha": "2024-11-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 419.11,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2024-11-Gasto-Transporte-179",
+    "fecha": "2024-11-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 12.0,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2024-11-Gasto-Viajes-222",
+    "fecha": "2024-11-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 765.0,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2024-11-Ingreso-Sueldo-121",
+    "fecha": "2024-11-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3142.67,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2024-12-Gasto-Alquiler-134",
+    "fecha": "2024-12-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 879.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2024-12-Gasto-Compras-158",
+    "fecha": "2024-12-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 680.48,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2024-12-Gasto-Ropa-168",
+    "fecha": "2024-12-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 64.64,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2024-12-Gasto-Salidas-204",
+    "fecha": "2024-12-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 31.9,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2024-12-Gasto-Salud-216",
+    "fecha": "2024-12-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 113.52,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2024-12-Gasto-Servicios-192",
+    "fecha": "2024-12-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 114.73,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2024-12-Gasto-Supermercado-146",
+    "fecha": "2024-12-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 628.93,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2024-12-Gasto-Transporte-180",
+    "fecha": "2024-12-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 4.0,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2024-12-Gasto-Viajes-223",
+    "fecha": "2024-12-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 222.72,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2024-12-Ingreso-Sueldo-122",
+    "fecha": "2024-12-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 4422.89,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2025-01-Gasto-Alquiler-239",
+    "fecha": "2025-01-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 901.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ESP)"
+  },
+  {
+    "id": "hist-2025-01-Gasto-Compras-263",
+    "fecha": "2025-01-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 457.5,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2025-01-Gasto-Ropa-275",
+    "fecha": "2025-01-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 248.58,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2025-01-Gasto-Salidas-306",
+    "fecha": "2025-01-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 146.2,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2025-01-Gasto-Servicios-294",
+    "fecha": "2025-01-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 499.57,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2025-01-Gasto-Supermercado-251",
+    "fecha": "2025-01-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 420.26,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2025-01-Ingreso-Sueldo-224",
+    "fecha": "2025-01-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 2913.9,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2025-02-Gasto-Alquiler-240",
+    "fecha": "2025-02-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 901.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ESP)"
+  },
+  {
+    "id": "hist-2025-02-Gasto-Compras-264",
+    "fecha": "2025-02-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 311.99,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2025-02-Gasto-Ropa-276",
+    "fecha": "2025-02-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 140.25,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2025-02-Gasto-Salidas-307",
+    "fecha": "2025-02-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 95.6,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2025-02-Gasto-Servicios-295",
+    "fecha": "2025-02-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 327.82,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2025-02-Gasto-Supermercado-252",
+    "fecha": "2025-02-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 313.08,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2025-02-Gasto-Transporte-287",
+    "fecha": "2025-02-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 4.0,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2025-02-Gasto-Viajes-322",
+    "fecha": "2025-02-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 41.0,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2025-02-Ingreso-Sueldo-225",
+    "fecha": "2025-02-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3133.14,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2025-03-Gasto-Alquiler-241",
+    "fecha": "2025-03-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 901.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ESP)"
+  },
+  {
+    "id": "hist-2025-03-Gasto-Compras-265",
+    "fecha": "2025-03-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 334.41,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2025-03-Gasto-Ropa-277",
+    "fecha": "2025-03-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 20.67,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2025-03-Gasto-Salidas-308",
+    "fecha": "2025-03-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 133.19,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2025-03-Gasto-Servicios-296",
+    "fecha": "2025-03-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 191.54,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2025-03-Gasto-Supermercado-253",
+    "fecha": "2025-03-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 567.13,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2025-03-Gasto-Viajes-323",
+    "fecha": "2025-03-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 171.48,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2025-03-Ingreso-Sueldo-226",
+    "fecha": "2025-03-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3472.44,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2025-04-Gasto-Alquiler-242",
+    "fecha": "2025-04-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 901.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ESP)"
+  },
+  {
+    "id": "hist-2025-04-Gasto-Compras-266",
+    "fecha": "2025-04-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 222.47,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2025-04-Gasto-Ropa-278",
+    "fecha": "2025-04-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 43.34,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2025-04-Gasto-Salidas-309",
+    "fecha": "2025-04-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 296.12,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2025-04-Gasto-Salud-318",
+    "fecha": "2025-04-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 41.94,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2025-04-Gasto-Servicios-297",
+    "fecha": "2025-04-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 103.94,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2025-04-Gasto-Supermercado-254",
+    "fecha": "2025-04-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 308.65,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2025-04-Gasto-Transporte-288",
+    "fecha": "2025-04-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 9.54,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2025-04-Gasto-Viajes-324",
+    "fecha": "2025-04-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 539.44,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2025-04-Ingreso-Sueldo-227",
+    "fecha": "2025-04-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3482.59,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2025-05-Gasto-Alquiler-243",
+    "fecha": "2025-05-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 901.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ESP)"
+  },
+  {
+    "id": "hist-2025-05-Gasto-Compras-267",
+    "fecha": "2025-05-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 350.47,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2025-05-Gasto-Ropa-279",
+    "fecha": "2025-05-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 144.0,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2025-05-Gasto-Salidas-310",
+    "fecha": "2025-05-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 319.95,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2025-05-Gasto-Servicios-298",
+    "fecha": "2025-05-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 174.47,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2025-05-Gasto-Supermercado-255",
+    "fecha": "2025-05-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 583.01,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2025-05-Gasto-Transporte-289",
+    "fecha": "2025-05-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 29.47,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2025-05-Gasto-Viajes-325",
+    "fecha": "2025-05-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 281.06,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2025-05-Ingreso-Sueldo-228",
+    "fecha": "2025-05-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 4781.11,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2025-06-Gasto-Alquiler-244",
+    "fecha": "2025-06-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 901.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ESP)"
+  },
+  {
+    "id": "hist-2025-06-Gasto-Auto-337",
+    "fecha": "2025-06-01",
+    "tipo": "Gasto",
+    "categoria": "Auto",
+    "monto": 10000.0,
+    "detalle": "Importado de Presupuesto.xlsx (AUTO)"
+  },
+  {
+    "id": "hist-2025-06-Gasto-Compras-268",
+    "fecha": "2025-06-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 339.18,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2025-06-Gasto-Gasolina-332",
+    "fecha": "2025-06-01",
+    "tipo": "Gasto",
+    "categoria": "Gasolina",
+    "monto": 54.5,
+    "detalle": "Importado de Presupuesto.xlsx (DIESEL)"
+  },
+  {
+    "id": "hist-2025-06-Gasto-Ropa-280",
+    "fecha": "2025-06-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 107.83,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2025-06-Gasto-Salidas-311",
+    "fecha": "2025-06-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 203.71,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2025-06-Gasto-Salud-319",
+    "fecha": "2025-06-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 13.63,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2025-06-Gasto-Seguro-343",
+    "fecha": "2025-06-01",
+    "tipo": "Gasto",
+    "categoria": "Seguro",
+    "monto": 139.33,
+    "detalle": "Importado de Presupuesto.xlsx (SEGURO)"
+  },
+  {
+    "id": "hist-2025-06-Gasto-Servicios-299",
+    "fecha": "2025-06-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 134.41,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2025-06-Gasto-Supermercado-256",
+    "fecha": "2025-06-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 395.6,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2025-06-Gasto-Viajes-326",
+    "fecha": "2025-06-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 19.43,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2025-06-Ingreso-Sueldo-229",
+    "fecha": "2025-06-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 4677.66,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2025-07-Gasto-Alquiler-245",
+    "fecha": "2025-07-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 901.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ESP)"
+  },
+  {
+    "id": "hist-2025-07-Gasto-Compras-269",
+    "fecha": "2025-07-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 450.39,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2025-07-Gasto-Gasolina-333",
+    "fecha": "2025-07-01",
+    "tipo": "Gasto",
+    "categoria": "Gasolina",
+    "monto": 57.9,
+    "detalle": "Importado de Presupuesto.xlsx (DIESEL)"
+  },
+  {
+    "id": "hist-2025-07-Gasto-Ropa-281",
+    "fecha": "2025-07-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 227.19,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2025-07-Gasto-Salidas-312",
+    "fecha": "2025-07-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 182.35,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2025-07-Gasto-Salud-320",
+    "fecha": "2025-07-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 41.98,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2025-07-Gasto-Servicios-300",
+    "fecha": "2025-07-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 278.5,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2025-07-Gasto-Supermercado-257",
+    "fecha": "2025-07-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 428.24,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2025-07-Gasto-Viajes-327",
+    "fecha": "2025-07-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 793.89,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2025-07-Ingreso-Sueldo-230",
+    "fecha": "2025-07-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3698.39,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2025-08-Gasto-Alquiler-246",
+    "fecha": "2025-08-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 901.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ESP)"
+  },
+  {
+    "id": "hist-2025-08-Gasto-Auto-338",
+    "fecha": "2025-08-01",
+    "tipo": "Gasto",
+    "categoria": "Auto",
+    "monto": 307.78,
+    "detalle": "Importado de Presupuesto.xlsx (AUTO)"
+  },
+  {
+    "id": "hist-2025-08-Gasto-Compras-270",
+    "fecha": "2025-08-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 648.87,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2025-08-Gasto-Gasolina-334",
+    "fecha": "2025-08-01",
+    "tipo": "Gasto",
+    "categoria": "Gasolina",
+    "monto": 256.54,
+    "detalle": "Importado de Presupuesto.xlsx (DIESEL)"
+  },
+  {
+    "id": "hist-2025-08-Gasto-Ropa-282",
+    "fecha": "2025-08-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 95.38,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2025-08-Gasto-Salidas-313",
+    "fecha": "2025-08-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 54.9,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2025-08-Gasto-Seguro-344",
+    "fecha": "2025-08-01",
+    "tipo": "Gasto",
+    "categoria": "Seguro",
+    "monto": 134.05,
+    "detalle": "Importado de Presupuesto.xlsx (SEGURO)"
+  },
+  {
+    "id": "hist-2025-08-Gasto-Servicios-301",
+    "fecha": "2025-08-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 123.39,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2025-08-Gasto-Supermercado-258",
+    "fecha": "2025-08-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 460.6,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2025-08-Gasto-Transporte-290",
+    "fecha": "2025-08-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 12.52,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2025-08-Gasto-Viajes-328",
+    "fecha": "2025-08-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 1091.88,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2025-08-Ingreso-Sueldo-231",
+    "fecha": "2025-08-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3701.44,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2025-09-Gasto-Alquiler-247",
+    "fecha": "2025-09-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 901.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ESP)"
+  },
+  {
+    "id": "hist-2025-09-Gasto-Auto-339",
+    "fecha": "2025-09-01",
+    "tipo": "Gasto",
+    "categoria": "Auto",
+    "monto": 307.78,
+    "detalle": "Importado de Presupuesto.xlsx (AUTO)"
+  },
+  {
+    "id": "hist-2025-09-Gasto-Compras-271",
+    "fecha": "2025-09-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 348.22,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2025-09-Gasto-Ropa-283",
+    "fecha": "2025-09-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 107.65,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2025-09-Gasto-Salidas-314",
+    "fecha": "2025-09-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 95.5,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2025-09-Gasto-Seguro-345",
+    "fecha": "2025-09-01",
+    "tipo": "Gasto",
+    "categoria": "Seguro",
+    "monto": 134.05,
+    "detalle": "Importado de Presupuesto.xlsx (SEGURO)"
+  },
+  {
+    "id": "hist-2025-09-Gasto-Servicios-302",
+    "fecha": "2025-09-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 161.59,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2025-09-Gasto-Supermercado-259",
+    "fecha": "2025-09-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 483.9,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2025-09-Gasto-Transporte-291",
+    "fecha": "2025-09-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 8.8,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2025-09-Gasto-Viajes-329",
+    "fecha": "2025-09-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 473.8,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2025-09-Ingreso-Sueldo-232",
+    "fecha": "2025-09-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3087.93,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2025-10-Gasto-Alquiler-236",
+    "fecha": "2025-10-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 194.65,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ARG)"
+  },
+  {
+    "id": "hist-2025-10-Gasto-Alquiler-248",
+    "fecha": "2025-10-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 901.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ESP)"
+  },
+  {
+    "id": "hist-2025-10-Gasto-Auto-340",
+    "fecha": "2025-10-01",
+    "tipo": "Gasto",
+    "categoria": "Auto",
+    "monto": 307.78,
+    "detalle": "Importado de Presupuesto.xlsx (AUTO)"
+  },
+  {
+    "id": "hist-2025-10-Gasto-Compras-272",
+    "fecha": "2025-10-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 349.51,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2025-10-Gasto-Gasolina-335",
+    "fecha": "2025-10-01",
+    "tipo": "Gasto",
+    "categoria": "Gasolina",
+    "monto": 61.85,
+    "detalle": "Importado de Presupuesto.xlsx (DIESEL)"
+  },
+  {
+    "id": "hist-2025-10-Gasto-Ropa-284",
+    "fecha": "2025-10-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 43.3,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2025-10-Gasto-Salidas-315",
+    "fecha": "2025-10-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 180.8,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2025-10-Gasto-Salud-321",
+    "fecha": "2025-10-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 79.1,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2025-10-Gasto-Servicios-303",
+    "fecha": "2025-10-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 82.02,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2025-10-Gasto-Supermercado-260",
+    "fecha": "2025-10-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 623.44,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2025-10-Gasto-Transporte-292",
+    "fecha": "2025-10-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 4.65,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2025-10-Gasto-Viajes-330",
+    "fecha": "2025-10-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 81.96,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2025-10-Ingreso-Sueldo-233",
+    "fecha": "2025-10-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3378.46,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2025-11-Gasto-Alquiler-237",
+    "fecha": "2025-11-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 295.8,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ARG)"
+  },
+  {
+    "id": "hist-2025-11-Gasto-Alquiler-249",
+    "fecha": "2025-11-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 901.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ESP)"
+  },
+  {
+    "id": "hist-2025-11-Gasto-Auto-341",
+    "fecha": "2025-11-01",
+    "tipo": "Gasto",
+    "categoria": "Auto",
+    "monto": 307.78,
+    "detalle": "Importado de Presupuesto.xlsx (AUTO)"
+  },
+  {
+    "id": "hist-2025-11-Gasto-Compras-273",
+    "fecha": "2025-11-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 309.69,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2025-11-Gasto-Ropa-285",
+    "fecha": "2025-11-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 137.02,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2025-11-Gasto-Salidas-316",
+    "fecha": "2025-11-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 180.7,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2025-11-Gasto-Servicios-304",
+    "fecha": "2025-11-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 198.11,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2025-11-Gasto-Supermercado-261",
+    "fecha": "2025-11-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 539.49,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2025-11-Ingreso-Sueldo-234",
+    "fecha": "2025-11-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 4042.09,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2025-12-Gasto-Alquiler-238",
+    "fecha": "2025-12-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 363.8,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ARG)"
+  },
+  {
+    "id": "hist-2025-12-Gasto-Alquiler-250",
+    "fecha": "2025-12-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 901.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER ESP)"
+  },
+  {
+    "id": "hist-2025-12-Gasto-Auto-342",
+    "fecha": "2025-12-01",
+    "tipo": "Gasto",
+    "categoria": "Auto",
+    "monto": 307.78,
+    "detalle": "Importado de Presupuesto.xlsx (AUTO)"
+  },
+  {
+    "id": "hist-2025-12-Gasto-Compras-274",
+    "fecha": "2025-12-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 350.0,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2025-12-Gasto-Gasolina-336",
+    "fecha": "2025-12-01",
+    "tipo": "Gasto",
+    "categoria": "Gasolina",
+    "monto": 56.0,
+    "detalle": "Importado de Presupuesto.xlsx (DIESEL)"
+  },
+  {
+    "id": "hist-2025-12-Gasto-Ropa-286",
+    "fecha": "2025-12-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 100.0,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2025-12-Gasto-Salidas-317",
+    "fecha": "2025-12-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 200.0,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2025-12-Gasto-Servicios-305",
+    "fecha": "2025-12-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 150.0,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2025-12-Gasto-Supermercado-262",
+    "fecha": "2025-12-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 550.0,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2025-12-Gasto-Transporte-293",
+    "fecha": "2025-12-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 22.19,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2025-12-Gasto-Viajes-331",
+    "fecha": "2025-12-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 101.0,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2025-12-Ingreso-Sueldo-235",
+    "fecha": "2025-12-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3847.39,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2026-01-Gasto-Alquiler-347",
+    "fecha": "2026-01-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 927.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2026-01-Gasto-Auto-357",
+    "fecha": "2026-01-01",
+    "tipo": "Gasto",
+    "categoria": "Auto",
+    "monto": 308.0,
+    "detalle": "Importado de Presupuesto.xlsx (AUTO)"
+  },
+  {
+    "id": "hist-2026-01-Gasto-Compras-349",
+    "fecha": "2026-01-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 178.97,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2026-01-Gasto-Gasolina-356",
+    "fecha": "2026-01-01",
+    "tipo": "Gasto",
+    "categoria": "Gasolina",
+    "monto": 174.79,
+    "detalle": "Importado de Presupuesto.xlsx (DIESEL)"
+  },
+  {
+    "id": "hist-2026-01-Gasto-Ropa-350",
+    "fecha": "2026-01-01",
+    "tipo": "Gasto",
+    "categoria": "Ropa",
+    "monto": 223.31,
+    "detalle": "Importado de Presupuesto.xlsx (ROPA)"
+  },
+  {
+    "id": "hist-2026-01-Gasto-Salidas-353",
+    "fecha": "2026-01-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 453.09,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2026-01-Gasto-Salud-354",
+    "fecha": "2026-01-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 209.26,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2026-01-Gasto-Seguro-358",
+    "fecha": "2026-01-01",
+    "tipo": "Gasto",
+    "categoria": "Seguro",
+    "monto": 361.32,
+    "detalle": "Importado de Presupuesto.xlsx (SEGURO)"
+  },
+  {
+    "id": "hist-2026-01-Gasto-Servicios-352",
+    "fecha": "2026-01-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 180.61,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2026-01-Gasto-Supermercado-348",
+    "fecha": "2026-01-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 468.84,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2026-01-Gasto-Transporte-351",
+    "fecha": "2026-01-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 13.35,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2026-01-Gasto-Viajes-355",
+    "fecha": "2026-01-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 349.05,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2026-01-Ingreso-Sueldo-346",
+    "fecha": "2026-01-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3706.0,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  }
+]
