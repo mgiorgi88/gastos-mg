@@ -591,9 +591,9 @@ function refresh() {
   balanceEl.classList.remove("saldo-pos", "saldo-neg", "saldo-neu");
   balanceEl.classList.add(balanceValue > 0 ? "saldo-pos" : balanceValue < 0 ? "saldo-neg" : "saldo-neu");
 
-  refreshDetailCategoryOptions(filtered);
+  refreshDetailCategoryOptions(all);
 
-  let detailRows = [...filtered];
+  let detailRows = [...all];
   const filterType = detailTypeEl ? detailTypeEl.value : "Todos";
   const filterCategory = detailCategoryEl ? detailCategoryEl.value : "Todos";
   const filterFrom = detailFromEl ? detailFromEl.value : "";
