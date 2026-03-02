@@ -223,7 +223,7 @@ function buildMonthOptions(all) {
 function getLast3MonthKeys() {
   const keys = [];
   const now = new Date();
-  for (let i = 0; i < 3; i += 1) {
+  for (let i = 1; i <= 3; i += 1) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
     keys.push(key);
