@@ -11,6 +11,7 @@ const form = document.getElementById("tx-form");
 const lista = document.getElementById("lista");
 const vacio = document.getElementById("vacio");
 const filtroMes = document.getElementById("filtro-mes");
+const trend3mEl = document.getElementById("trend-3m");
 const detalleMovimientosEl = document.getElementById("detalle-movimientos");
 const tipoEl = document.getElementById("tipo");
 const categoriaEl = document.getElementById("categoria");
@@ -198,6 +199,52 @@ function buildMonthOptions(all) {
   ];
 }
 
+function getLast3MonthKeys() {
+  const keys = [];
+  const now = new Date();
+  for (let i = 0; i < 3; i += 1) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    keys.push(key);
+  }
+  return keys;
+}
+
+function monthLabel(key) {
+  const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+  const [y, m] = key.split("-");
+  const idx = Math.max(0, Math.min(11, Number(m) - 1));
+  return `${monthNames[idx]} ${y}`;
+}
+
+function renderLast3Months(all) {
+  if (!trend3mEl) return;
+
+  const monthKeys = getLast3MonthKeys();
+  const cards = monthKeys.map((key) => {
+    let ingresos = 0;
+    let gastos = 0;
+
+    all.forEach((x) => {
+      if (getMonth(x.fecha) !== key) return;
+      if (x.tipo === "Ingreso") ingresos += Number(x.monto);
+      else gastos += Number(x.monto);
+    });
+
+    const saldo = ingresos - gastos;
+    const saldoClass = saldo > 0 ? "saldo-pos" : saldo < 0 ? "saldo-neg" : "saldo-neu";
+
+    return `
+      <article class="trend-item">
+        <span>${monthLabel(key)}</span>
+        <strong class="${saldoClass}">${money(saldo)}</strong>
+      </article>
+    `;
+  });
+
+  trend3mEl.innerHTML = cards.join("");
+}
+
 function refresh() {
   const all = [...txData].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
   const options = buildMonthOptions(all);
@@ -238,6 +285,7 @@ function refresh() {
   });
 
   vacio.hidden = filtered.length > 0;
+  renderLast3Months(all);
 }
 
 function setAuthButtons() {
