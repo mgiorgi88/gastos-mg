@@ -25,6 +25,7 @@
   --soft: #0f172a;
   --income: #4ade80;
   --expense: #fb7185;
+  color-scheme: dark;
 }
 
 * {
@@ -213,6 +214,18 @@ button:focus {
   color: #52525b;
 }
 
+:root[data-theme="dark"] .saldo-pos {
+  color: #4ade80;
+}
+
+:root[data-theme="dark"] .saldo-neg {
+  color: #fb7185;
+}
+
+:root[data-theme="dark"] .saldo-neu {
+  color: #cbd5e1;
+}
+
 #lista {
   list-style: none;
   margin: 0;
@@ -268,6 +281,9 @@ button:focus {
   align-content: space-between;
   cursor: pointer;
   background: var(--card);
+  color: var(--ink);
+  font-weight: 500;
+  margin-top: 0;
 }
 
 .calendar-cell small {
@@ -313,6 +329,10 @@ button:focus {
 
 .dot.today {
   background: #facc15;
+}
+
+:root[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.2);
 }
 
 .calendar-legend {
