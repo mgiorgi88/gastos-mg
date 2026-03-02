@@ -3,6 +3,7 @@ const BOOTSTRAP_KEY = "mis_gastos_bootstrap_v1";
 const MIGRATION_KEY = "mis_gastos_migration_v2";
 const SESSION_KEY = "mis_gastos_supabase_session_v1";
 const QUICK_AMOUNTS_KEY = "mis_gastos_quick_amounts_v1";
+const CURRENCY_KEY = "mis_gastos_currency_v1";
 const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
 
 const SUPABASE_URL = "https://gwtioxerklmzjssweqgm.supabase.co";
@@ -18,6 +19,7 @@ const btnQuickGas = document.getElementById("btn-quick-gas");
 const lista = document.getElementById("lista");
 const vacio = document.getElementById("vacio");
 const filtroMes = document.getElementById("filtro-mes");
+const currencyEl = document.getElementById("currency-select");
 const trend3mEl = document.getElementById("trend-3m");
 const detalleMovimientosEl = document.getElementById("detalle-movimientos");
 const tipoEl = document.getElementById("tipo");
@@ -63,11 +65,18 @@ let txData = [];
 let hasUserChosenMonth = false;
 let authSession = loadSession();
 let quickAmounts = loadQuickAmounts();
+let selectedCurrency = loadCurrency();
 
 document.getElementById("fecha").valueAsDate = new Date();
 
 function money(value) {
-  return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" }).format(value);
+  const localeMap = {
+    EUR: "es-ES",
+    ARS: "es-AR",
+    USD: "en-US"
+  };
+  const locale = localeMap[selectedCurrency] || "es-ES";
+  return new Intl.NumberFormat(locale, { style: "currency", currency: selectedCurrency }).format(value);
 }
 
 function setStatus(msg) {
@@ -102,6 +111,17 @@ function loadQuickAmounts() {
 function saveQuickAmounts(data) {
   quickAmounts = data;
   localStorage.setItem(QUICK_AMOUNTS_KEY, JSON.stringify(data));
+}
+
+function loadCurrency() {
+  const valid = new Set(["EUR", "ARS", "USD"]);
+  const stored = localStorage.getItem(CURRENCY_KEY) || "EUR";
+  return valid.has(stored) ? stored : "EUR";
+}
+
+function saveCurrency(currency) {
+  selectedCurrency = currency;
+  localStorage.setItem(CURRENCY_KEY, currency);
 }
 
 function loadSession() {
@@ -711,6 +731,13 @@ filtroMes.addEventListener("change", () => {
   refresh();
 });
 
+if (currencyEl) {
+  currencyEl.addEventListener("change", () => {
+    saveCurrency(currencyEl.value);
+    refresh();
+  });
+}
+
 tipoEl.addEventListener("change", () => updateCategoryOptions(tipoEl.value));
 
 lista.addEventListener("click", async (e) => {
@@ -776,6 +803,7 @@ btnQuickGas.addEventListener("click", async () => quickAddExpense("Gasolina"));
     await bootstrapHistorico();
     runCategoryMigration();
     txData = loadTx();
+    if (currencyEl) currencyEl.value = selectedCurrency;
     refresh();
     await initAuth();
   } catch (err) {
