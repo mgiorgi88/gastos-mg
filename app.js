@@ -502,7 +502,10 @@ function renderSelectedDayRows(rows) {
       li.innerHTML = `
         <div class="meta">
           <strong>${item.categoria}</strong>
-          <small>${item.tipo}${item.detalle ? " - " + item.detalle : ""}</small>
+          <small>
+            <span class="tx-type ${item.tipo === "Ingreso" ? "ingreso" : "gasto"}">${item.tipo === "Ingreso" ? "↑ Ingreso" : "↓ Gasto"}</span>
+            ${item.detalle ? " - " + item.detalle : ""}
+          </small>
         </div>
         <div class="item-actions">
           <strong class="monto ${String(item.tipo).toLowerCase()}">${item.tipo === "Gasto" ? "-" : "+"}${money(Number(item.monto))}</strong>
