@@ -5,6 +5,7 @@
   --ink: #18181b;
   --muted: #71717a;
   --primary: #27272a;
+  --on-primary: #ffffff;
   --danger: #3f3f46;
   --line: #e4e4e7;
   --soft: #fafafa;
@@ -13,16 +14,17 @@
 }
 
 :root[data-theme="dark"] {
-  --bg: #0f1115;
-  --card: #171a21;
-  --ink: #f4f7ff;
-  --muted: #a7b0c0;
-  --primary: #e5e7eb;
-  --danger: #f3f4f6;
-  --line: #2b3240;
-  --soft: #1b2230;
-  --income: #86efac;
-  --expense: #fca5a5;
+  --bg: #0b1220;
+  --card: #111b2e;
+  --ink: #f8fafc;
+  --muted: #cbd5e1;
+  --primary: #60a5fa;
+  --on-primary: #0b1220;
+  --danger: #f1f5f9;
+  --line: #334155;
+  --soft: #0f172a;
+  --income: #4ade80;
+  --expense: #fb7185;
 }
 
 * {
@@ -129,17 +131,28 @@ input, select, button {
   padding: 10px;
   font-size: 1rem;
   font-family: var(--font-main);
-  background: var(--card);
+  background: var(--soft);
   color: var(--ink);
 }
 
 button {
   margin-top: 10px;
   background: var(--primary);
-  color: var(--bg);
+  color: var(--on-primary);
   border: 0;
   font-weight: 500;
   cursor: pointer;
+}
+
+input::placeholder {
+  color: var(--muted);
+}
+
+input:focus,
+select:focus,
+button:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
 }
 
 .stats {
@@ -243,6 +256,12 @@ button {
 
 .muted {
   color: var(--muted);
+}
+
+:root[data-theme="dark"] .danger {
+  background: #1e293b;
+  color: #f8fafc;
+  border-color: #475569;
 }
 
 .auth-actions {
