@@ -49,7 +49,7 @@
         <button id="btn-logout" type="button" class="danger">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v34</p>
+      <p class="muted">Version: v35</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -178,6 +178,22 @@
 
     <section class="card">
       <h2>Movimientos por dia</h2>
+      <div class="calendar-panel">
+        <div class="calendar-head">
+          <button id="cal-prev" type="button" class="danger">◀</button>
+          <strong id="cal-title"></strong>
+          <button id="cal-next" type="button" class="danger">▶</button>
+        </div>
+        <div class="calendar-weekdays">
+          <span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span><span>Vi</span><span>Sa</span><span>Do</span>
+        </div>
+        <div id="cal-grid" class="calendar-grid"></div>
+        <div class="calendar-legend muted">
+          <span><i class="dot income"></i>Dia con ingresos</span>
+          <span><i class="dot expense"></i>Dia con gastos</span>
+          <span><i class="dot today"></i>Hoy</span>
+        </div>
+      </div>
       <div class="detail-filters">
         <label>Tipo
           <select id="detail-type">
@@ -218,6 +234,7 @@
           <strong id="detail-avg">$0.00</strong>
         </article>
       </div>
+      <p id="day-title" class="muted"></p>
       <ul id="lista"></ul>
       <p id="vacio" class="muted">No hay movimientos en el periodo seleccionado.</p>
     </section>

@@ -49,7 +49,11 @@ const filtroMes = document.getElementById("filtro-mes");
 const currencyEl = document.getElementById("currency-select");
 const themeEl = document.getElementById("theme-select");
 const trend3mEl = document.getElementById("trend-3m");
-const detalleMovimientosEl = document.getElementById("detalle-movimientos");
+const calPrevEl = document.getElementById("cal-prev");
+const calNextEl = document.getElementById("cal-next");
+const calTitleEl = document.getElementById("cal-title");
+const calGridEl = document.getElementById("cal-grid");
+const dayTitleEl = document.getElementById("day-title");
 const tipoEl = document.getElementById("tipo");
 const categoriaEl = document.getElementById("categoria");
 
@@ -99,6 +103,8 @@ let arsRate = loadArsRate();
 let spreadPct = loadSpreadPct();
 let selectedTheme = loadTheme();
 let editingTxId = null;
+let calendarMonthDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+let selectedDayKey = new Date().toISOString().slice(0, 10);
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -357,6 +363,108 @@ function formatDateLabel(dateStr) {
   }).format(d);
 }
 
+function formatMonthTitle(date) {
+  return new Intl.DateTimeFormat("es-ES", {
+    month: "long",
+    year: "numeric"
+  }).format(date);
+}
+
+function toDateKeyLocal(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function moveCalendarMonth(offset) {
+  calendarMonthDate = new Date(calendarMonthDate.getFullYear(), calendarMonthDate.getMonth() + offset, 1);
+}
+
+function ensureSelectedDayInMonth(rows) {
+  const selectedMonthKey = `${calendarMonthDate.getFullYear()}-${String(calendarMonthDate.getMonth() + 1).padStart(2, "0")}`;
+  if (String(selectedDayKey).slice(0, 7) === selectedMonthKey) return;
+
+  const monthRows = rows
+    .filter((x) => String(x.fecha).slice(0, 7) === selectedMonthKey)
+    .sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
+
+  if (monthRows.length > 0) {
+    selectedDayKey = String(monthRows[0].fecha).slice(0, 10);
+    return;
+  }
+
+  selectedDayKey = `${selectedMonthKey}-01`;
+}
+
+function renderCalendar(rows) {
+  if (!calGridEl || !calTitleEl) return;
+
+  ensureSelectedDayInMonth(rows);
+
+  const y = calendarMonthDate.getFullYear();
+  const m = calendarMonthDate.getMonth();
+  const first = new Date(y, m, 1);
+  const firstWeekDay = (first.getDay() + 6) % 7;
+  const gridStart = new Date(y, m, 1 - firstWeekDay);
+  const monthKey = `${y}-${String(m + 1).padStart(2, "0")}`;
+  const todayKey = toDateKeyLocal(new Date());
+
+  calTitleEl.textContent = formatMonthTitle(calendarMonthDate);
+  calGridEl.innerHTML = "";
+
+  for (let i = 0; i < 42; i += 1) {
+    const date = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
+    const dateKey = toDateKeyLocal(date);
+    const rowsForDay = rows.filter((x) => String(x.fecha).slice(0, 10) === dateKey);
+    const hasIncome = rowsForDay.some((x) => x.tipo === "Ingreso");
+    const hasExpense = rowsForDay.some((x) => x.tipo === "Gasto");
+    const isOutMonth = !dateKey.startsWith(monthKey);
+    const isToday = dateKey === todayKey;
+    const isSelected = dateKey === selectedDayKey;
+
+    const cell = document.createElement("button");
+    cell.type = "button";
+    cell.className = `calendar-cell${isOutMonth ? " out-month" : ""}${isToday ? " today" : ""}${isSelected ? " selected" : ""}`;
+    cell.setAttribute("data-date", dateKey);
+    cell.innerHTML = `
+      <small>${date.getDate()}</small>
+      <span class="calendar-marks">
+        ${hasIncome ? '<i class="dot income"></i>' : ""}
+        ${hasExpense ? '<i class="dot expense"></i>' : ""}
+      </span>
+    `;
+    calGridEl.appendChild(cell);
+  }
+}
+
+function renderSelectedDayRows(rows) {
+  const dayRows = rows.filter((x) => String(x.fecha).slice(0, 10) === selectedDayKey);
+  if (dayTitleEl) dayTitleEl.textContent = `Movimientos del ${formatDateLabel(selectedDayKey)}`;
+
+  lista.innerHTML = "";
+  dayRows
+    .sort((a, b) => String(b.id).localeCompare(String(a.id)))
+    .forEach((item) => {
+      const li = document.createElement("li");
+      li.className = "item";
+      li.innerHTML = `
+        <div class="meta">
+          <strong>${item.categoria}</strong>
+          <small>${item.tipo}${item.detalle ? " - " + item.detalle : ""}</small>
+        </div>
+        <div class="item-actions">
+          <strong class="monto ${String(item.tipo).toLowerCase()}">${item.tipo === "Gasto" ? "-" : "+"}${money(Number(item.monto))}</strong>
+          <button class="danger" data-action="edit" data-id="${item.id}" type="button">Editar</button>
+          <button class="danger" data-action="delete" data-id="${item.id}" type="button">Eliminar</button>
+        </div>
+      `;
+      lista.appendChild(li);
+    });
+
+  vacio.hidden = dayRows.length > 0;
+}
+
 function setEditingState(tx = null) {
   editingTxId = tx ? String(tx.id) : null;
   if (btnSubmitTx) btnSubmitTx.textContent = tx ? "Guardar cambios" : "Guardar";
@@ -518,48 +626,8 @@ function refresh() {
   if (detailCountEl) detailCountEl.textContent = String(detailCount);
   if (detailAvgEl) detailAvgEl.textContent = money(detailAvg);
 
-  const groupedByDay = new Map();
-  detailRows.forEach((item) => {
-    const dayKey = String(item.fecha).slice(0, 10);
-    if (!groupedByDay.has(dayKey)) groupedByDay.set(dayKey, []);
-    groupedByDay.get(dayKey).push(item);
-  });
-
-  lista.innerHTML = "";
-  Array.from(groupedByDay.entries()).forEach(([dayKey, dayItems]) => {
-    const dayTotal = dayItems.reduce(
-      (acc, tx) => acc + (tx.tipo === "Ingreso" ? Number(tx.monto) : -Number(tx.monto)),
-      0
-    );
-    const dayClass = dayTotal > 0 ? "saldo-pos" : dayTotal < 0 ? "saldo-neg" : "saldo-neu";
-
-    const dayLi = document.createElement("li");
-    dayLi.className = "calendar-day";
-    dayLi.innerHTML = `
-      <div class="calendar-day-head">
-        <strong>${formatDateLabel(dayKey)}</strong>
-        <span class="${dayClass}">${money(dayTotal)}</span>
-      </div>
-      <ul class="calendar-day-list">
-        ${dayItems.map((item) => `
-          <li class="item">
-            <div class="meta">
-              <strong>${item.categoria}</strong>
-              <small>${item.tipo}${item.detalle ? " - " + item.detalle : ""}</small>
-            </div>
-            <div class="item-actions">
-              <strong class="monto ${String(item.tipo).toLowerCase()}">${item.tipo === "Gasto" ? "-" : "+"}${money(Number(item.monto))}</strong>
-              <button class="danger" data-action="edit" data-id="${item.id}" type="button">Editar</button>
-              <button class="danger" data-action="delete" data-id="${item.id}" type="button">Eliminar</button>
-            </div>
-          </li>
-        `).join("")}
-      </ul>
-    `;
-    lista.appendChild(dayLi);
-  });
-
-  vacio.hidden = detailRows.length > 0;
+  renderCalendar(detailRows);
+  renderSelectedDayRows(detailRows);
   renderLast3Months(all);
   renderBudgetStatus(all);
 }
@@ -1080,6 +1148,13 @@ form.addEventListener("submit", async (e) => {
 
 filtroMes.addEventListener("change", () => {
   hasUserChosenMonth = true;
+  if (filtroMes.value && filtroMes.value !== "Todos") {
+    const [yy, mm] = filtroMes.value.split("-").map(Number);
+    if (yy && mm) {
+      calendarMonthDate = new Date(yy, mm - 1, 1);
+      selectedDayKey = `${filtroMes.value}-01`;
+    }
+  }
   refresh();
 });
 
@@ -1120,6 +1195,29 @@ lista.addEventListener("click", async (e) => {
     await deleteTransaction(id);
   }
 });
+
+if (calPrevEl) {
+  calPrevEl.addEventListener("click", () => {
+    moveCalendarMonth(-1);
+    refresh();
+  });
+}
+
+if (calNextEl) {
+  calNextEl.addEventListener("click", () => {
+    moveCalendarMonth(1);
+    refresh();
+  });
+}
+
+if (calGridEl) {
+  calGridEl.addEventListener("click", (e) => {
+    const cell = e.target.closest(".calendar-cell[data-date]");
+    if (!cell) return;
+    selectedDayKey = cell.getAttribute("data-date");
+    refresh();
+  });
+}
 
 if (btnCancelEdit) {
   btnCancelEdit.addEventListener("click", () => {
