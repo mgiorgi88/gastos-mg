@@ -29,6 +29,7 @@ const detailFromEl = document.getElementById("detail-from");
 const detailToEl = document.getElementById("detail-to");
 const detailSearchEl = document.getElementById("detail-search");
 const btnDetailClear = document.getElementById("btn-detail-clear");
+const btnExportExcel = document.getElementById("btn-export-excel");
 const detailTotalEl = document.getElementById("detail-total");
 const detailCountEl = document.getElementById("detail-count");
 const detailAvgEl = document.getElementById("detail-avg");
@@ -128,6 +129,7 @@ let selectedTheme = loadTheme();
 let editingTxId = null;
 let calendarMonthDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 let selectedDayKey = null;
+let currentDetailRows = [];
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -704,6 +706,7 @@ function refresh() {
       return hay.includes(filterSearch);
     });
   }
+  currentDetailRows = detailRows;
 
   const detailTotal = detailRows.reduce((acc, x) => acc + Number(x.monto || 0), 0);
   const detailCount = detailRows.length;
@@ -717,6 +720,69 @@ function refresh() {
   renderMonthlyComparison(all, filtroMes.value);
   renderLast3Months(all);
   renderBudgetStatus(all);
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function exportFilteredToExcel() {
+  const rows = [...currentDetailRows];
+  if (rows.length === 0) {
+    setStatus("No hay movimientos filtrados para exportar.");
+    return;
+  }
+
+  const header = `
+    <tr>
+      <th>Fecha</th>
+      <th>Tipo</th>
+      <th>Categoria</th>
+      <th>Detalle</th>
+      <th>Monto</th>
+      <th>Moneda visual</th>
+    </tr>
+  `;
+  const body = rows.map((x) => `
+    <tr>
+      <td>${escapeHtml(String(x.fecha).slice(0, 10))}</td>
+      <td>${escapeHtml(x.tipo)}</td>
+      <td>${escapeHtml(x.categoria)}</td>
+      <td>${escapeHtml(x.detalle || "")}</td>
+      <td style="mso-number-format:'0.00'">${Number(x.monto).toFixed(2)}</td>
+      <td>${escapeHtml(selectedCurrency)}</td>
+    </tr>
+  `).join("");
+
+  const html = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office"
+          xmlns:x="urn:schemas-microsoft-com:office:excel"
+          xmlns="http://www.w3.org/TR/REC-html40">
+      <head><meta charset="UTF-8"></head>
+      <body>
+        <table border="1">
+          ${header}
+          ${body}
+        </table>
+      </body>
+    </html>
+  `;
+
+  const blob = new Blob([`\uFEFF${html}`], { type: "application/vnd.ms-excel;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const today = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `gastos-mg_${today}.xls`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  setStatus(`Excel exportado (${rows.length} movimientos).`);
 }
 
 function setAuthButtons() {
@@ -1326,6 +1392,12 @@ if (btnDetailClear) {
     if (detailToEl) detailToEl.value = "";
     if (detailSearchEl) detailSearchEl.value = "";
     refresh();
+  });
+}
+
+if (btnExportExcel) {
+  btnExportExcel.addEventListener("click", () => {
+    exportFilteredToExcel();
   });
 }
 
