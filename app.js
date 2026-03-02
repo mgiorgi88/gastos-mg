@@ -568,7 +568,10 @@ function refreshDetailCategoryOptions(rows) {
       : selectedType === "Ingreso"
         ? CATEGORIAS.Ingreso
         : [...CATEGORIAS.Gasto, ...CATEGORIAS.Ingreso];
-  const dataCategories = rows.map((x) => x.categoria).filter(Boolean);
+  const dataCategories = rows
+    .filter((x) => selectedType === "Todos" || x.tipo === selectedType)
+    .map((x) => x.categoria)
+    .filter(Boolean);
   const categories = ["Todos", ...new Set([...baseCategories, ...dataCategories])];
   detailCategoryEl.innerHTML = categories.map((c) => `<option value="${c}">${c}</option>`).join("");
   detailCategoryEl.value = categories.includes(prev) ? prev : "Todos";
