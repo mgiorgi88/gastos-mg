@@ -23,6 +23,7 @@ const emailEl = document.getElementById("auth-email");
 const passwordEl = document.getElementById("auth-password");
 const btnSignup = document.getElementById("btn-signup");
 const btnLogin = document.getElementById("btn-login");
+const btnRecover = document.getElementById("btn-recover");
 const btnLogout = document.getElementById("btn-logout");
 const authStatusEl = document.getElementById("auth-status");
 const authCardEl = document.getElementById("auth-card");
@@ -246,6 +247,7 @@ function setAuthButtons() {
   if (sessionEmailEl) sessionEmailEl.textContent = logged ? `Conectado como ${currentUser.email}` : "";
   if (btnSignup) btnSignup.disabled = logged;
   if (btnLogin) btnLogin.disabled = logged;
+  if (btnRecover) btnRecover.disabled = logged;
   if (btnLogout) btnLogout.disabled = !logged;
   if (emailEl) emailEl.disabled = logged;
   if (passwordEl) passwordEl.disabled = logged;
@@ -445,6 +447,29 @@ async function login() {
   await loadCloudData();
 }
 
+async function recoverPassword() {
+  const email = emailEl.value.trim();
+  if (!email) {
+    setStatus("Escribe tu email para recuperar contrasena.");
+    return;
+  }
+
+  const resp = await sbFetch("/auth/v1/recover", {
+    method: "POST",
+    body: { email },
+    auth: false
+  });
+
+  if (!resp.ok) {
+    const data = await resp.json().catch(() => null);
+    const msg = data?.msg || data?.error_description || data?.error || `HTTP ${resp.status}`;
+    setStatus(`Error al enviar recuperacion: ${msg}`);
+    return;
+  }
+
+  setStatus("Si el email existe, Supabase envio un correo de recuperacion.");
+}
+
 async function logout() {
   if (authSession?.access_token) {
     await sbAuthFetch("/auth/v1/logout", { method: "POST" }).catch(() => {});
@@ -605,6 +630,15 @@ btnLogin.addEventListener("click", async () => {
     await login();
   } catch (err) {
     setStatus(`Fallo en Iniciar sesion: ${err?.message || String(err)}`);
+  }
+});
+
+btnRecover.addEventListener("click", async () => {
+  try {
+    setStatus("Enviando recuperacion...");
+    await recoverPassword();
+  } catch (err) {
+    setStatus(`Fallo en Recuperar contrasena: ${err?.message || String(err)}`);
   }
 });
 
