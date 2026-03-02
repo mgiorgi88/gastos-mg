@@ -267,6 +267,13 @@ details summary {
   margin-bottom: 10px;
 }
 
+.detail-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
 @media (max-width: 600px) {
   .stats {
     grid-template-columns: 1fr;
@@ -278,6 +285,10 @@ details summary {
 
   .quick-actions {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .detail-filters {
+    grid-template-columns: 1fr;
   }
 
   .session-bar {

@@ -17,6 +17,12 @@ const btnQuickSuper = document.getElementById("btn-quick-super");
 const btnQuickComp = document.getElementById("btn-quick-comp");
 const btnQuickSal = document.getElementById("btn-quick-sal");
 const btnQuickGas = document.getElementById("btn-quick-gas");
+const detailTypeEl = document.getElementById("detail-type");
+const detailCategoryEl = document.getElementById("detail-category");
+const detailFromEl = document.getElementById("detail-from");
+const detailToEl = document.getElementById("detail-to");
+const detailSearchEl = document.getElementById("detail-search");
+const btnDetailClear = document.getElementById("btn-detail-clear");
 const budgetCategoryEl = document.getElementById("budget-category");
 const budgetAmountEl = document.getElementById("budget-amount");
 const btnBudgetSave = document.getElementById("btn-budget-save");
@@ -343,6 +349,14 @@ function renderBudgetStatus(all) {
   }).join("");
 }
 
+function refreshDetailCategoryOptions(rows) {
+  if (!detailCategoryEl) return;
+  const prev = detailCategoryEl.value || "Todos";
+  const categories = ["Todos", ...new Set(rows.map((x) => x.categoria).filter(Boolean).sort())];
+  detailCategoryEl.innerHTML = categories.map((c) => `<option value="${c}">${c}</option>`).join("");
+  detailCategoryEl.value = categories.includes(prev) ? prev : "Todos";
+}
+
 function refresh() {
   const all = [...txData].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
   const options = buildMonthOptions(all);
@@ -368,8 +382,36 @@ function refresh() {
   balanceEl.classList.remove("saldo-pos", "saldo-neg", "saldo-neu");
   balanceEl.classList.add(balanceValue > 0 ? "saldo-pos" : balanceValue < 0 ? "saldo-neg" : "saldo-neu");
 
+  refreshDetailCategoryOptions(filtered);
+
+  let detailRows = [...filtered];
+  const filterType = detailTypeEl ? detailTypeEl.value : "Todos";
+  const filterCategory = detailCategoryEl ? detailCategoryEl.value : "Todos";
+  const filterFrom = detailFromEl ? detailFromEl.value : "";
+  const filterTo = detailToEl ? detailToEl.value : "";
+  const filterSearch = (detailSearchEl ? detailSearchEl.value : "").trim().toLowerCase();
+
+  if (filterType !== "Todos") {
+    detailRows = detailRows.filter((x) => x.tipo === filterType);
+  }
+  if (filterCategory !== "Todos") {
+    detailRows = detailRows.filter((x) => x.categoria === filterCategory);
+  }
+  if (filterFrom) {
+    detailRows = detailRows.filter((x) => String(x.fecha) >= filterFrom);
+  }
+  if (filterTo) {
+    detailRows = detailRows.filter((x) => String(x.fecha) <= filterTo);
+  }
+  if (filterSearch) {
+    detailRows = detailRows.filter((x) => {
+      const hay = `${x.categoria} ${x.detalle || ""} ${x.tipo} ${x.fecha}`.toLowerCase();
+      return hay.includes(filterSearch);
+    });
+  }
+
   lista.innerHTML = "";
-  filtered.forEach((item) => {
+  detailRows.forEach((item) => {
     const li = document.createElement("li");
     li.className = "item";
     li.innerHTML = `
@@ -385,7 +427,7 @@ function refresh() {
     lista.appendChild(li);
   });
 
-  vacio.hidden = filtered.length > 0;
+  vacio.hidden = detailRows.length > 0;
   renderLast3Months(all);
   renderBudgetStatus(all);
 }
@@ -803,6 +845,22 @@ lista.addEventListener("click", async (e) => {
   const id = e.target.getAttribute("data-id");
   await deleteTransaction(id);
 });
+
+if (detailTypeEl) detailTypeEl.addEventListener("change", refresh);
+if (detailCategoryEl) detailCategoryEl.addEventListener("change", refresh);
+if (detailFromEl) detailFromEl.addEventListener("change", refresh);
+if (detailToEl) detailToEl.addEventListener("change", refresh);
+if (detailSearchEl) detailSearchEl.addEventListener("input", refresh);
+if (btnDetailClear) {
+  btnDetailClear.addEventListener("click", () => {
+    if (detailTypeEl) detailTypeEl.value = "Todos";
+    if (detailCategoryEl) detailCategoryEl.value = "Todos";
+    if (detailFromEl) detailFromEl.value = "";
+    if (detailToEl) detailToEl.value = "";
+    if (detailSearchEl) detailSearchEl.value = "";
+    refresh();
+  });
+}
 
 btnSignup.addEventListener("click", async () => {
   try {

@@ -41,7 +41,7 @@
         <button id="btn-logout" type="button" class="danger">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v20</p>
+      <p class="muted">Version: v21</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -146,7 +146,33 @@
     <section class="card">
       <h2>Detalle</h2>
       <details id="detalle-movimientos">
-        <summary>Ver detalle fino de movimientos</summary>
+        <summary>Ver movimientos y filtros</summary>
+        <div class="detail-filters">
+          <label>Tipo
+            <select id="detail-type">
+              <option value="Todos">Todos</option>
+              <option value="Gasto">Gasto</option>
+              <option value="Ingreso">Ingreso</option>
+            </select>
+          </label>
+          <label>Categoria
+            <select id="detail-category">
+              <option value="Todos">Todos</option>
+            </select>
+          </label>
+          <label>Desde
+            <input type="date" id="detail-from">
+          </label>
+          <label>Hasta
+            <input type="date" id="detail-to">
+          </label>
+          <label class="full">Buscar
+            <input type="text" id="detail-search" placeholder="Categoria o detalle">
+          </label>
+        </div>
+        <div class="auth-actions">
+          <button id="btn-detail-clear" type="button">Limpiar filtros</button>
+        </div>
         <ul id="lista"></ul>
         <p id="vacio" class="muted">No hay movimientos en el periodo seleccionado.</p>
       </details>
