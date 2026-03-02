@@ -23,6 +23,9 @@ const detailFromEl = document.getElementById("detail-from");
 const detailToEl = document.getElementById("detail-to");
 const detailSearchEl = document.getElementById("detail-search");
 const btnDetailClear = document.getElementById("btn-detail-clear");
+const detailTotalEl = document.getElementById("detail-total");
+const detailCountEl = document.getElementById("detail-count");
+const detailAvgEl = document.getElementById("detail-avg");
 const budgetCategoryEl = document.getElementById("budget-category");
 const budgetAmountEl = document.getElementById("budget-amount");
 const btnBudgetSave = document.getElementById("btn-budget-save");
@@ -409,6 +412,13 @@ function refresh() {
       return hay.includes(filterSearch);
     });
   }
+
+  const detailTotal = detailRows.reduce((acc, x) => acc + Number(x.monto || 0), 0);
+  const detailCount = detailRows.length;
+  const detailAvg = detailCount > 0 ? detailTotal / detailCount : 0;
+  if (detailTotalEl) detailTotalEl.textContent = money(detailTotal);
+  if (detailCountEl) detailCountEl.textContent = String(detailCount);
+  if (detailAvgEl) detailAvgEl.textContent = money(detailAvg);
 
   lista.innerHTML = "";
   detailRows.forEach((item) => {

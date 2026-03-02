@@ -274,6 +274,25 @@ details summary {
   margin-bottom: 8px;
 }
 
+.detail-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+
+.detail-kpis article {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fafafa;
+  padding: 10px;
+}
+
+.detail-kpis span {
+  color: var(--muted);
+  display: block;
+}
+
 @media (max-width: 600px) {
   .stats {
     grid-template-columns: 1fr;
@@ -288,6 +307,10 @@ details summary {
   }
 
   .detail-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-kpis {
     grid-template-columns: 1fr;
   }
 
