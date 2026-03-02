@@ -32,6 +32,10 @@ const btnDetailClear = document.getElementById("btn-detail-clear");
 const detailTotalEl = document.getElementById("detail-total");
 const detailCountEl = document.getElementById("detail-count");
 const detailAvgEl = document.getElementById("detail-avg");
+const cmpTitleEl = document.getElementById("cmp-title");
+const cmpIngresosEl = document.getElementById("cmp-ingresos");
+const cmpGastosEl = document.getElementById("cmp-gastos");
+const cmpBalanceEl = document.getElementById("cmp-balance");
 const budgetCategoryEl = document.getElementById("budget-category");
 const budgetAmountEl = document.getElementById("budget-amount");
 const btnBudgetSave = document.getElementById("btn-budget-save");
@@ -352,6 +356,63 @@ function monthLabel(key) {
   return `${monthNames[idx]} ${y}`;
 }
 
+function previousMonthKey(monthKey) {
+  const [y, m] = String(monthKey).split("-").map(Number);
+  if (!y || !m) return CURRENT_MONTH;
+  const d = new Date(y, m - 2, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function monthTotals(rows, monthKey) {
+  let ingresos = 0;
+  let gastos = 0;
+  rows.forEach((x) => {
+    if (getMonth(x.fecha) !== monthKey) return;
+    if (x.tipo === "Ingreso") ingresos += Number(x.monto);
+    else gastos += Number(x.monto);
+  });
+  return { ingresos, gastos, balance: ingresos - gastos };
+}
+
+function fmtDelta(curr, prev) {
+  const delta = curr - prev;
+  const cls = delta > 0 ? "saldo-pos" : delta < 0 ? "saldo-neg" : "saldo-neu";
+  const sign = delta > 0 ? "+" : "";
+  const pct = prev === 0 ? "n/a" : `${sign}${((delta / prev) * 100).toFixed(1)}%`;
+  return { cls, text: `${sign}${money(delta)} (${pct})` };
+}
+
+function fmtDeltaExpense(curr, prev) {
+  const delta = curr - prev;
+  const cls = delta > 0 ? "saldo-neg" : delta < 0 ? "saldo-pos" : "saldo-neu";
+  const sign = delta > 0 ? "+" : "";
+  const pct = prev === 0 ? "n/a" : `${sign}${((delta / prev) * 100).toFixed(1)}%`;
+  return { cls, text: `${sign}${money(delta)} (${pct})` };
+}
+
+function renderMonthlyComparison(all, selectedMonth) {
+  if (!cmpTitleEl || !cmpIngresosEl || !cmpGastosEl || !cmpBalanceEl) return;
+
+  const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
+  const prevKey = previousMonthKey(monthKey);
+  const curr = monthTotals(all, monthKey);
+  const prev = monthTotals(all, prevKey);
+
+  cmpTitleEl.textContent = `${monthKey} vs ${prevKey}`;
+
+  const i = fmtDelta(curr.ingresos, prev.ingresos);
+  cmpIngresosEl.className = i.cls;
+  cmpIngresosEl.textContent = i.text;
+
+  const g = fmtDeltaExpense(curr.gastos, prev.gastos);
+  cmpGastosEl.className = g.cls;
+  cmpGastosEl.textContent = g.text;
+
+  const b = fmtDelta(curr.balance, prev.balance);
+  cmpBalanceEl.className = b.cls;
+  cmpBalanceEl.textContent = b.text;
+}
+
 function formatDateLabel(dateStr) {
   const d = new Date(`${dateStr}T00:00:00`);
   if (Number.isNaN(d.getTime())) return dateStr;
@@ -629,6 +690,7 @@ function refresh() {
 
   renderCalendar(detailRows);
   renderSelectedDayRows(detailRows);
+  renderMonthlyComparison(all, filtroMes.value);
   renderLast3Months(all);
   renderBudgetStatus(all);
 }
