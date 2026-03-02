@@ -37,6 +37,7 @@ const arsAmountEl = document.getElementById("ars-amount");
 const arsRateEl = document.getElementById("ars-rate");
 const arsResultEl = document.getElementById("ars-result");
 const btnConvertArs = document.getElementById("btn-convert-ars");
+const btnRefreshRate = document.getElementById("btn-refresh-rate");
 const lista = document.getElementById("lista");
 const vacio = document.getElementById("vacio");
 const filtroMes = document.getElementById("filtro-mes");
@@ -841,18 +842,65 @@ function updateArsConvertVisibility() {
   if (!arsConvertBoxEl) return;
   const show = tipoEl.value === "Ingreso" && categoriaEl.value === "Alquiler Depto Argentina";
   arsConvertBoxEl.hidden = !show;
+  if (show) {
+    fetchArsRateForSelectedCurrency();
+    updateArsResultPreview();
+  }
 }
 
 function convertArsToSelectedCurrency() {
   const ars = Number(arsAmountEl.value || 0);
-  const rate = Number(arsRateEl.value || 0);
+  const rate = Number(arsRateEl.value || arsRate || 0);
   if (!(ars > 0) || !(rate > 0)) {
-    setStatus("Completa ARS y tipo de cambio valido.");
+    setStatus("No se pudo convertir: falta ARS o tipo de cambio.");
     return null;
   }
   saveArsRate(rate);
   if (selectedCurrency === "ARS") return ars;
   return ars / rate;
+}
+
+async function fetchArsRateForSelectedCurrency() {
+  if (!arsRateEl) return;
+
+  if (selectedCurrency === "ARS") {
+    arsRateEl.value = "1";
+    saveArsRate(1);
+    updateArsResultPreview();
+    return;
+  }
+
+  try {
+    const resp = await fetch("https://open.er-api.com/v6/latest/ARS", { cache: "no-store" });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    const perArs = Number(data?.rates?.[selectedCurrency] || 0);
+    if (!(perArs > 0)) throw new Error("sin cotizacion");
+    const arsPerUnit = 1 / perArs;
+    saveArsRate(arsPerUnit);
+    arsRateEl.value = arsPerUnit.toFixed(4);
+    updateArsResultPreview();
+  } catch {
+    if (arsRate > 0) {
+      arsRateEl.value = Number(arsRate).toFixed(4);
+      updateArsResultPreview();
+      setStatus("No se pudo actualizar la cotizacion online. Se usa la ultima guardada.");
+    } else {
+      setStatus("No se pudo obtener tipo de cambio online.");
+    }
+  }
+}
+
+function updateArsResultPreview() {
+  if (!arsResultEl || !arsAmountEl || !arsRateEl) return;
+  const ars = Number(arsAmountEl.value || 0);
+  const rate = Number(arsRateEl.value || 0);
+  if (!(ars > 0) || !(rate > 0)) {
+    arsResultEl.value = "";
+    return;
+  }
+  const converted = selectedCurrency === "ARS" ? ars : ars / rate;
+  arsResultEl.value = money(converted);
 }
 
 async function addMonthlyReminderExpense(category, amount) {
@@ -940,11 +988,11 @@ filtroMes.addEventListener("change", () => {
 });
 
 if (currencyEl) {
-  currencyEl.addEventListener("change", () => {
+  currencyEl.addEventListener("change", async () => {
     saveCurrency(currencyEl.value);
-    if (arsResultEl && arsAmountEl && arsRateEl && Number(arsAmountEl.value) > 0 && Number(arsRateEl.value) > 0) {
-      const converted = convertArsToSelectedCurrency();
-      if (converted > 0) arsResultEl.value = money(converted);
+    if (!arsConvertBoxEl?.hidden) {
+      await fetchArsRateForSelectedCurrency();
+      updateArsResultPreview();
     }
     refresh();
   });
@@ -1025,7 +1073,8 @@ btnQuickSal.addEventListener("click", async () => quickAddExpense("Salidas"));
 btnQuickGas.addEventListener("click", async () => quickAddExpense("Gasolina"));
 
 if (btnConvertArs) {
-  btnConvertArs.addEventListener("click", () => {
+  btnConvertArs.addEventListener("click", async () => {
+    await fetchArsRateForSelectedCurrency();
     const converted = convertArsToSelectedCurrency();
     if (!(converted > 0)) return;
     document.getElementById("monto").value = converted.toFixed(2);
@@ -1033,6 +1082,15 @@ if (btnConvertArs) {
     setStatus(`Convertido a ${selectedCurrency}: ${money(converted)}.`);
   });
 }
+
+if (btnRefreshRate) {
+  btnRefreshRate.addEventListener("click", async () => {
+    await fetchArsRateForSelectedCurrency();
+    setStatus("Cotizacion actualizada.");
+  });
+}
+
+if (arsAmountEl) arsAmountEl.addEventListener("input", updateArsResultPreview);
 
 if (reminderGridEl) {
   reminderGridEl.addEventListener("click", async (e) => {
@@ -1065,7 +1123,7 @@ btnBudgetSave.addEventListener("click", () => {
     setupBudgetCategoryOptions();
     updateCategoryOptions(tipoEl.value);
     updateArsConvertVisibility();
-    if (arsRateEl) arsRateEl.value = String(arsRate);
+    if (arsRateEl) arsRateEl.value = Number(arsRate).toFixed(4);
     await bootstrapHistorico();
     runCategoryMigration();
     txData = loadTx();
