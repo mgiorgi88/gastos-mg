@@ -104,7 +104,7 @@ let spreadPct = loadSpreadPct();
 let selectedTheme = loadTheme();
 let editingTxId = null;
 let calendarMonthDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-let selectedDayKey = new Date().toISOString().slice(0, 10);
+let selectedDayKey = null;
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -379,28 +379,11 @@ function toDateKeyLocal(date) {
 
 function moveCalendarMonth(offset) {
   calendarMonthDate = new Date(calendarMonthDate.getFullYear(), calendarMonthDate.getMonth() + offset, 1);
-}
-
-function ensureSelectedDayInMonth(rows) {
-  const selectedMonthKey = `${calendarMonthDate.getFullYear()}-${String(calendarMonthDate.getMonth() + 1).padStart(2, "0")}`;
-  if (String(selectedDayKey).slice(0, 7) === selectedMonthKey) return;
-
-  const monthRows = rows
-    .filter((x) => String(x.fecha).slice(0, 7) === selectedMonthKey)
-    .sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
-
-  if (monthRows.length > 0) {
-    selectedDayKey = String(monthRows[0].fecha).slice(0, 10);
-    return;
-  }
-
-  selectedDayKey = `${selectedMonthKey}-01`;
+  selectedDayKey = null;
 }
 
 function renderCalendar(rows) {
   if (!calGridEl || !calTitleEl) return;
-
-  ensureSelectedDayInMonth(rows);
 
   const y = calendarMonthDate.getFullYear();
   const m = calendarMonthDate.getMonth();
@@ -439,6 +422,13 @@ function renderCalendar(rows) {
 }
 
 function renderSelectedDayRows(rows) {
+  if (!selectedDayKey) {
+    if (dayTitleEl) dayTitleEl.textContent = "Selecciona un dia para ver movimientos.";
+    lista.innerHTML = "";
+    vacio.hidden = true;
+    return;
+  }
+
   const dayRows = rows.filter((x) => String(x.fecha).slice(0, 10) === selectedDayKey);
   if (dayTitleEl) dayTitleEl.textContent = `Movimientos del ${formatDateLabel(selectedDayKey)}`;
 
@@ -1163,7 +1153,7 @@ filtroMes.addEventListener("change", () => {
     const [yy, mm] = filtroMes.value.split("-").map(Number);
     if (yy && mm) {
       calendarMonthDate = new Date(yy, mm - 1, 1);
-      selectedDayKey = `${filtroMes.value}-01`;
+      selectedDayKey = null;
     }
   }
   refresh();
