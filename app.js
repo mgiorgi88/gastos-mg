@@ -955,6 +955,7 @@ form.addEventListener("submit", async (e) => {
   document.getElementById("fecha").valueAsDate = new Date();
   tipoEl.value = "Gasto";
   updateCategoryOptions("Gasto");
+  updateArsConvertVisibility();
 });
 
 filtroMes.addEventListener("change", () => {
