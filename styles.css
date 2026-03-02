@@ -231,6 +231,31 @@ button {
   margin-top: 0;
 }
 
+.budget-list {
+  list-style: none;
+  margin: 12px 0 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.budget-item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fafafa;
+  padding: 10px 12px;
+  display: grid;
+  gap: 4px;
+}
+
+.budget-item span {
+  font-weight: 600;
+}
+
+.budget-item small {
+  color: var(--muted);
+}
+
 button:disabled {
   opacity: 0.55;
   cursor: not-allowed;

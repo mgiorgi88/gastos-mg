@@ -4,6 +4,7 @@ const MIGRATION_KEY = "mis_gastos_migration_v2";
 const SESSION_KEY = "mis_gastos_supabase_session_v1";
 const QUICK_AMOUNTS_KEY = "mis_gastos_quick_amounts_v1";
 const CURRENCY_KEY = "mis_gastos_currency_v1";
+const BUDGETS_KEY = "mis_gastos_budgets_v1";
 const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
 
 const SUPABASE_URL = "https://gwtioxerklmzjssweqgm.supabase.co";
@@ -16,6 +17,10 @@ const btnQuickSuper = document.getElementById("btn-quick-super");
 const btnQuickComp = document.getElementById("btn-quick-comp");
 const btnQuickSal = document.getElementById("btn-quick-sal");
 const btnQuickGas = document.getElementById("btn-quick-gas");
+const budgetCategoryEl = document.getElementById("budget-category");
+const budgetAmountEl = document.getElementById("budget-amount");
+const btnBudgetSave = document.getElementById("btn-budget-save");
+const budgetListEl = document.getElementById("budget-list");
 const lista = document.getElementById("lista");
 const vacio = document.getElementById("vacio");
 const filtroMes = document.getElementById("filtro-mes");
@@ -66,6 +71,7 @@ let hasUserChosenMonth = false;
 let authSession = loadSession();
 let quickAmounts = loadQuickAmounts();
 let selectedCurrency = loadCurrency();
+let budgets = loadBudgets();
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -111,6 +117,19 @@ function loadQuickAmounts() {
 function saveQuickAmounts(data) {
   quickAmounts = data;
   localStorage.setItem(QUICK_AMOUNTS_KEY, JSON.stringify(data));
+}
+
+function loadBudgets() {
+  try {
+    return JSON.parse(localStorage.getItem(BUDGETS_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function saveBudgets(data) {
+  budgets = data;
+  localStorage.setItem(BUDGETS_KEY, JSON.stringify(data));
 }
 
 function loadCurrency() {
@@ -230,6 +249,13 @@ function updateCategoryOptions(tipo, selected = "") {
   categoriaEl.value = categorias.includes(selected) ? selected : (categorias[0] || "");
 }
 
+function setupBudgetCategoryOptions() {
+  if (!budgetCategoryEl) return;
+  budgetCategoryEl.innerHTML = CATEGORIAS.Gasto
+    .map((c) => `<option value="${c}">${c}</option>`)
+    .join("");
+}
+
 function buildMonthOptions(all) {
   const months = [...new Set(all.map((x) => getMonth(x.fecha)))];
   const ordered = [CURRENT_MONTH, ...months.filter((m) => m !== CURRENT_MONTH)];
@@ -286,6 +312,37 @@ function renderLast3Months(all) {
   trend3mEl.innerHTML = cards.join("");
 }
 
+function renderBudgetStatus(all) {
+  if (!budgetListEl) return;
+
+  const spentByCategory = {};
+  all.forEach((x) => {
+    if (x.tipo !== "Gasto") return;
+    if (getMonth(x.fecha) !== CURRENT_MONTH) return;
+    spentByCategory[x.categoria] = (spentByCategory[x.categoria] || 0) + Number(x.monto);
+  });
+
+  const categoriesWithBudget = CATEGORIAS.Gasto.filter((c) => Number(budgets[c] || 0) > 0);
+  if (categoriesWithBudget.length === 0) {
+    budgetListEl.innerHTML = `<li class="muted">No hay presupuestos cargados para el mes actual.</li>`;
+    return;
+  }
+
+  budgetListEl.innerHTML = categoriesWithBudget.map((cat) => {
+    const budget = Number(budgets[cat] || 0);
+    const spent = Number(spentByCategory[cat] || 0);
+    const diff = budget - spent;
+    const statusClass = diff >= 0 ? "saldo-pos" : "saldo-neg";
+    return `
+      <li class="budget-item">
+        <span>${cat}</span>
+        <small>Presupuesto: ${money(budget)} · Gastado: ${money(spent)}</small>
+        <strong class="${statusClass}">${diff >= 0 ? "Restante" : "Exceso"}: ${money(Math.abs(diff))}</strong>
+      </li>
+    `;
+  }).join("");
+}
+
 function refresh() {
   const all = [...txData].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
   const options = buildMonthOptions(all);
@@ -330,6 +387,7 @@ function refresh() {
 
   vacio.hidden = filtered.length > 0;
   renderLast3Months(all);
+  renderBudgetStatus(all);
 }
 
 function setAuthButtons() {
@@ -794,11 +852,24 @@ btnQuickComp.addEventListener("click", async () => quickAddExpense("Compras"));
 btnQuickSal.addEventListener("click", async () => quickAddExpense("Salidas"));
 btnQuickGas.addEventListener("click", async () => quickAddExpense("Gasolina"));
 
+btnBudgetSave.addEventListener("click", () => {
+  const cat = budgetCategoryEl.value;
+  const amount = Number(budgetAmountEl.value || 0);
+  const next = { ...budgets };
+  if (amount > 0) next[cat] = amount;
+  else delete next[cat];
+  saveBudgets(next);
+  budgetAmountEl.value = "";
+  setStatus(`Presupuesto actualizado para ${cat}.`);
+  refresh();
+});
+
 (async () => {
   try {
     setStatus("Inicializando app...");
     await disableServiceWorkerCache();
     if (detalleMovimientosEl) detalleMovimientosEl.open = false;
+    setupBudgetCategoryOptions();
     updateCategoryOptions(tipoEl.value);
     await bootstrapHistorico();
     runCategoryMigration();

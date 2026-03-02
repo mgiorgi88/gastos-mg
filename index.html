@@ -41,7 +41,7 @@
         <button id="btn-logout" type="button" class="danger">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v19</p>
+      <p class="muted">Version: v20</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -124,6 +124,23 @@
     <section class="card">
       <h2>Ultimos 3 meses cerrados</h2>
       <div id="trend-3m" class="trend-grid"></div>
+    </section>
+
+    <section class="card">
+      <h2>Presupuesto mensual</h2>
+      <div class="grid">
+        <label>Categoria
+          <select id="budget-category"></select>
+        </label>
+        <label>Presupuesto mes actual
+          <input type="number" id="budget-amount" min="0" step="0.01" placeholder="0.00">
+        </label>
+      </div>
+      <div class="auth-actions">
+        <button id="btn-budget-save" type="button">Guardar presupuesto</button>
+      </div>
+      <ul id="budget-list" class="budget-list"></ul>
+      <p class="muted">Si pones 0, se elimina el presupuesto de esa categoria.</p>
     </section>
 
     <section class="card">
