@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -43,6 +43,25 @@
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
       <p class="muted">Version: v15</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
+    </section>
+
+    <section class="card">
+      <h2>Carga rapida</h2>
+      <div class="grid">
+        <label>Importe rapido
+          <input type="number" id="quick-amount" min="0.01" step="0.01" placeholder="0.00">
+        </label>
+        <label>Detalle rapido (opcional)
+          <input type="text" id="quick-detail" placeholder="Ej: compra semanal">
+        </label>
+      </div>
+      <div class="quick-actions">
+        <button id="btn-quick-super" type="button">Supermercado</button>
+        <button id="btn-quick-comp" type="button">Compras</button>
+        <button id="btn-quick-sal" type="button">Salidas</button>
+        <button id="btn-quick-gas" type="button">Gasolina</button>
+      </div>
+      <p class="muted">Tip: si dejas vacio el importe, usa el ultimo guardado de esa categoria.</p>
     </section>
 
     <section class="card">

@@ -220,6 +220,17 @@ button {
   margin-top: 0;
 }
 
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.quick-actions button {
+  margin-top: 0;
+}
+
 button:disabled {
   opacity: 0.55;
   cursor: not-allowed;
@@ -238,6 +249,10 @@ details summary {
 
   .trend-grid {
     grid-template-columns: 1fr;
+  }
+
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .session-bar {

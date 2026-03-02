@@ -2,12 +2,19 @@
 const BOOTSTRAP_KEY = "mis_gastos_bootstrap_v1";
 const MIGRATION_KEY = "mis_gastos_migration_v2";
 const SESSION_KEY = "mis_gastos_supabase_session_v1";
+const QUICK_AMOUNTS_KEY = "mis_gastos_quick_amounts_v1";
 const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
 
 const SUPABASE_URL = "https://gwtioxerklmzjssweqgm.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_rcTj1A_vRoeOQ7yDOjPQ7g_PlmfsQPs";
 
 const form = document.getElementById("tx-form");
+const quickAmountEl = document.getElementById("quick-amount");
+const quickDetailEl = document.getElementById("quick-detail");
+const btnQuickSuper = document.getElementById("btn-quick-super");
+const btnQuickComp = document.getElementById("btn-quick-comp");
+const btnQuickSal = document.getElementById("btn-quick-sal");
+const btnQuickGas = document.getElementById("btn-quick-gas");
 const lista = document.getElementById("lista");
 const vacio = document.getElementById("vacio");
 const filtroMes = document.getElementById("filtro-mes");
@@ -55,6 +62,7 @@ let currentUser = null;
 let txData = [];
 let hasUserChosenMonth = false;
 let authSession = loadSession();
+let quickAmounts = loadQuickAmounts();
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -81,6 +89,19 @@ function loadTx() {
 
 function saveTx(items) {
   localStorage.setItem(KEY, JSON.stringify(items));
+}
+
+function loadQuickAmounts() {
+  try {
+    return JSON.parse(localStorage.getItem(QUICK_AMOUNTS_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function saveQuickAmounts(data) {
+  quickAmounts = data;
+  localStorage.setItem(QUICK_AMOUNTS_KEY, JSON.stringify(data));
 }
 
 function loadSession() {
@@ -589,6 +610,38 @@ async function addTransaction(tx) {
   await loadCloudData();
 }
 
+async function quickAddExpense(category) {
+  const inputAmount = Number(quickAmountEl.value);
+  const rememberedAmount = Number(quickAmounts[category] || 0);
+
+  let amount = inputAmount > 0 ? inputAmount : rememberedAmount;
+  if (amount <= 0) {
+    const typed = prompt(`Importe para ${category}:`, "");
+    amount = Number(typed);
+  }
+
+  if (!(amount > 0)) {
+    setStatus("Importe invalido para carga rapida.");
+    return;
+  }
+
+  const detail = quickDetailEl.value.trim();
+  const today = new Date().toISOString().slice(0, 10);
+
+  await addTransaction({
+    id: crypto.randomUUID(),
+    fecha: today,
+    tipo: "Gasto",
+    monto: amount,
+    categoria: category,
+    detalle: detail
+  });
+
+  saveQuickAmounts({ ...quickAmounts, [category]: amount });
+  quickDetailEl.value = "";
+  setStatus(`Carga rapida guardada: ${category} ${money(amount)}.`);
+}
+
 async function deleteTransaction(id) {
   if (!currentUser) {
     const next = loadTx().filter((x) => String(x.id) !== String(id));
@@ -705,6 +758,11 @@ btnLogoutMini.addEventListener("click", async () => {
     setStatus(`Fallo en Cerrar sesion: ${err?.message || String(err)}`);
   }
 });
+
+btnQuickSuper.addEventListener("click", async () => quickAddExpense("Supermercado"));
+btnQuickComp.addEventListener("click", async () => quickAddExpense("Compras"));
+btnQuickSal.addEventListener("click", async () => quickAddExpense("Salidas"));
+btnQuickGas.addEventListener("click", async () => quickAddExpense("Gasolina"));
 
 (async () => {
   try {
