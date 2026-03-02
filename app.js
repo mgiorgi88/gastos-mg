@@ -14,6 +14,9 @@ const SUPABASE_URL = "https://gwtioxerklmzjssweqgm.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_rcTj1A_vRoeOQ7yDOjPQ7g_PlmfsQPs";
 
 const form = document.getElementById("tx-form");
+const btnSubmitTx = document.getElementById("btn-submit-tx");
+const btnCancelEdit = document.getElementById("btn-cancel-edit");
+const txFormModeEl = document.getElementById("tx-form-mode");
 const quickAmountEl = document.getElementById("quick-amount");
 const quickDetailEl = document.getElementById("quick-detail");
 const btnQuickSuper = document.getElementById("btn-quick-super");
@@ -95,6 +98,7 @@ let budgets = loadBudgets();
 let arsRate = loadArsRate();
 let spreadPct = loadSpreadPct();
 let selectedTheme = loadTheme();
+let editingTxId = null;
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -342,6 +346,51 @@ function monthLabel(key) {
   return `${monthNames[idx]} ${y}`;
 }
 
+function formatDateLabel(dateStr) {
+  const d = new Date(`${dateStr}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return dateStr;
+  return new Intl.DateTimeFormat("es-ES", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  }).format(d);
+}
+
+function setEditingState(tx = null) {
+  editingTxId = tx ? String(tx.id) : null;
+  if (btnSubmitTx) btnSubmitTx.textContent = tx ? "Guardar cambios" : "Guardar";
+  if (btnCancelEdit) btnCancelEdit.hidden = !tx;
+  if (txFormModeEl) txFormModeEl.hidden = !tx;
+}
+
+function startEditTransaction(id) {
+  const tx = txData.find((x) => String(x.id) === String(id));
+  if (!tx) {
+    setStatus("No se encontro el movimiento para editar.");
+    return;
+  }
+
+  document.getElementById("fecha").value = String(tx.fecha).slice(0, 10);
+  tipoEl.value = tx.tipo === "Ingreso" ? "Ingreso" : "Gasto";
+  updateCategoryOptions(tipoEl.value, tx.categoria);
+  document.getElementById("monto").value = Number(tx.monto).toFixed(2);
+  document.getElementById("detalle").value = tx.detalle || "";
+  updateArsConvertVisibility();
+  setEditingState(tx);
+  form.scrollIntoView({ behavior: "smooth", block: "start" });
+  setStatus(`Editando: ${tx.categoria} del ${tx.fecha}.`);
+}
+
+function resetTransactionForm() {
+  form.reset();
+  document.getElementById("fecha").valueAsDate = new Date();
+  tipoEl.value = "Gasto";
+  updateCategoryOptions("Gasto");
+  updateArsConvertVisibility();
+  setEditingState(null);
+}
+
 function renderLast3Months(all) {
   if (!trend3mEl) return;
 
@@ -469,21 +518,45 @@ function refresh() {
   if (detailCountEl) detailCountEl.textContent = String(detailCount);
   if (detailAvgEl) detailAvgEl.textContent = money(detailAvg);
 
-  lista.innerHTML = "";
+  const groupedByDay = new Map();
   detailRows.forEach((item) => {
-    const li = document.createElement("li");
-    li.className = "item";
-    li.innerHTML = `
-      <div class="meta">
-        <strong>${item.categoria}</strong>
-        <small>${item.fecha} - ${item.tipo}${item.detalle ? " - " + item.detalle : ""}</small>
+    const dayKey = String(item.fecha).slice(0, 10);
+    if (!groupedByDay.has(dayKey)) groupedByDay.set(dayKey, []);
+    groupedByDay.get(dayKey).push(item);
+  });
+
+  lista.innerHTML = "";
+  Array.from(groupedByDay.entries()).forEach(([dayKey, dayItems]) => {
+    const dayTotal = dayItems.reduce(
+      (acc, tx) => acc + (tx.tipo === "Ingreso" ? Number(tx.monto) : -Number(tx.monto)),
+      0
+    );
+    const dayClass = dayTotal > 0 ? "saldo-pos" : dayTotal < 0 ? "saldo-neg" : "saldo-neu";
+
+    const dayLi = document.createElement("li");
+    dayLi.className = "calendar-day";
+    dayLi.innerHTML = `
+      <div class="calendar-day-head">
+        <strong>${formatDateLabel(dayKey)}</strong>
+        <span class="${dayClass}">${money(dayTotal)}</span>
       </div>
-      <div>
-        <strong class="monto ${String(item.tipo).toLowerCase()}">${item.tipo === "Gasto" ? "-" : "+"}${money(Number(item.monto))}</strong>
-        <button class="danger" data-id="${item.id}" type="button">Eliminar</button>
-      </div>
+      <ul class="calendar-day-list">
+        ${dayItems.map((item) => `
+          <li class="item">
+            <div class="meta">
+              <strong>${item.categoria}</strong>
+              <small>${item.tipo}${item.detalle ? " - " + item.detalle : ""}</small>
+            </div>
+            <div class="item-actions">
+              <strong class="monto ${String(item.tipo).toLowerCase()}">${item.tipo === "Gasto" ? "-" : "+"}${money(Number(item.monto))}</strong>
+              <button class="danger" data-action="edit" data-id="${item.id}" type="button">Editar</button>
+              <button class="danger" data-action="delete" data-id="${item.id}" type="button">Eliminar</button>
+            </div>
+          </li>
+        `).join("")}
+      </ul>
     `;
-    lista.appendChild(li);
+    lista.appendChild(dayLi);
   });
 
   vacio.hidden = detailRows.length > 0;
@@ -792,6 +865,37 @@ async function addTransaction(tx) {
   await loadCloudData();
 }
 
+async function updateTransaction(id, tx) {
+  if (!currentUser) {
+    const next = loadTx().map((x) => (String(x.id) === String(id) ? { ...x, ...tx, id: x.id } : x));
+    saveTx(next);
+    txData = next;
+    refresh();
+    return true;
+  }
+
+  const encodedId = encodeURIComponent(id);
+  const resp = await sbAuthFetch(`/rest/v1/movimientos?id=eq.${encodedId}`, {
+    method: "PATCH",
+    body: {
+      fecha: tx.fecha,
+      tipo: tx.tipo,
+      categoria: tx.categoria,
+      monto: tx.monto,
+      detalle: tx.detalle
+    }
+  });
+
+  if (!resp.ok) {
+    const txt = await resp.text().catch(() => "");
+    setStatus(`Error actualizando en nube: ${txt || resp.status}`);
+    return false;
+  }
+
+  await loadCloudData();
+  return true;
+}
+
 async function quickAddExpense(category) {
   const inputAmount = Number(quickAmountEl.value);
   const rememberedAmount = Number(quickAmounts[category] || 0);
@@ -947,6 +1051,21 @@ form.addEventListener("submit", async (e) => {
 
   if (!fecha || !categoria || monto <= 0) return;
 
+  if (editingTxId) {
+    const ok = await updateTransaction(editingTxId, {
+      fecha,
+      tipo,
+      monto,
+      categoria,
+      detalle
+    });
+    if (ok) {
+      setStatus("Movimiento editado correctamente.");
+      resetTransactionForm();
+    }
+    return;
+  }
+
   await addTransaction({
     id: crypto.randomUUID(),
     fecha,
@@ -956,11 +1075,7 @@ form.addEventListener("submit", async (e) => {
     detalle
   });
 
-  form.reset();
-  document.getElementById("fecha").valueAsDate = new Date();
-  tipoEl.value = "Gasto";
-  updateCategoryOptions("Gasto");
-  updateArsConvertVisibility();
+  resetTransactionForm();
 });
 
 filtroMes.addEventListener("change", () => {
@@ -992,10 +1107,26 @@ tipoEl.addEventListener("change", updateArsConvertVisibility);
 categoriaEl.addEventListener("change", updateArsConvertVisibility);
 
 lista.addEventListener("click", async (e) => {
-  if (!e.target.matches("button[data-id]")) return;
-  const id = e.target.getAttribute("data-id");
-  await deleteTransaction(id);
+  const btn = e.target.closest("button[data-id][data-action]");
+  if (!btn) return;
+  const id = btn.getAttribute("data-id");
+  const action = btn.getAttribute("data-action");
+
+  if (action === "edit") {
+    startEditTransaction(id);
+    return;
+  }
+  if (action === "delete") {
+    await deleteTransaction(id);
+  }
 });
+
+if (btnCancelEdit) {
+  btnCancelEdit.addEventListener("click", () => {
+    resetTransactionForm();
+    setStatus("Edicion cancelada.");
+  });
+}
 
 if (detailTypeEl) detailTypeEl.addEventListener("change", refresh);
 if (detailCategoryEl) detailCategoryEl.addEventListener("change", refresh);
@@ -1104,7 +1235,6 @@ btnBudgetSave.addEventListener("click", () => {
   try {
     setStatus("Inicializando app...");
     await disableServiceWorkerCache();
-    if (detalleMovimientosEl) detalleMovimientosEl.open = false;
     setupBudgetCategoryOptions();
     updateCategoryOptions(tipoEl.value);
     updateArsConvertVisibility();

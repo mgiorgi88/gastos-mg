@@ -49,7 +49,7 @@
         <button id="btn-logout" type="button" class="danger">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v33</p>
+      <p class="muted">Version: v34</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -113,7 +113,11 @@
             <button id="btn-convert-ars" type="button">Calcular y usar en monto</button>
           </div>
         </div>
-        <button type="submit">Guardar</button>
+        <div class="auth-actions">
+          <button id="btn-submit-tx" type="submit">Guardar</button>
+          <button id="btn-cancel-edit" type="button" class="danger" hidden>Cancelar edicion</button>
+        </div>
+        <p id="tx-form-mode" class="muted" hidden>Editando movimiento</p>
       </form>
     </section>
 
@@ -173,52 +177,49 @@
     </section>
 
     <section class="card">
-      <h2>Detalle</h2>
-      <details id="detalle-movimientos">
-        <summary>Ver movimientos y filtros</summary>
-        <div class="detail-filters">
-          <label>Tipo
-            <select id="detail-type">
-              <option value="Todos">Todos</option>
-              <option value="Gasto">Gasto</option>
-              <option value="Ingreso">Ingreso</option>
-            </select>
-          </label>
-          <label>Categoria
-            <select id="detail-category">
-              <option value="Todos">Todos</option>
-            </select>
-          </label>
-          <label>Desde
-            <input type="date" id="detail-from">
-          </label>
-          <label>Hasta
-            <input type="date" id="detail-to">
-          </label>
-          <label class="full">Buscar
-            <input type="text" id="detail-search" placeholder="Categoria o detalle">
-          </label>
-        </div>
-        <div class="auth-actions">
-          <button id="btn-detail-clear" type="button">Limpiar filtros</button>
-        </div>
-        <div id="detail-kpis" class="detail-kpis">
-          <article>
-            <span>Total filtrado</span>
-            <strong id="detail-total">$0.00</strong>
-          </article>
-          <article>
-            <span>Movimientos</span>
-            <strong id="detail-count">0</strong>
-          </article>
-          <article>
-            <span>Promedio</span>
-            <strong id="detail-avg">$0.00</strong>
-          </article>
-        </div>
-        <ul id="lista"></ul>
-        <p id="vacio" class="muted">No hay movimientos en el periodo seleccionado.</p>
-      </details>
+      <h2>Movimientos por dia</h2>
+      <div class="detail-filters">
+        <label>Tipo
+          <select id="detail-type">
+            <option value="Todos">Todos</option>
+            <option value="Gasto">Gasto</option>
+            <option value="Ingreso">Ingreso</option>
+          </select>
+        </label>
+        <label>Categoria
+          <select id="detail-category">
+            <option value="Todos">Todos</option>
+          </select>
+        </label>
+        <label>Desde
+          <input type="date" id="detail-from">
+        </label>
+        <label>Hasta
+          <input type="date" id="detail-to">
+        </label>
+        <label class="full">Buscar
+          <input type="text" id="detail-search" placeholder="Categoria o detalle">
+        </label>
+      </div>
+      <div class="auth-actions">
+        <button id="btn-detail-clear" type="button">Limpiar filtros</button>
+      </div>
+      <div id="detail-kpis" class="detail-kpis">
+        <article>
+          <span>Total filtrado</span>
+          <strong id="detail-total">$0.00</strong>
+        </article>
+        <article>
+          <span>Movimientos</span>
+          <strong id="detail-count">0</strong>
+        </article>
+        <article>
+          <span>Promedio</span>
+          <strong id="detail-avg">$0.00</strong>
+        </article>
+      </div>
+      <ul id="lista"></ul>
+      <p id="vacio" class="muted">No hay movimientos en el periodo seleccionado.</p>
     </section>
   </main>
 
