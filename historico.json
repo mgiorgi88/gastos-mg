@@ -2760,7 +2760,7 @@
     "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
   },
   {
-    "id": "hist-2026-01-Gasto-Alquiler-347",
+    "id": "hist-2026-01-Gasto-Alquiler-348",
     "fecha": "2026-01-01",
     "tipo": "Gasto",
     "categoria": "Alquiler",
@@ -2768,7 +2768,7 @@
     "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
   },
   {
-    "id": "hist-2026-01-Gasto-Auto-357",
+    "id": "hist-2026-01-Gasto-Auto-367",
     "fecha": "2026-01-01",
     "tipo": "Gasto",
     "categoria": "Auto",
@@ -2776,7 +2776,7 @@
     "detalle": "Importado de Presupuesto.xlsx (AUTO)"
   },
   {
-    "id": "hist-2026-01-Gasto-Compras-349",
+    "id": "hist-2026-01-Gasto-Compras-352",
     "fecha": "2026-01-01",
     "tipo": "Gasto",
     "categoria": "Compras",
@@ -2784,7 +2784,7 @@
     "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
   },
   {
-    "id": "hist-2026-01-Gasto-Gasolina-356",
+    "id": "hist-2026-01-Gasto-Gasolina-365",
     "fecha": "2026-01-01",
     "tipo": "Gasto",
     "categoria": "Gasolina",
@@ -2792,7 +2792,7 @@
     "detalle": "Importado de Presupuesto.xlsx (DIESEL)"
   },
   {
-    "id": "hist-2026-01-Gasto-Ropa-350",
+    "id": "hist-2026-01-Gasto-Ropa-354",
     "fecha": "2026-01-01",
     "tipo": "Gasto",
     "categoria": "Ropa",
@@ -2800,7 +2800,7 @@
     "detalle": "Importado de Presupuesto.xlsx (ROPA)"
   },
   {
-    "id": "hist-2026-01-Gasto-Salidas-353",
+    "id": "hist-2026-01-Gasto-Salidas-359",
     "fecha": "2026-01-01",
     "tipo": "Gasto",
     "categoria": "Salidas",
@@ -2808,7 +2808,7 @@
     "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
   },
   {
-    "id": "hist-2026-01-Gasto-Salud-354",
+    "id": "hist-2026-01-Gasto-Salud-361",
     "fecha": "2026-01-01",
     "tipo": "Gasto",
     "categoria": "Salud",
@@ -2816,7 +2816,7 @@
     "detalle": "Importado de Presupuesto.xlsx (SALUD)"
   },
   {
-    "id": "hist-2026-01-Gasto-Seguro-358",
+    "id": "hist-2026-01-Gasto-Seguro-369",
     "fecha": "2026-01-01",
     "tipo": "Gasto",
     "categoria": "Seguro",
@@ -2824,7 +2824,7 @@
     "detalle": "Importado de Presupuesto.xlsx (SEGURO)"
   },
   {
-    "id": "hist-2026-01-Gasto-Servicios-352",
+    "id": "hist-2026-01-Gasto-Servicios-357",
     "fecha": "2026-01-01",
     "tipo": "Gasto",
     "categoria": "Servicios",
@@ -2832,7 +2832,7 @@
     "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
   },
   {
-    "id": "hist-2026-01-Gasto-Supermercado-348",
+    "id": "hist-2026-01-Gasto-Supermercado-350",
     "fecha": "2026-01-01",
     "tipo": "Gasto",
     "categoria": "Supermercado",
@@ -2840,7 +2840,7 @@
     "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
   },
   {
-    "id": "hist-2026-01-Gasto-Transporte-351",
+    "id": "hist-2026-01-Gasto-Transporte-355",
     "fecha": "2026-01-01",
     "tipo": "Gasto",
     "categoria": "Transporte",
@@ -2848,7 +2848,7 @@
     "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
   },
   {
-    "id": "hist-2026-01-Gasto-Viajes-355",
+    "id": "hist-2026-01-Gasto-Viajes-363",
     "fecha": "2026-01-01",
     "tipo": "Gasto",
     "categoria": "Viajes",
@@ -2861,6 +2861,94 @@
     "tipo": "Ingreso",
     "categoria": "Sueldo",
     "monto": 3706.0,
+    "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
+  },
+  {
+    "id": "hist-2026-02-Gasto-Alquiler-349",
+    "fecha": "2026-02-01",
+    "tipo": "Gasto",
+    "categoria": "Alquiler",
+    "monto": 927.0,
+    "detalle": "Importado de Presupuesto.xlsx (ALQUILER)"
+  },
+  {
+    "id": "hist-2026-02-Gasto-Auto-368",
+    "fecha": "2026-02-01",
+    "tipo": "Gasto",
+    "categoria": "Auto",
+    "monto": 784.47,
+    "detalle": "Importado de Presupuesto.xlsx (AUTO)"
+  },
+  {
+    "id": "hist-2026-02-Gasto-Compras-353",
+    "fecha": "2026-02-01",
+    "tipo": "Gasto",
+    "categoria": "Compras",
+    "monto": 230.6,
+    "detalle": "Importado de Presupuesto.xlsx (COMPRAS)"
+  },
+  {
+    "id": "hist-2026-02-Gasto-Gasolina-366",
+    "fecha": "2026-02-01",
+    "tipo": "Gasto",
+    "categoria": "Gasolina",
+    "monto": 55.0,
+    "detalle": "Importado de Presupuesto.xlsx (DIESEL)"
+  },
+  {
+    "id": "hist-2026-02-Gasto-Salidas-360",
+    "fecha": "2026-02-01",
+    "tipo": "Gasto",
+    "categoria": "Salidas",
+    "monto": 57.4,
+    "detalle": "Importado de Presupuesto.xlsx (SALIDAS)"
+  },
+  {
+    "id": "hist-2026-02-Gasto-Salud-362",
+    "fecha": "2026-02-01",
+    "tipo": "Gasto",
+    "categoria": "Salud",
+    "monto": 18.98,
+    "detalle": "Importado de Presupuesto.xlsx (SALUD)"
+  },
+  {
+    "id": "hist-2026-02-Gasto-Servicios-358",
+    "fecha": "2026-02-01",
+    "tipo": "Gasto",
+    "categoria": "Servicios",
+    "monto": 167.19,
+    "detalle": "Importado de Presupuesto.xlsx (SERVICIOS)"
+  },
+  {
+    "id": "hist-2026-02-Gasto-Supermercado-351",
+    "fecha": "2026-02-01",
+    "tipo": "Gasto",
+    "categoria": "Supermercado",
+    "monto": 431.25,
+    "detalle": "Importado de Presupuesto.xlsx (SUPERMERCADO)"
+  },
+  {
+    "id": "hist-2026-02-Gasto-Transporte-356",
+    "fecha": "2026-02-01",
+    "tipo": "Gasto",
+    "categoria": "Transporte",
+    "monto": 5.4,
+    "detalle": "Importado de Presupuesto.xlsx (TRANSPORTE)"
+  },
+  {
+    "id": "hist-2026-02-Gasto-Viajes-364",
+    "fecha": "2026-02-01",
+    "tipo": "Gasto",
+    "categoria": "Viajes",
+    "monto": 101.0,
+    "detalle": "Importado de Presupuesto.xlsx (VIAJES)"
+  },
+  {
+    "id": "hist-2026-02-Ingreso-Sueldo-347",
+    "fecha": "2026-02-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 3665.08,
     "detalle": "Importado de Presupuesto.xlsx (INGRESOS)"
   }
 ]
