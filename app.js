@@ -831,6 +831,11 @@ function updateArsConvertVisibility() {
     categoriaEl.value === "Alquiler Depto Argentina" &&
     selectedCurrency === "USD";
   arsConvertBoxEl.hidden = !show;
+  arsConvertBoxEl.style.display = show ? "grid" : "none";
+  if (!show) {
+    if (arsAmountEl) arsAmountEl.value = "";
+    if (arsResultEl) arsResultEl.value = "";
+  }
   if (show) {
     fetchArsRateForSelectedCurrency();
     updateArsResultPreview();
@@ -966,6 +971,7 @@ filtroMes.addEventListener("change", () => {
 if (currencyEl) {
   currencyEl.addEventListener("change", async () => {
     saveCurrency(currencyEl.value);
+    updateArsConvertVisibility();
     if (!arsConvertBoxEl?.hidden) {
       await fetchArsRateForSelectedCurrency();
       updateArsResultPreview();
@@ -1110,6 +1116,7 @@ btnBudgetSave.addEventListener("click", () => {
     if (currencyEl) currencyEl.value = selectedCurrency;
     if (themeEl) themeEl.value = selectedTheme;
     applyTheme(selectedTheme);
+    updateArsConvertVisibility();
     refresh();
     await initAuth();
   } catch (err) {

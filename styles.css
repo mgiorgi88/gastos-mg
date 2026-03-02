@@ -30,6 +30,10 @@
   font-family: var(--font-main);
 }
 
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   font-family: var(--font-main);
