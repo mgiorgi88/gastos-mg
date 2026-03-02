@@ -231,39 +231,6 @@ button {
   margin-top: 0;
 }
 
-.reminder-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-
-.reminder-item {
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: #fafafa;
-  padding: 10px;
-  display: grid;
-  gap: 6px;
-}
-
-.reminder-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-}
-
-.reminder-actions {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px;
-}
-
-.reminder-actions input,
-.reminder-actions button {
-  margin-top: 0;
-}
-
 .budget-list {
   list-style: none;
   margin: 12px 0 0 0;
@@ -337,10 +304,6 @@ details summary {
 
   .quick-actions {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .reminder-grid {
-    grid-template-columns: 1fr;
   }
 
   .detail-filters {

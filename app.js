@@ -19,7 +19,6 @@ const btnQuickSuper = document.getElementById("btn-quick-super");
 const btnQuickComp = document.getElementById("btn-quick-comp");
 const btnQuickSal = document.getElementById("btn-quick-sal");
 const btnQuickGas = document.getElementById("btn-quick-gas");
-const reminderGridEl = document.getElementById("monthly-reminders");
 const detailTypeEl = document.getElementById("detail-type");
 const detailCategoryEl = document.getElementById("detail-category");
 const detailFromEl = document.getElementById("detail-from");
@@ -325,49 +324,6 @@ function monthLabel(key) {
   return `${monthNames[idx]} ${y}`;
 }
 
-function shiftMonthKey(key, delta) {
-  const [y, m] = key.split("-").map((x) => Number(x));
-  const d = new Date(y, (m - 1) + delta, 1);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-}
-
-function renderMonthlyReminders(all) {
-  if (!reminderGridEl) return;
-
-  const reminderCategories = ["Alquiler", "Hipoteca"];
-  const prevMonth = shiftMonthKey(CURRENT_MONTH, -1);
-
-  const cards = reminderCategories.map((cat) => {
-    const currentRows = all.filter((x) => x.tipo === "Gasto" && x.categoria === cat && getMonth(x.fecha) === CURRENT_MONTH);
-    const prevRows = all.filter((x) => x.tipo === "Gasto" && x.categoria === cat && getMonth(x.fecha) === prevMonth);
-
-    const currentTotal = currentRows.reduce((acc, x) => acc + Number(x.monto), 0);
-    const prevTotal = prevRows.reduce((acc, x) => acc + Number(x.monto), 0);
-    const suggested = currentTotal > 0 ? currentTotal : prevTotal;
-    const diff = currentTotal - prevTotal;
-    const status = currentTotal > 0 ? "Cargado" : "Pendiente";
-    const diffLabel = prevTotal > 0 ? `${diff >= 0 ? "+" : "-"}${money(Math.abs(diff))} vs mes anterior` : "Sin referencia del mes anterior";
-    const diffClass = prevTotal > 0 ? (diff >= 0 ? "saldo-neg" : "saldo-pos") : "saldo-neu";
-
-    return `
-      <article class="reminder-item">
-        <div class="reminder-top">
-          <strong>${cat}</strong>
-          <span class="${currentTotal > 0 ? "saldo-pos" : "saldo-neg"}">${status}</span>
-        </div>
-        <small>Sugerido: ${money(suggested || 0)}</small>
-        <small class="${diffClass}">${diffLabel}</small>
-        <div class="reminder-actions">
-          <input type="number" min="0.01" step="0.01" class="reminder-input" data-cat="${cat}" value="${(suggested || "").toString()}">
-          <button type="button" class="reminder-btn" data-cat="${cat}">Cargar</button>
-        </div>
-      </article>
-    `;
-  });
-
-  reminderGridEl.innerHTML = cards.join("");
-}
-
 function renderLast3Months(all) {
   if (!trend3mEl) return;
 
@@ -514,7 +470,6 @@ function refresh() {
 
   vacio.hidden = detailRows.length > 0;
   renderLast3Months(all);
-  renderMonthlyReminders(all);
   renderBudgetStatus(all);
 }
 
@@ -853,7 +808,10 @@ async function quickAddExpense(category) {
 
 function updateArsConvertVisibility() {
   if (!arsConvertBoxEl) return;
-  const show = tipoEl.value === "Ingreso" && categoriaEl.value === "Alquiler Depto Argentina";
+  const show =
+    tipoEl.value === "Ingreso" &&
+    categoriaEl.value === "Alquiler Depto Argentina" &&
+    selectedCurrency === "USD";
   arsConvertBoxEl.hidden = !show;
   if (show) {
     fetchArsRateForSelectedCurrency();
@@ -918,24 +876,6 @@ function updateArsResultPreview() {
   }
   const converted = selectedCurrency === "ARS" ? ars : ars / rate;
   arsResultEl.value = money(converted);
-}
-
-async function addMonthlyReminderExpense(category, amount) {
-  if (!(amount > 0)) {
-    setStatus(`Importe invalido para ${category}.`);
-    return;
-  }
-
-  const reminderDate = `${CURRENT_MONTH}-01`;
-  await addTransaction({
-    id: crypto.randomUUID(),
-    fecha: reminderDate,
-    tipo: "Gasto",
-    monto: amount,
-    categoria: category,
-    detalle: "Pendiente mensual"
-  });
-  setStatus(`${category} cargado para ${CURRENT_MONTH}.`);
 }
 
 async function deleteTransaction(id) {
@@ -1113,17 +1053,6 @@ if (spreadPctEl) {
     const v = Number(spreadPctEl.value || 0);
     if (v >= 0) saveSpreadPct(v);
     updateArsResultPreview();
-  });
-}
-
-if (reminderGridEl) {
-  reminderGridEl.addEventListener("click", async (e) => {
-    const btn = e.target.closest("button.reminder-btn");
-    if (!btn) return;
-    const cat = btn.getAttribute("data-cat");
-    const input = reminderGridEl.querySelector(`input.reminder-input[data-cat="${cat}"]`);
-    const amount = Number(input?.value || 0);
-    await addMonthlyReminderExpense(cat, amount);
   });
 }
 
