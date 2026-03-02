@@ -284,9 +284,12 @@ function refresh() {
   let ingresos = 0;
   let gastos = 0;
   filtered.forEach((x) => (x.tipo === "Ingreso" ? (ingresos += Number(x.monto)) : (gastos += Number(x.monto))));
+  const balanceValue = ingresos - gastos;
   ingresosEl.textContent = money(ingresos);
   gastosEl.textContent = money(gastos);
-  balanceEl.textContent = money(ingresos - gastos);
+  balanceEl.textContent = money(balanceValue);
+  balanceEl.classList.remove("saldo-pos", "saldo-neg", "saldo-neu");
+  balanceEl.classList.add(balanceValue > 0 ? "saldo-pos" : balanceValue < 0 ? "saldo-neg" : "saldo-neu");
 
   lista.innerHTML = "";
   filtered.forEach((item) => {
