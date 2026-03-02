@@ -39,6 +39,24 @@ body {
   color: var(--muted);
 }
 
+.session-bar {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fafafa;
+  font-size: 0.92rem;
+}
+
+.session-bar button {
+  margin-top: 0;
+  padding: 8px 10px;
+}
+
 .card {
   background: var(--card);
   border: 1px solid var(--line);
@@ -181,5 +199,10 @@ details summary {
 @media (max-width: 600px) {
   .stats {
     grid-template-columns: 1fr;
+  }
+
+  .session-bar {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

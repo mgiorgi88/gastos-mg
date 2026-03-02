@@ -25,6 +25,10 @@ const btnSignup = document.getElementById("btn-signup");
 const btnLogin = document.getElementById("btn-login");
 const btnLogout = document.getElementById("btn-logout");
 const authStatusEl = document.getElementById("auth-status");
+const authCardEl = document.getElementById("auth-card");
+const sessionBarEl = document.getElementById("session-bar");
+const sessionEmailEl = document.getElementById("session-email");
+const btnLogoutMini = document.getElementById("btn-logout-mini");
 
 const CATEGORIAS = {
   Gasto: [
@@ -237,11 +241,15 @@ function refresh() {
 
 function setAuthButtons() {
   const logged = Boolean(currentUser);
-  btnSignup.disabled = logged;
-  btnLogin.disabled = logged;
-  btnLogout.disabled = !logged;
-  emailEl.disabled = logged;
-  passwordEl.disabled = logged;
+  if (authCardEl) authCardEl.hidden = logged;
+  if (sessionBarEl) sessionBarEl.hidden = !logged;
+  if (sessionEmailEl) sessionEmailEl.textContent = logged ? `Conectado como ${currentUser.email}` : "";
+  if (btnSignup) btnSignup.disabled = logged;
+  if (btnLogin) btnLogin.disabled = logged;
+  if (btnLogout) btnLogout.disabled = !logged;
+  if (emailEl) emailEl.disabled = logged;
+  if (passwordEl) passwordEl.disabled = logged;
+  if (btnLogoutMini) btnLogoutMini.disabled = !logged;
 }
 
 async function sbFetch(path, options = {}) {
@@ -601,6 +609,14 @@ btnLogin.addEventListener("click", async () => {
 });
 
 btnLogout.addEventListener("click", async () => {
+  try {
+    await logout();
+  } catch (err) {
+    setStatus(`Fallo en Cerrar sesion: ${err?.message || String(err)}`);
+  }
+});
+
+btnLogoutMini.addEventListener("click", async () => {
   try {
     await logout();
   } catch (err) {

@@ -18,9 +18,13 @@
     <header class="hero">
       <h1>Mis Gastos</h1>
       <p>Registra ingresos y gastos en segundos.</p>
+      <div id="session-bar" class="session-bar" hidden>
+        <span id="session-email"></span>
+        <button id="btn-logout-mini" type="button" class="danger">Cerrar sesion</button>
+      </div>
     </header>
 
-    <section class="card">
+    <section id="auth-card" class="card">
       <h2>Cuenta</h2>
       <div class="grid">
         <label>Email
