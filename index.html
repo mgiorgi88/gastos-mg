@@ -41,7 +41,7 @@
         <button id="btn-logout" type="button" class="danger">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v22</p>
+      <p class="muted">Version: v23</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -62,6 +62,12 @@
         <button id="btn-quick-gas" type="button">Gasolina</button>
       </div>
       <p class="muted">Tip: si dejas vacio el importe, usa el ultimo guardado de esa categoria.</p>
+    </section>
+
+    <section class="card">
+      <h2>Pendientes del mes</h2>
+      <div id="monthly-reminders" class="reminder-grid"></div>
+      <p class="muted">Usa el monto sugerido (mes anterior) o editalo antes de cargar.</p>
     </section>
 
     <section class="card">
@@ -86,6 +92,20 @@
           <label class="full">Detalle
             <input type="text" id="detalle" placeholder="Opcional">
           </label>
+        </div>
+        <div id="ars-convert-box" class="grid" hidden>
+          <label>Monto en ARS
+            <input type="number" id="ars-amount" min="0.01" step="0.01" placeholder="0.00">
+          </label>
+          <label>Tipo de cambio ARS por 1 unidad
+            <input type="number" id="ars-rate" min="0.0001" step="0.0001" placeholder="Ej: 1100">
+          </label>
+          <label>Resultado convertido
+            <input type="text" id="ars-result" readonly>
+          </label>
+          <div class="auth-actions">
+            <button id="btn-convert-ars" type="button">Calcular y usar en monto</button>
+          </div>
         </div>
         <button type="submit">Guardar</button>
       </form>

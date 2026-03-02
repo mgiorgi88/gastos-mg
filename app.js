@@ -5,6 +5,7 @@ const SESSION_KEY = "mis_gastos_supabase_session_v1";
 const QUICK_AMOUNTS_KEY = "mis_gastos_quick_amounts_v1";
 const CURRENCY_KEY = "mis_gastos_currency_v1";
 const BUDGETS_KEY = "mis_gastos_budgets_v1";
+const ARS_RATE_KEY = "mis_gastos_ars_rate_v1";
 const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
 
 const SUPABASE_URL = "https://gwtioxerklmzjssweqgm.supabase.co";
@@ -17,6 +18,7 @@ const btnQuickSuper = document.getElementById("btn-quick-super");
 const btnQuickComp = document.getElementById("btn-quick-comp");
 const btnQuickSal = document.getElementById("btn-quick-sal");
 const btnQuickGas = document.getElementById("btn-quick-gas");
+const reminderGridEl = document.getElementById("monthly-reminders");
 const detailTypeEl = document.getElementById("detail-type");
 const detailCategoryEl = document.getElementById("detail-category");
 const detailFromEl = document.getElementById("detail-from");
@@ -30,6 +32,11 @@ const budgetCategoryEl = document.getElementById("budget-category");
 const budgetAmountEl = document.getElementById("budget-amount");
 const btnBudgetSave = document.getElementById("btn-budget-save");
 const budgetListEl = document.getElementById("budget-list");
+const arsConvertBoxEl = document.getElementById("ars-convert-box");
+const arsAmountEl = document.getElementById("ars-amount");
+const arsRateEl = document.getElementById("ars-rate");
+const arsResultEl = document.getElementById("ars-result");
+const btnConvertArs = document.getElementById("btn-convert-ars");
 const lista = document.getElementById("lista");
 const vacio = document.getElementById("vacio");
 const filtroMes = document.getElementById("filtro-mes");
@@ -71,7 +78,7 @@ const CATEGORIAS = {
     "Salud",
     "Transporte"
   ],
-  Ingreso: ["Sueldo", "Depositos"]
+  Ingreso: ["Sueldo", "Depositos", "Alquiler Depto Argentina"]
 };
 
 let currentUser = null;
@@ -81,6 +88,7 @@ let authSession = loadSession();
 let quickAmounts = loadQuickAmounts();
 let selectedCurrency = loadCurrency();
 let budgets = loadBudgets();
+let arsRate = loadArsRate();
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -139,6 +147,16 @@ function loadBudgets() {
 function saveBudgets(data) {
   budgets = data;
   localStorage.setItem(BUDGETS_KEY, JSON.stringify(data));
+}
+
+function loadArsRate() {
+  const v = Number(localStorage.getItem(ARS_RATE_KEY) || 1100);
+  return v > 0 ? v : 1100;
+}
+
+function saveArsRate(v) {
+  arsRate = v;
+  localStorage.setItem(ARS_RATE_KEY, String(v));
 }
 
 function loadCurrency() {
@@ -293,6 +311,49 @@ function monthLabel(key) {
   return `${monthNames[idx]} ${y}`;
 }
 
+function shiftMonthKey(key, delta) {
+  const [y, m] = key.split("-").map((x) => Number(x));
+  const d = new Date(y, (m - 1) + delta, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function renderMonthlyReminders(all) {
+  if (!reminderGridEl) return;
+
+  const reminderCategories = ["Alquiler", "Hipoteca"];
+  const prevMonth = shiftMonthKey(CURRENT_MONTH, -1);
+
+  const cards = reminderCategories.map((cat) => {
+    const currentRows = all.filter((x) => x.tipo === "Gasto" && x.categoria === cat && getMonth(x.fecha) === CURRENT_MONTH);
+    const prevRows = all.filter((x) => x.tipo === "Gasto" && x.categoria === cat && getMonth(x.fecha) === prevMonth);
+
+    const currentTotal = currentRows.reduce((acc, x) => acc + Number(x.monto), 0);
+    const prevTotal = prevRows.reduce((acc, x) => acc + Number(x.monto), 0);
+    const suggested = currentTotal > 0 ? currentTotal : prevTotal;
+    const diff = currentTotal - prevTotal;
+    const status = currentTotal > 0 ? "Cargado" : "Pendiente";
+    const diffLabel = prevTotal > 0 ? `${diff >= 0 ? "+" : "-"}${money(Math.abs(diff))} vs mes anterior` : "Sin referencia del mes anterior";
+    const diffClass = prevTotal > 0 ? (diff >= 0 ? "saldo-neg" : "saldo-pos") : "saldo-neu";
+
+    return `
+      <article class="reminder-item">
+        <div class="reminder-top">
+          <strong>${cat}</strong>
+          <span class="${currentTotal > 0 ? "saldo-pos" : "saldo-neg"}">${status}</span>
+        </div>
+        <small>Sugerido: ${money(suggested || 0)}</small>
+        <small class="${diffClass}">${diffLabel}</small>
+        <div class="reminder-actions">
+          <input type="number" min="0.01" step="0.01" class="reminder-input" data-cat="${cat}" value="${(suggested || "").toString()}">
+          <button type="button" class="reminder-btn" data-cat="${cat}">Cargar</button>
+        </div>
+      </article>
+    `;
+  });
+
+  reminderGridEl.innerHTML = cards.join("");
+}
+
 function renderLast3Months(all) {
   if (!trend3mEl) return;
 
@@ -439,6 +500,7 @@ function refresh() {
 
   vacio.hidden = detailRows.length > 0;
   renderLast3Months(all);
+  renderMonthlyReminders(all);
   renderBudgetStatus(all);
 }
 
@@ -775,6 +837,42 @@ async function quickAddExpense(category) {
   setStatus(`Carga rapida guardada: ${category} ${money(amount)}.`);
 }
 
+function updateArsConvertVisibility() {
+  if (!arsConvertBoxEl) return;
+  const show = tipoEl.value === "Ingreso" && categoriaEl.value === "Alquiler Depto Argentina";
+  arsConvertBoxEl.hidden = !show;
+}
+
+function convertArsToSelectedCurrency() {
+  const ars = Number(arsAmountEl.value || 0);
+  const rate = Number(arsRateEl.value || 0);
+  if (!(ars > 0) || !(rate > 0)) {
+    setStatus("Completa ARS y tipo de cambio valido.");
+    return null;
+  }
+  saveArsRate(rate);
+  if (selectedCurrency === "ARS") return ars;
+  return ars / rate;
+}
+
+async function addMonthlyReminderExpense(category, amount) {
+  if (!(amount > 0)) {
+    setStatus(`Importe invalido para ${category}.`);
+    return;
+  }
+
+  const reminderDate = `${CURRENT_MONTH}-01`;
+  await addTransaction({
+    id: crypto.randomUUID(),
+    fecha: reminderDate,
+    tipo: "Gasto",
+    monto: amount,
+    categoria: category,
+    detalle: "Pendiente mensual"
+  });
+  setStatus(`${category} cargado para ${CURRENT_MONTH}.`);
+}
+
 async function deleteTransaction(id) {
   if (!currentUser) {
     const next = loadTx().filter((x) => String(x.id) !== String(id));
@@ -844,11 +942,17 @@ filtroMes.addEventListener("change", () => {
 if (currencyEl) {
   currencyEl.addEventListener("change", () => {
     saveCurrency(currencyEl.value);
+    if (arsResultEl && arsAmountEl && arsRateEl && Number(arsAmountEl.value) > 0 && Number(arsRateEl.value) > 0) {
+      const converted = convertArsToSelectedCurrency();
+      if (converted > 0) arsResultEl.value = money(converted);
+    }
     refresh();
   });
 }
 
 tipoEl.addEventListener("change", () => updateCategoryOptions(tipoEl.value));
+tipoEl.addEventListener("change", updateArsConvertVisibility);
+categoriaEl.addEventListener("change", updateArsConvertVisibility);
 
 lista.addEventListener("click", async (e) => {
   if (!e.target.matches("button[data-id]")) return;
@@ -920,6 +1024,27 @@ btnQuickComp.addEventListener("click", async () => quickAddExpense("Compras"));
 btnQuickSal.addEventListener("click", async () => quickAddExpense("Salidas"));
 btnQuickGas.addEventListener("click", async () => quickAddExpense("Gasolina"));
 
+if (btnConvertArs) {
+  btnConvertArs.addEventListener("click", () => {
+    const converted = convertArsToSelectedCurrency();
+    if (!(converted > 0)) return;
+    document.getElementById("monto").value = converted.toFixed(2);
+    if (arsResultEl) arsResultEl.value = money(converted);
+    setStatus(`Convertido a ${selectedCurrency}: ${money(converted)}.`);
+  });
+}
+
+if (reminderGridEl) {
+  reminderGridEl.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button.reminder-btn");
+    if (!btn) return;
+    const cat = btn.getAttribute("data-cat");
+    const input = reminderGridEl.querySelector(`input.reminder-input[data-cat="${cat}"]`);
+    const amount = Number(input?.value || 0);
+    await addMonthlyReminderExpense(cat, amount);
+  });
+}
+
 btnBudgetSave.addEventListener("click", () => {
   const cat = budgetCategoryEl.value;
   const amount = Number(budgetAmountEl.value || 0);
@@ -939,6 +1064,8 @@ btnBudgetSave.addEventListener("click", () => {
     if (detalleMovimientosEl) detalleMovimientosEl.open = false;
     setupBudgetCategoryOptions();
     updateCategoryOptions(tipoEl.value);
+    updateArsConvertVisibility();
+    if (arsRateEl) arsRateEl.value = String(arsRate);
     await bootstrapHistorico();
     runCategoryMigration();
     txData = loadTx();
