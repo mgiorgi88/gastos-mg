@@ -41,7 +41,7 @@
         <button id="btn-logout" type="button" class="danger">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v24</p>
+      <p class="muted">Version: v25</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -99,6 +99,9 @@
           </label>
           <label>Tipo de cambio ARS por 1 unidad
             <input type="number" id="ars-rate" min="0.0001" step="0.0001" placeholder="Cargando..." readonly>
+          </label>
+          <label>Spread casa de cambio (%)
+            <input type="number" id="spread-pct" min="0" step="0.1" placeholder="3.0">
           </label>
           <label>Resultado convertido
             <input type="text" id="ars-result" readonly>

@@ -6,6 +6,7 @@ const QUICK_AMOUNTS_KEY = "mis_gastos_quick_amounts_v1";
 const CURRENCY_KEY = "mis_gastos_currency_v1";
 const BUDGETS_KEY = "mis_gastos_budgets_v1";
 const ARS_RATE_KEY = "mis_gastos_ars_rate_v1";
+const SPREAD_PCT_KEY = "mis_gastos_spread_pct_v1";
 const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
 
 const SUPABASE_URL = "https://gwtioxerklmzjssweqgm.supabase.co";
@@ -35,6 +36,7 @@ const budgetListEl = document.getElementById("budget-list");
 const arsConvertBoxEl = document.getElementById("ars-convert-box");
 const arsAmountEl = document.getElementById("ars-amount");
 const arsRateEl = document.getElementById("ars-rate");
+const spreadPctEl = document.getElementById("spread-pct");
 const arsResultEl = document.getElementById("ars-result");
 const btnConvertArs = document.getElementById("btn-convert-ars");
 const btnRefreshRate = document.getElementById("btn-refresh-rate");
@@ -90,6 +92,7 @@ let quickAmounts = loadQuickAmounts();
 let selectedCurrency = loadCurrency();
 let budgets = loadBudgets();
 let arsRate = loadArsRate();
+let spreadPct = loadSpreadPct();
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -158,6 +161,16 @@ function loadArsRate() {
 function saveArsRate(v) {
   arsRate = v;
   localStorage.setItem(ARS_RATE_KEY, String(v));
+}
+
+function loadSpreadPct() {
+  const v = Number(localStorage.getItem(SPREAD_PCT_KEY) || 3);
+  return v >= 0 ? v : 3;
+}
+
+function saveSpreadPct(v) {
+  spreadPct = v;
+  localStorage.setItem(SPREAD_PCT_KEY, String(v));
 }
 
 function loadCurrency() {
@@ -851,13 +864,17 @@ function updateArsConvertVisibility() {
 function convertArsToSelectedCurrency() {
   const ars = Number(arsAmountEl.value || 0);
   const rate = Number(arsRateEl.value || arsRate || 0);
+  const spread = Number(spreadPctEl?.value || spreadPct || 0);
   if (!(ars > 0) || !(rate > 0)) {
     setStatus("No se pudo convertir: falta ARS o tipo de cambio.");
     return null;
   }
   saveArsRate(rate);
+  if (spread >= 0) saveSpreadPct(spread);
   if (selectedCurrency === "ARS") return ars;
-  return ars / rate;
+  const gross = ars / rate;
+  const net = gross * (1 - (spread / 100));
+  return net > 0 ? net : 0;
 }
 
 async function fetchArsRateForSelectedCurrency() {
@@ -1091,6 +1108,13 @@ if (btnRefreshRate) {
 }
 
 if (arsAmountEl) arsAmountEl.addEventListener("input", updateArsResultPreview);
+if (spreadPctEl) {
+  spreadPctEl.addEventListener("input", () => {
+    const v = Number(spreadPctEl.value || 0);
+    if (v >= 0) saveSpreadPct(v);
+    updateArsResultPreview();
+  });
+}
 
 if (reminderGridEl) {
   reminderGridEl.addEventListener("click", async (e) => {
@@ -1124,6 +1148,7 @@ btnBudgetSave.addEventListener("click", () => {
     updateCategoryOptions(tipoEl.value);
     updateArsConvertVisibility();
     if (arsRateEl) arsRateEl.value = Number(arsRate).toFixed(4);
+    if (spreadPctEl) spreadPctEl.value = Number(spreadPct).toFixed(1);
     await bootstrapHistorico();
     runCategoryMigration();
     txData = loadTx();
