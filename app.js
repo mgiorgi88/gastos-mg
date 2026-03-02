@@ -561,7 +561,15 @@ function renderBudgetStatus(all) {
 function refreshDetailCategoryOptions(rows) {
   if (!detailCategoryEl) return;
   const prev = detailCategoryEl.value || "Todos";
-  const categories = ["Todos", ...new Set(rows.map((x) => x.categoria).filter(Boolean).sort())];
+  const selectedType = detailTypeEl ? detailTypeEl.value : "Todos";
+  const baseCategories =
+    selectedType === "Gasto"
+      ? CATEGORIAS.Gasto
+      : selectedType === "Ingreso"
+        ? CATEGORIAS.Ingreso
+        : [...CATEGORIAS.Gasto, ...CATEGORIAS.Ingreso];
+  const dataCategories = rows.map((x) => x.categoria).filter(Boolean);
+  const categories = ["Todos", ...new Set([...baseCategories, ...dataCategories])];
   detailCategoryEl.innerHTML = categories.map((c) => `<option value="${c}">${c}</option>`).join("");
   detailCategoryEl.value = categories.includes(prev) ? prev : "Todos";
 }
