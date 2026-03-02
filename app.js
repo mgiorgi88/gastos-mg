@@ -96,6 +96,25 @@ const CATEGORIAS = {
   Ingreso: ["Sueldo", "Depositos", "Alquiler Depto Argentina"]
 };
 
+const CATEGORY_ICONS = {
+  Alquiler: "🏠",
+  Hipoteca: "🏡",
+  Supermercado: "🛒",
+  Auto: "🚗",
+  Seguro: "🛡️",
+  Compras: "🛍️",
+  Ropa: "👕",
+  Servicios: "💡",
+  Viajes: "✈️",
+  Salidas: "🍽️",
+  Gasolina: "⛽",
+  Salud: "💊",
+  Transporte: "🚌",
+  Sueldo: "💼",
+  Depositos: "🏦",
+  "Alquiler Depto Argentina": "🏘️"
+};
+
 let currentUser = null;
 let txData = [];
 let hasUserChosenMonth = false;
@@ -316,7 +335,7 @@ function getMonth(dateStr) {
 function updateCategoryOptions(tipo, selected = "") {
   const categorias = CATEGORIAS[tipo] || [];
   categoriaEl.innerHTML = categorias
-    .map((categoria) => `<option value="${categoria}">${categoria}</option>`)
+    .map((categoria) => `<option value="${categoria}">${CATEGORY_ICONS[categoria] || "•"} ${categoria}</option>`)
     .join("");
   categoriaEl.value = categorias.includes(selected) ? selected : (categorias[0] || "");
 }
@@ -324,7 +343,7 @@ function updateCategoryOptions(tipo, selected = "") {
 function setupBudgetCategoryOptions() {
   if (!budgetCategoryEl) return;
   budgetCategoryEl.innerHTML = CATEGORIAS.Gasto
-    .map((c) => `<option value="${c}">${c}</option>`)
+    .map((c) => `<option value="${c}">${CATEGORY_ICONS[c] || "•"} ${c}</option>`)
     .join("");
 }
 
@@ -501,7 +520,7 @@ function renderSelectedDayRows(rows) {
       li.className = "item";
       li.innerHTML = `
         <div class="meta">
-          <strong>${item.categoria}</strong>
+          <strong>${CATEGORY_ICONS[item.categoria] || "•"} ${item.categoria}</strong>
           <small>
             <span class="tx-type ${item.tipo === "Ingreso" ? "ingreso" : "gasto"}">${item.tipo === "Ingreso" ? "↑ Ingreso" : "↓ Gasto"}</span>
             ${item.detalle ? " - " + item.detalle : ""}
@@ -627,7 +646,9 @@ function refreshDetailCategoryOptions(rows) {
     .map((x) => x.categoria)
     .filter(Boolean);
   const categories = ["Todos", ...new Set([...baseCategories, ...dataCategories])];
-  detailCategoryEl.innerHTML = categories.map((c) => `<option value="${c}">${c}</option>`).join("");
+  detailCategoryEl.innerHTML = categories
+    .map((c) => `<option value="${c}">${c === "Todos" ? "↕ Todos" : `${CATEGORY_ICONS[c] || "•"} ${c}`}</option>`)
+    .join("");
   detailCategoryEl.value = categories.includes(prev) ? prev : "Todos";
 }
 
