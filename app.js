@@ -522,7 +522,7 @@ function renderSelectedDayRows(rows) {
         <div class="meta">
           <strong>${CATEGORY_ICONS[item.categoria] || "•"} ${item.categoria}</strong>
           <small>
-            <span class="tx-type ${item.tipo === "Ingreso" ? "ingreso" : "gasto"}">${item.tipo === "Ingreso" ? "↑ Ingreso" : "↓ Gasto"}</span>
+            <span class="tx-type ${item.tipo === "Ingreso" ? "ingreso" : "gasto"}">${item.tipo === "Ingreso" ? "Ingreso" : "Gasto"}</span>
             ${item.detalle ? " - " + item.detalle : ""}
           </small>
         </div>
