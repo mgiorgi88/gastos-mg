@@ -7,6 +7,7 @@ const CURRENCY_KEY = "mis_gastos_currency_v1";
 const BUDGETS_KEY = "mis_gastos_budgets_v1";
 const ARS_RATE_KEY = "mis_gastos_ars_rate_v1";
 const SPREAD_PCT_KEY = "mis_gastos_spread_pct_v1";
+const THEME_KEY = "mis_gastos_theme_v1";
 const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
 
 const SUPABASE_URL = "https://gwtioxerklmzjssweqgm.supabase.co";
@@ -43,6 +44,7 @@ const lista = document.getElementById("lista");
 const vacio = document.getElementById("vacio");
 const filtroMes = document.getElementById("filtro-mes");
 const currencyEl = document.getElementById("currency-select");
+const themeEl = document.getElementById("theme-select");
 const trend3mEl = document.getElementById("trend-3m");
 const detalleMovimientosEl = document.getElementById("detalle-movimientos");
 const tipoEl = document.getElementById("tipo");
@@ -92,6 +94,7 @@ let selectedCurrency = loadCurrency();
 let budgets = loadBudgets();
 let arsRate = loadArsRate();
 let spreadPct = loadSpreadPct();
+let selectedTheme = loadTheme();
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -170,6 +173,21 @@ function loadSpreadPct() {
 function saveSpreadPct(v) {
   spreadPct = v;
   localStorage.setItem(SPREAD_PCT_KEY, String(v));
+}
+
+function loadTheme() {
+  const valid = new Set(["light", "dark"]);
+  const stored = localStorage.getItem(THEME_KEY) || "light";
+  return valid.has(stored) ? stored : "light";
+}
+
+function saveTheme(theme) {
+  selectedTheme = theme;
+  localStorage.setItem(THEME_KEY, theme);
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
 }
 
 function loadCurrency() {
@@ -955,6 +973,13 @@ if (currencyEl) {
   });
 }
 
+if (themeEl) {
+  themeEl.addEventListener("change", () => {
+    saveTheme(themeEl.value);
+    applyTheme(selectedTheme);
+  });
+}
+
 tipoEl.addEventListener("change", () => updateCategoryOptions(tipoEl.value));
 tipoEl.addEventListener("change", updateArsConvertVisibility);
 categoriaEl.addEventListener("change", updateArsConvertVisibility);
@@ -1082,6 +1107,8 @@ btnBudgetSave.addEventListener("click", () => {
     runCategoryMigration();
     txData = loadTx();
     if (currencyEl) currencyEl.value = selectedCurrency;
+    if (themeEl) themeEl.value = selectedTheme;
+    applyTheme(selectedTheme);
     refresh();
     await initAuth();
   } catch (err) {

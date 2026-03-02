@@ -7,6 +7,22 @@
   --primary: #27272a;
   --danger: #3f3f46;
   --line: #e4e4e7;
+  --soft: #fafafa;
+  --income: #18181b;
+  --expense: #52525b;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f1115;
+  --card: #171a21;
+  --ink: #f4f7ff;
+  --muted: #a7b0c0;
+  --primary: #e5e7eb;
+  --danger: #f3f4f6;
+  --line: #2b3240;
+  --soft: #1b2230;
+  --income: #86efac;
+  --expense: #fca5a5;
 }
 
 * {
@@ -48,7 +64,7 @@ body {
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: #fafafa;
+  background: var(--soft);
   font-size: 0.92rem;
 }
 
@@ -93,14 +109,14 @@ input, select, button {
   padding: 10px;
   font-size: 1rem;
   font-family: var(--font-main);
-  background: #fff;
+  background: var(--card);
   color: var(--ink);
 }
 
 button {
   margin-top: 10px;
   background: var(--primary);
-  color: white;
+  color: var(--bg);
   border: 0;
   font-weight: 500;
   cursor: pointer;
@@ -117,7 +133,7 @@ button {
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 12px;
-  background: #fafafa;
+  background: var(--soft);
 }
 
 .stats span {
@@ -139,7 +155,7 @@ button {
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 12px;
-  background: #fafafa;
+  background: var(--soft);
   display: grid;
   gap: 6px;
 }
@@ -192,16 +208,16 @@ button {
 }
 
 .monto.gasto {
-  color: #52525b;
+  color: var(--expense);
 }
 
 .monto.ingreso {
-  color: #18181b;
+  color: var(--income);
 }
 
 .danger {
-  background: #fafafa;
-  color: #3f3f46;
+  background: var(--soft);
+  color: var(--ink);
   border: 1px solid var(--line);
 }
 
@@ -242,7 +258,7 @@ button {
 .budget-item {
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: #fafafa;
+  background: var(--soft);
   padding: 10px 12px;
   display: grid;
   gap: 4px;
@@ -284,7 +300,7 @@ details summary {
 .detail-kpis article {
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: #fafafa;
+  background: var(--soft);
   padding: 10px;
 }
 
