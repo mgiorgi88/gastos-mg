@@ -147,6 +147,8 @@ body {
   background: var(--primary);
   color: var(--on-primary);
   border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary), 0 6px 14px rgba(17, 24, 39, 0.18);
+  transform: translateY(-1px);
 }
 
 .card {
@@ -212,6 +214,31 @@ button {
   border: 0;
   font-weight: 500;
   cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background-color 0.14s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.18);
+  font-weight: 600;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.btn-tertiary {
+  background: var(--soft);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  font-size: 0.94rem;
 }
 
 input::placeholder {
@@ -366,6 +393,12 @@ button:focus {
 
 .calendar-cell.selected {
   border-color: var(--primary);
+  background: linear-gradient(0deg, rgba(17, 24, 39, 0.10), rgba(17, 24, 39, 0.10)), var(--card);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+:root[data-theme="dark"] .calendar-cell.selected {
+  background: linear-gradient(0deg, rgba(203, 213, 225, 0.14), rgba(203, 213, 225, 0.14)), var(--card);
 }
 
 .calendar-cell.today {
@@ -535,6 +568,7 @@ button:focus {
 
 .quick-actions button {
   margin-top: 0;
+  border-radius: 999px;
 }
 
 .budget-list {

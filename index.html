@@ -19,8 +19,8 @@
       <h2>Mis Gastos</h2>
       <p class="muted">Elige como quieres usar la app.</p>
       <div class="auth-actions">
-        <button id="btn-gate-local" type="button">Entrar en modo local</button>
-        <button id="btn-gate-login" type="button" class="danger">Iniciar sesion / Crear cuenta</button>
+        <button id="btn-gate-local" type="button" class="btn-primary">Entrar en modo local</button>
+        <button id="btn-gate-login" type="button" class="btn-secondary">Iniciar sesion / Crear cuenta</button>
       </div>
     </div>
   </section>
@@ -60,13 +60,13 @@
         Recordarme en este dispositivo
       </label>
       <div class="auth-actions">
-        <button id="btn-signup" type="button">Crear cuenta</button>
-        <button id="btn-login" type="button">Iniciar sesion</button>
-        <button id="btn-recover" type="button">Recuperar contrasena</button>
-        <button id="btn-logout" type="button" class="danger">Cerrar sesion</button>
+        <button id="btn-signup" type="button" class="btn-secondary">Crear cuenta</button>
+        <button id="btn-login" type="button" class="btn-primary">Iniciar sesion</button>
+        <button id="btn-recover" type="button" class="btn-tertiary">Recuperar contrasena</button>
+        <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v55</p>
+      <p class="muted">Version: v56</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -74,7 +74,7 @@
       <h2>Cuenta</h2>
       <p class="muted">Conectado como <strong id="account-mini-email"></strong></p>
       <div class="auth-actions">
-        <button id="btn-logout-mini" type="button" class="danger">Cerrar sesion</button>
+        <button id="btn-logout-mini" type="button" class="danger btn-tertiary">Cerrar sesion</button>
       </div>
     </section>
 
@@ -89,10 +89,10 @@
         </label>
       </div>
       <div class="quick-actions">
-        <button id="btn-quick-super" type="button">Supermercado</button>
-        <button id="btn-quick-comp" type="button">Compras</button>
-        <button id="btn-quick-sal" type="button">Salidas</button>
-        <button id="btn-quick-gas" type="button">Gasolina</button>
+        <button id="btn-quick-super" type="button" class="btn-tertiary">Supermercado</button>
+        <button id="btn-quick-comp" type="button" class="btn-tertiary">Compras</button>
+        <button id="btn-quick-sal" type="button" class="btn-tertiary">Salidas</button>
+        <button id="btn-quick-gas" type="button" class="btn-tertiary">Gasolina</button>
       </div>
       <p class="muted">Tip: si dejas vacio el importe, usa el ultimo guardado de esa categoria.</p>
     </section>
@@ -134,13 +134,13 @@
             <input type="text" id="ars-result" readonly>
           </label>
           <div class="auth-actions">
-            <button id="btn-refresh-rate" type="button">Actualizar tipo de cambio</button>
-            <button id="btn-convert-ars" type="button">Calcular y usar en monto</button>
+            <button id="btn-refresh-rate" type="button" class="btn-secondary">Actualizar tipo de cambio</button>
+            <button id="btn-convert-ars" type="button" class="btn-secondary">Calcular y usar en monto</button>
           </div>
         </div>
         <div class="auth-actions">
-          <button id="btn-submit-tx" type="submit">Guardar</button>
-          <button id="btn-cancel-edit" type="button" class="danger" hidden>Cancelar edicion</button>
+          <button id="btn-submit-tx" type="submit" class="btn-primary">Guardar</button>
+          <button id="btn-cancel-edit" type="button" class="danger btn-tertiary" hidden>Cancelar edicion</button>
         </div>
         <p id="tx-form-mode" class="muted" hidden>Editando movimiento</p>
       </form>
@@ -213,7 +213,7 @@
           </label>
         </div>
         <div class="auth-actions">
-          <button id="btn-budget-save" type="button">Guardar presupuesto</button>
+          <button id="btn-budget-save" type="button" class="btn-secondary">Guardar presupuesto</button>
         </div>
         <ul id="budget-list" class="budget-list"></ul>
         <p class="muted">Si pones 0, se elimina el presupuesto de esa categoria.</p>
@@ -262,8 +262,8 @@
         </label>
       </div>
       <div class="auth-actions">
-        <button id="btn-detail-clear" type="button">Limpiar filtros</button>
-        <button id="btn-export-excel" type="button">Exportar Excel</button>
+        <button id="btn-detail-clear" type="button" class="btn-secondary">Limpiar filtros</button>
+        <button id="btn-export-excel" type="button" class="btn-secondary">Exportar Excel</button>
       </div>
       <div id="detail-kpis" class="detail-kpis">
         <article>

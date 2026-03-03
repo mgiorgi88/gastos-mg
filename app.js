@@ -140,6 +140,7 @@ let editingTxId = null;
 let calendarMonthDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 let selectedDayKey = null;
 let currentDetailRows = [];
+let lastQuickCategory = "Supermercado";
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -1207,6 +1208,8 @@ async function updateTransaction(id, tx) {
 }
 
 async function quickAddExpense(category) {
+  lastQuickCategory = category;
+  updateQuickAmountPlaceholder(category);
   const inputAmount = Number(quickAmountEl.value);
   const rememberedAmount = Number(quickAmounts[category] || 0);
 
@@ -1234,8 +1237,19 @@ async function quickAddExpense(category) {
   });
 
   saveQuickAmounts({ ...quickAmounts, [category]: amount });
+  updateQuickAmountPlaceholder(category);
   quickDetailEl.value = "";
   setStatus(`Carga rapida guardada: ${category} ${money(amount)}.`);
+}
+
+function updateQuickAmountPlaceholder(category = lastQuickCategory) {
+  if (!quickAmountEl) return;
+  const remembered = Number(quickAmounts[category] || 0);
+  if (remembered > 0) {
+    quickAmountEl.placeholder = `${remembered.toFixed(2)} (ultimo ${category.toLowerCase()})`;
+  } else {
+    quickAmountEl.placeholder = "0.00";
+  }
 }
 
 function updateArsConvertVisibility() {
@@ -1589,6 +1603,10 @@ btnQuickSuper.addEventListener("click", async () => quickAddExpense("Supermercad
 btnQuickComp.addEventListener("click", async () => quickAddExpense("Compras"));
 btnQuickSal.addEventListener("click", async () => quickAddExpense("Salidas"));
 btnQuickGas.addEventListener("click", async () => quickAddExpense("Gasolina"));
+btnQuickSuper.addEventListener("mouseenter", () => updateQuickAmountPlaceholder("Supermercado"));
+btnQuickComp.addEventListener("mouseenter", () => updateQuickAmountPlaceholder("Compras"));
+btnQuickSal.addEventListener("mouseenter", () => updateQuickAmountPlaceholder("Salidas"));
+btnQuickGas.addEventListener("mouseenter", () => updateQuickAmountPlaceholder("Gasolina"));
 
 if (btnConvertArs) {
   btnConvertArs.addEventListener("click", async () => {
@@ -1646,6 +1664,7 @@ btnBudgetSave.addEventListener("click", () => {
     if (rememberEl) rememberEl.checked = loadRememberMe();
     applyTheme(selectedTheme);
     setActiveTab(loadActiveTab());
+    updateQuickAmountPlaceholder();
     updateArsConvertVisibility();
     refresh();
     await initAuth();
