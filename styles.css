@@ -153,17 +153,6 @@ body {
   font-weight: 700;
 }
 
-.tab-btn.active::after {
-  content: "";
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: -3px;
-  height: 3px;
-  border-radius: 999px;
-  background: var(--primary);
-}
-
 .card {
   background: transparent;
   border: 0;
