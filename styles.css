@@ -78,6 +78,16 @@ body {
   color: var(--muted);
 }
 
+.cloud-indicator {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.cloud-indicator.ok {
+  color: var(--income);
+}
+
 .session-bar {
   margin-top: 10px;
   display: flex;

@@ -74,6 +74,7 @@ const btnLogin = document.getElementById("btn-login");
 const btnRecover = document.getElementById("btn-recover");
 const btnLogout = document.getElementById("btn-logout");
 const authStatusEl = document.getElementById("auth-status");
+const cloudIndicatorEl = document.getElementById("cloud-indicator");
 const authCardEl = document.getElementById("auth-card");
 const accountMiniEl = document.getElementById("account-mini");
 const accountMiniEmailEl = document.getElementById("account-mini-email");
@@ -824,6 +825,10 @@ function setAuthButtons() {
   if (authCardEl) authCardEl.hidden = logged || loadActiveTab() !== "mas";
   if (accountMiniEl) accountMiniEl.hidden = !logged || loadActiveTab() !== "mas";
   if (accountMiniEmailEl) accountMiniEmailEl.textContent = logged ? currentUser.email : "";
+  if (cloudIndicatorEl) {
+    cloudIndicatorEl.textContent = logged ? "Nube: Conectado" : "Nube: Local";
+    cloudIndicatorEl.classList.toggle("ok", logged);
+  }
   if (btnSignup) btnSignup.disabled = logged;
   if (btnLogin) btnLogin.disabled = logged;
   if (btnRecover) btnRecover.disabled = logged;
