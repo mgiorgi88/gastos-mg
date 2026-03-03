@@ -14,6 +14,16 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <section id="entry-gate" class="entry-gate" hidden>
+    <div class="entry-card">
+      <h2>Mis Gastos</h2>
+      <p class="muted">Elige como quieres usar la app.</p>
+      <div class="auth-actions">
+        <button id="btn-gate-local" type="button">Entrar en modo local</button>
+        <button id="btn-gate-login" type="button" class="danger">Iniciar sesion / Crear cuenta</button>
+      </div>
+    </div>
+  </section>
   <main class="app">
     <header class="hero">
       <div class="hero-head">
@@ -56,7 +66,7 @@
         <button id="btn-logout" type="button" class="danger">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v53</p>
+      <p class="muted">Version: v54</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 

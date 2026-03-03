@@ -14,17 +14,17 @@
 }
 
 :root[data-theme="dark"] {
-  --bg: #0b0f14;
-  --card: #121821;
-  --ink: #e5e7eb;
-  --muted: #9ca3af;
-  --primary: #d1d5db;
-  --on-primary: #0b0f14;
-  --danger: #e5e7eb;
-  --line: #2a3342;
-  --soft: #0f141c;
-  --income: #4ade80;
-  --expense: #fb7185;
+  --bg: #0f1115;
+  --card: #161b23;
+  --ink: #e6eaf2;
+  --muted: #aab3c2;
+  --primary: #7dd3c7;
+  --on-primary: #0f1115;
+  --danger: #e6eaf2;
+  --line: #2b3443;
+  --soft: #131922;
+  --income: #52d38a;
+  --expense: #ff8a9a;
   color-scheme: dark;
 }
 
@@ -42,6 +42,29 @@ body {
   font-family: var(--font-main);
   background: var(--bg);
   color: var(--ink);
+}
+
+.entry-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(15, 17, 21, 0.78);
+  backdrop-filter: blur(3px);
+}
+
+.entry-card {
+  width: min(460px, 100%);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.entry-card h2 {
+  margin: 0 0 6px;
 }
 
 .app {

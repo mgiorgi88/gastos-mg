@@ -81,6 +81,9 @@ const authCardEl = document.getElementById("auth-card");
 const accountMiniEl = document.getElementById("account-mini");
 const accountMiniEmailEl = document.getElementById("account-mini-email");
 const btnLogoutMini = document.getElementById("btn-logout-mini");
+const entryGateEl = document.getElementById("entry-gate");
+const btnGateLocal = document.getElementById("btn-gate-local");
+const btnGateLogin = document.getElementById("btn-gate-login");
 const tabBtns = document.querySelectorAll(".tab-btn");
 const tabPanels = document.querySelectorAll("[data-panel]");
 
@@ -874,6 +877,12 @@ function setAuthButtons() {
   if (emailEl) emailEl.disabled = logged;
   if (passwordEl) passwordEl.disabled = logged;
   if (btnLogoutMini) btnLogoutMini.disabled = !logged;
+  updateEntryGate();
+}
+
+function updateEntryGate() {
+  if (!entryGateEl) return;
+  entryGateEl.hidden = Boolean(currentUser);
 }
 
 async function sbFetch(path, options = {}) {
@@ -1102,6 +1111,7 @@ async function logout() {
   currentUser = null;
   txData = loadTx();
   setAuthButtons();
+  updateEntryGate();
   refresh();
   setStatus("Sesion cerrada. Modo local activo.");
 }
@@ -1494,6 +1504,22 @@ if (btnCancelEdit) {
   });
 }
 
+if (btnGateLocal) {
+  btnGateLocal.addEventListener("click", () => {
+    if (entryGateEl) entryGateEl.hidden = true;
+    setActiveTab("cargar");
+    setStatus("Modo local activo.");
+  });
+}
+
+if (btnGateLogin) {
+  btnGateLogin.addEventListener("click", () => {
+    if (entryGateEl) entryGateEl.hidden = true;
+    setActiveTab("mas");
+    if (emailEl) emailEl.focus();
+  });
+}
+
 if (detailTypeEl) detailTypeEl.addEventListener("change", refresh);
 if (detailCategoryEl) detailCategoryEl.addEventListener("change", refresh);
 if (detailFromEl) detailFromEl.addEventListener("change", refresh);
@@ -1623,6 +1649,7 @@ btnBudgetSave.addEventListener("click", () => {
     updateArsConvertVisibility();
     refresh();
     await initAuth();
+    updateEntryGate();
   } catch (err) {
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
