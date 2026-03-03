@@ -8,6 +8,7 @@ const BUDGETS_KEY = "mis_gastos_budgets_v1";
 const ARS_RATE_KEY = "mis_gastos_ars_rate_v1";
 const SPREAD_PCT_KEY = "mis_gastos_spread_pct_v1";
 const THEME_KEY = "mis_gastos_theme_v1";
+const ACTIVE_TAB_KEY = "mis_gastos_active_tab_v1";
 const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
 
 const SUPABASE_URL = "https://gwtioxerklmzjssweqgm.supabase.co";
@@ -77,6 +78,8 @@ const authCardEl = document.getElementById("auth-card");
 const sessionBarEl = document.getElementById("session-bar");
 const sessionEmailEl = document.getElementById("session-email");
 const btnLogoutMini = document.getElementById("btn-logout-mini");
+const tabBtns = document.querySelectorAll(".tab-btn");
+const tabPanels = document.querySelectorAll("[data-panel]");
 
 const CATEGORIAS = {
   Gasto: [
@@ -141,6 +144,32 @@ function money(value) {
   };
   const locale = localeMap[selectedCurrency] || "es-ES";
   return new Intl.NumberFormat(locale, { style: "currency", currency: selectedCurrency }).format(value);
+}
+
+function loadActiveTab() {
+  const stored = localStorage.getItem(ACTIVE_TAB_KEY) || "cargar";
+  return ["cargar", "resumen", "mas"].includes(stored) ? stored : "cargar";
+}
+
+function saveActiveTab(tab) {
+  localStorage.setItem(ACTIVE_TAB_KEY, tab);
+}
+
+function setActiveTab(tab) {
+  saveActiveTab(tab);
+  tabBtns.forEach((btn) => {
+    const active = btn.getAttribute("data-tab") === tab;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-selected", active ? "true" : "false");
+  });
+  tabPanels.forEach((panel) => {
+    const show = panel.getAttribute("data-panel") === tab;
+    panel.hidden = !show;
+  });
+  if (authCardEl) {
+    const logged = Boolean(currentUser);
+    authCardEl.hidden = logged || tab !== "mas";
+  }
 }
 
 function setStatus(msg) {
@@ -788,7 +817,7 @@ function exportFilteredToExcel() {
 
 function setAuthButtons() {
   const logged = Boolean(currentUser);
-  if (authCardEl) authCardEl.hidden = logged;
+  if (authCardEl) authCardEl.hidden = logged || loadActiveTab() !== "mas";
   if (sessionBarEl) sessionBarEl.hidden = !logged;
   if (sessionEmailEl) sessionEmailEl.textContent = logged ? `Conectado como ${currentUser.email}` : "";
   if (btnSignup) btnSignup.disabled = logged;
@@ -1353,6 +1382,12 @@ if (themeEl) {
 tipoEl.addEventListener("change", () => updateCategoryOptions(tipoEl.value));
 tipoEl.addEventListener("change", updateArsConvertVisibility);
 categoriaEl.addEventListener("change", updateArsConvertVisibility);
+tabBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const tab = btn.getAttribute("data-tab") || "cargar";
+    setActiveTab(tab);
+  });
+});
 
 lista.addEventListener("click", async (e) => {
   const btn = e.target.closest("button[data-id][data-action]");
@@ -1527,6 +1562,7 @@ btnBudgetSave.addEventListener("click", () => {
     if (currencyEl) currencyEl.value = selectedCurrency;
     if (themeEl) themeEl.value = selectedTheme;
     applyTheme(selectedTheme);
+    setActiveTab(loadActiveTab());
     updateArsConvertVisibility();
     refresh();
     await initAuth();

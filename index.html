@@ -32,7 +32,13 @@
       </div>
     </header>
 
-    <section id="auth-card" class="card">
+    <nav class="tab-nav" aria-label="Secciones">
+      <button type="button" class="tab-btn active" data-tab="cargar">Cargar</button>
+      <button type="button" class="tab-btn" data-tab="resumen">Resumen</button>
+      <button type="button" class="tab-btn" data-tab="mas">Mas</button>
+    </nav>
+
+    <section id="auth-card" class="card" data-panel="mas">
       <h2>Cuenta</h2>
       <div class="grid">
         <label>Email
@@ -49,11 +55,11 @@
         <button id="btn-logout" type="button" class="danger">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v47</p>
+      <p class="muted">Version: v48</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
-    <section class="card">
+    <section class="card" data-panel="cargar">
       <h2>Carga rapida</h2>
       <div class="grid">
         <label>Importe rapido
@@ -72,7 +78,7 @@
       <p class="muted">Tip: si dejas vacio el importe, usa el ultimo guardado de esa categoria.</p>
     </section>
 
-    <section class="card">
+    <section class="card" data-panel="cargar">
       <h2>Nueva transaccion</h2>
       <form id="tx-form">
         <div class="grid">
@@ -121,7 +127,7 @@
       </form>
     </section>
 
-    <section class="card">
+    <section class="card" data-panel="resumen">
       <h2>Resumen</h2>
       <div class="grid">
         <label>Filtrar por mes
@@ -151,7 +157,7 @@
       </div>
     </section>
 
-    <section class="card">
+    <section class="card" data-panel="resumen">
       <h2>Comparativa mensual</h2>
       <p id="cmp-title" class="muted"></p>
       <div class="detail-kpis">
@@ -170,12 +176,12 @@
       </div>
     </section>
 
-    <section class="card">
+    <section class="card" data-panel="resumen">
       <h2>Ultimos 3 meses cerrados</h2>
       <div id="trend-3m" class="trend-grid"></div>
     </section>
 
-    <section class="card">
+    <section class="card" data-panel="mas">
       <h2>Presupuesto mensual</h2>
       <details id="budget-panel">
         <summary>Ver y editar presupuesto</summary>
@@ -195,7 +201,7 @@
       </details>
     </section>
 
-    <section class="card">
+    <section class="card" data-panel="mas">
       <h2>Movimientos por dia</h2>
       <div class="calendar-panel">
         <div class="calendar-head">
