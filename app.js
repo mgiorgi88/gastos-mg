@@ -173,6 +173,11 @@ function setActiveTab(tab) {
   tabPanels.forEach((panel) => {
     const show = panel.getAttribute("data-panel") === tab;
     panel.hidden = !show;
+    panel.classList.remove("panel-enter");
+    if (show) {
+      void panel.offsetWidth;
+      panel.classList.add("panel-enter");
+    }
   });
   if (authCardEl) {
     const logged = Boolean(currentUser);
@@ -560,13 +565,14 @@ function renderCalendar(rows) {
     const rowsForDay = rows.filter((x) => String(x.fecha).slice(0, 10) === dateKey);
     const hasIncome = rowsForDay.some((x) => x.tipo === "Ingreso");
     const hasExpense = rowsForDay.some((x) => x.tipo === "Gasto");
+    const hasData = hasIncome || hasExpense;
     const isOutMonth = !dateKey.startsWith(monthKey);
     const isToday = dateKey === todayKey;
     const isSelected = dateKey === selectedDayKey;
 
     const cell = document.createElement("button");
     cell.type = "button";
-    cell.className = `calendar-cell${isOutMonth ? " out-month" : ""}${isToday ? " today" : ""}${isSelected ? " selected" : ""}`;
+    cell.className = `calendar-cell${isOutMonth ? " out-month" : ""}${isToday ? " today" : ""}${isSelected ? " selected" : ""}${hasData ? " has-data" : " no-data"}`;
     cell.setAttribute("data-date", dateKey);
     cell.innerHTML = `
       <small>${date.getDate()}</small>
