@@ -75,8 +75,8 @@ const btnRecover = document.getElementById("btn-recover");
 const btnLogout = document.getElementById("btn-logout");
 const authStatusEl = document.getElementById("auth-status");
 const authCardEl = document.getElementById("auth-card");
-const sessionBarEl = document.getElementById("session-bar");
-const sessionEmailEl = document.getElementById("session-email");
+const accountMiniEl = document.getElementById("account-mini");
+const accountMiniEmailEl = document.getElementById("account-mini-email");
 const btnLogoutMini = document.getElementById("btn-logout-mini");
 const tabBtns = document.querySelectorAll(".tab-btn");
 const tabPanels = document.querySelectorAll("[data-panel]");
@@ -169,6 +169,10 @@ function setActiveTab(tab) {
   if (authCardEl) {
     const logged = Boolean(currentUser);
     authCardEl.hidden = logged || tab !== "mas";
+  }
+  if (accountMiniEl) {
+    const logged = Boolean(currentUser);
+    accountMiniEl.hidden = !logged || tab !== "mas";
   }
 }
 
@@ -818,8 +822,8 @@ function exportFilteredToExcel() {
 function setAuthButtons() {
   const logged = Boolean(currentUser);
   if (authCardEl) authCardEl.hidden = logged || loadActiveTab() !== "mas";
-  if (sessionBarEl) sessionBarEl.hidden = !logged;
-  if (sessionEmailEl) sessionEmailEl.textContent = logged ? `Conectado como ${currentUser.email}` : "";
+  if (accountMiniEl) accountMiniEl.hidden = !logged || loadActiveTab() !== "mas";
+  if (accountMiniEmailEl) accountMiniEmailEl.textContent = logged ? currentUser.email : "";
   if (btnSignup) btnSignup.disabled = logged;
   if (btnLogin) btnLogin.disabled = logged;
   if (btnRecover) btnRecover.disabled = logged;

@@ -26,10 +26,6 @@
         </label>
       </div>
       <p>Registra ingresos y gastos en segundos.</p>
-      <div id="session-bar" class="session-bar" hidden>
-        <span id="session-email"></span>
-        <button id="btn-logout-mini" type="button" class="danger">Cerrar sesion</button>
-      </div>
     </header>
 
     <nav class="tab-nav" aria-label="Secciones">
@@ -55,8 +51,16 @@
         <button id="btn-logout" type="button" class="danger">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v50</p>
+      <p class="muted">Version: v51</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
+    </section>
+
+    <section id="account-mini" class="card" data-panel="mas" hidden>
+      <h2>Cuenta</h2>
+      <p class="muted">Conectado como <strong id="account-mini-email"></strong></p>
+      <div class="auth-actions">
+        <button id="btn-logout-mini" type="button" class="danger">Cerrar sesion</button>
+      </div>
     </section>
 
     <section class="card" data-panel="cargar">
