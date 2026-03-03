@@ -4,7 +4,7 @@
   --card: #ffffff;
   --ink: #111827;
   --muted: #6b7280;
-  --primary: #111827;
+  --primary: #3b82f6;
   --on-primary: #ffffff;
   --danger: #374151;
   --line: #e5e7eb;
@@ -18,8 +18,8 @@
   --card: #161b23;
   --ink: #e6eaf2;
   --muted: #aab3c2;
-  --primary: #cbd5e1;
-  --on-primary: #0f1115;
+  --primary: #3b82f6;
+  --on-primary: #ffffff;
   --danger: #e6eaf2;
   --line: #2b3443;
   --soft: #131922;
@@ -147,7 +147,7 @@ body {
   background: var(--primary);
   color: var(--on-primary);
   border-color: var(--primary);
-  box-shadow: 0 0 0 1px var(--primary), 0 6px 14px rgba(17, 24, 39, 0.18);
+  box-shadow: 0 0 0 1px var(--primary), 0 6px 14px rgba(59, 130, 246, 0.32);
   transform: translateY(-1px);
 }
 
@@ -214,7 +214,7 @@ button {
   border: 0;
   font-weight: 500;
   cursor: pointer;
-  transition: transform 0.14s ease, box-shadow 0.14s ease, background-color 0.14s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 button:hover {
@@ -224,14 +224,14 @@ button:hover {
 .btn-primary {
   background: var(--primary);
   color: var(--on-primary);
-  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.18);
+  box-shadow: 0 8px 18px rgba(59, 130, 246, 0.28);
   font-weight: 600;
 }
 
 .btn-secondary {
   background: transparent;
-  color: var(--ink);
-  border: 1px solid var(--line);
+  color: var(--primary);
+  border: 2px solid var(--primary);
 }
 
 .btn-tertiary {
@@ -239,6 +239,20 @@ button:hover {
   color: var(--muted);
   border: 1px solid var(--line);
   font-size: 0.94rem;
+}
+
+.btn-secondary:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.btn-primary.saving {
+  animation: savePulse 0.24s ease;
+}
+
+@keyframes savePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.97); }
+  100% { transform: scale(1); }
 }
 
 input::placeholder {
@@ -250,11 +264,12 @@ select:focus,
 button:focus {
   outline: 2px solid var(--primary);
   outline-offset: 1px;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
 }
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   margin-top: 10px;
 }
@@ -273,6 +288,15 @@ button:focus {
 
 .stats strong {
   font-size: 1.1rem;
+}
+
+.stats article:last-child {
+  order: -1;
+  grid-column: 1 / -1;
+}
+
+.stats article:last-child strong {
+  font-size: 1.45rem;
 }
 
 .trend-grid {
@@ -380,6 +404,11 @@ button:focus {
   color: var(--ink);
   font-weight: 500;
   margin-top: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.calendar-cell:hover {
+  transform: translateY(-1px);
 }
 
 .calendar-cell small {
@@ -393,12 +422,17 @@ button:focus {
 
 .calendar-cell.selected {
   border-color: var(--primary);
-  background: linear-gradient(0deg, rgba(17, 24, 39, 0.10), rgba(17, 24, 39, 0.10)), var(--card);
-  box-shadow: inset 0 0 0 1px var(--primary);
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--primary), 0 8px 16px rgba(59, 130, 246, 0.35);
 }
 
 :root[data-theme="dark"] .calendar-cell.selected {
-  background: linear-gradient(0deg, rgba(203, 213, 225, 0.14), rgba(203, 213, 225, 0.14)), var(--card);
+  background: var(--primary);
+}
+
+.calendar-cell.selected small {
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .calendar-cell.today {
@@ -422,11 +456,11 @@ button:focus {
 }
 
 .dot.income {
-  background: #16a34a;
+  background: #22c55e;
 }
 
 .dot.expense {
-  background: #dc2626;
+  background: #ef4444;
 }
 
 .dot.today {
@@ -571,6 +605,18 @@ button:focus {
   border-radius: 999px;
 }
 
+.quick-actions .btn-tertiary {
+  background: #374151;
+  color: #f3f4f6;
+  border-color: #374151;
+}
+
+:root[data-theme="dark"] .quick-actions .btn-tertiary {
+  background: #1f2937;
+  color: #e5e7eb;
+  border-color: #374151;
+}
+
 .budget-list {
   list-style: none;
   margin: 12px 0 0 0;
@@ -626,6 +672,12 @@ details summary {
   border-radius: 10px;
   background: var(--soft);
   padding: 10px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.detail-kpis article:hover {
+  transform: translateY(-1px);
+  border-color: var(--primary);
 }
 
 .detail-kpis span {

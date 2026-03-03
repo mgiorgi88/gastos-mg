@@ -651,6 +651,14 @@ function resetTransactionForm() {
   setEditingState(null);
 }
 
+function animatePrimarySave() {
+  if (!btnSubmitTx) return;
+  btnSubmitTx.classList.remove("saving");
+  void btnSubmitTx.offsetWidth;
+  btnSubmitTx.classList.add("saving");
+  setTimeout(() => btnSubmitTx.classList.remove("saving"), 260);
+}
+
 function renderLast3Months(all) {
   if (!trend3mEl) return;
 
@@ -1403,6 +1411,7 @@ form.addEventListener("submit", async (e) => {
       detalle
     });
     if (ok) {
+      animatePrimarySave();
       setStatus("Movimiento editado correctamente.");
       resetTransactionForm();
     }
@@ -1418,6 +1427,7 @@ form.addEventListener("submit", async (e) => {
     detalle
   });
 
+  animatePrimarySave();
   resetTransactionForm();
 });
 
