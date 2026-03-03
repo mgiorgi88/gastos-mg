@@ -140,6 +140,7 @@ body {
   position: relative;
   margin-top: 0;
   border: 1px solid var(--line);
+  border-radius: 12px;
   background: var(--soft);
   color: var(--ink);
   opacity: 0.86;
