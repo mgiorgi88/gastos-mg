@@ -9,6 +9,7 @@ const ARS_RATE_KEY = "mis_gastos_ars_rate_v1";
 const SPREAD_PCT_KEY = "mis_gastos_spread_pct_v1";
 const THEME_KEY = "mis_gastos_theme_v1";
 const ACTIVE_TAB_KEY = "mis_gastos_active_tab_v1";
+const REMEMBER_ME_KEY = "mis_gastos_remember_me_v1";
 const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
 
 const SUPABASE_URL = "https://gwtioxerklmzjssweqgm.supabase.co";
@@ -69,6 +70,7 @@ const balanceEl = document.getElementById("balance");
 
 const emailEl = document.getElementById("auth-email");
 const passwordEl = document.getElementById("auth-password");
+const rememberEl = document.getElementById("auth-remember");
 const btnSignup = document.getElementById("btn-signup");
 const btnLogin = document.getElementById("btn-login");
 const btnRecover = document.getElementById("btn-recover");
@@ -123,6 +125,7 @@ const CATEGORY_ICONS = {
 let currentUser = null;
 let txData = [];
 let hasUserChosenMonth = false;
+let sessionPersistMode = "local";
 let authSession = loadSession();
 let quickAmounts = loadQuickAmounts();
 let selectedCurrency = loadCurrency();
@@ -272,20 +275,55 @@ function saveCurrency(currency) {
 
 function loadSession() {
   try {
-    return JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
+    const local = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
+    if (local?.access_token) {
+      sessionPersistMode = "local";
+      return local;
+    }
+    const session = JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null");
+    if (session?.access_token) {
+      sessionPersistMode = "session";
+      return session;
+    }
+    sessionPersistMode = "local";
+    return null;
   } catch {
+    sessionPersistMode = "local";
     return null;
   }
 }
 
+function loadRememberMe() {
+  const stored = localStorage.getItem(REMEMBER_ME_KEY);
+  if (stored === null) return true;
+  return stored === "1";
+}
+
+function saveRememberMe(enabled) {
+  localStorage.setItem(REMEMBER_ME_KEY, enabled ? "1" : "0");
+}
+
 function saveSession(session) {
   authSession = session;
-  localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  if (sessionPersistMode === "session") {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    localStorage.removeItem(SESSION_KEY);
+  } else {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    sessionStorage.removeItem(SESSION_KEY);
+  }
 }
 
 function clearSession() {
   authSession = null;
   localStorage.removeItem(SESSION_KEY);
+  sessionStorage.removeItem(SESSION_KEY);
+}
+
+function applyRememberPreference() {
+  const remember = rememberEl ? Boolean(rememberEl.checked) : true;
+  saveRememberMe(remember);
+  sessionPersistMode = remember ? "local" : "session";
 }
 
 function txSignature(tx) {
@@ -990,6 +1028,7 @@ async function signup() {
   }
 
   if (data?.access_token) {
+    applyRememberPreference();
     saveSession(data);
     currentUser = data.user || null;
     setAuthButtons();
@@ -1023,6 +1062,7 @@ async function login() {
     return;
   }
 
+  applyRememberPreference();
   saveSession(data);
   currentUser = data.user || null;
   setAuthButtons();
@@ -1388,6 +1428,13 @@ if (themeEl) {
   });
 }
 
+if (rememberEl) {
+  rememberEl.addEventListener("change", () => {
+    applyRememberPreference();
+    if (authSession?.access_token) saveSession(authSession);
+  });
+}
+
 tipoEl.addEventListener("change", () => updateCategoryOptions(tipoEl.value));
 tipoEl.addEventListener("change", updateArsConvertVisibility);
 categoriaEl.addEventListener("change", updateArsConvertVisibility);
@@ -1570,6 +1617,7 @@ btnBudgetSave.addEventListener("click", () => {
     txData = loadTx();
     if (currencyEl) currencyEl.value = selectedCurrency;
     if (themeEl) themeEl.value = selectedTheme;
+    if (rememberEl) rememberEl.checked = loadRememberMe();
     applyTheme(selectedTheme);
     setActiveTab(loadActiveTab());
     updateArsConvertVisibility();
