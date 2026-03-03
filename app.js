@@ -84,6 +84,7 @@ const btnLogoutMini = document.getElementById("btn-logout-mini");
 const entryGateEl = document.getElementById("entry-gate");
 const btnGateLocal = document.getElementById("btn-gate-local");
 const btnGateLogin = document.getElementById("btn-gate-login");
+const toastEl = document.getElementById("toast");
 const tabBtns = document.querySelectorAll(".tab-btn");
 const tabPanels = document.querySelectorAll("[data-panel]");
 
@@ -141,6 +142,7 @@ let calendarMonthDate = new Date(new Date().getFullYear(), new Date().getMonth()
 let selectedDayKey = null;
 let currentDetailRows = [];
 let lastQuickCategory = "Supermercado";
+let toastTimer = null;
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -196,6 +198,20 @@ function setStatus(msg) {
   } catch {
     // Ignore console issues.
   }
+}
+
+function showToast(message) {
+  if (!toastEl) return;
+  toastEl.textContent = message;
+  toastEl.hidden = false;
+  toastEl.classList.add("show");
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toastEl.classList.remove("show");
+    setTimeout(() => {
+      toastEl.hidden = true;
+    }, 190);
+  }, 1500);
 }
 
 function loadTx() {
@@ -557,6 +573,9 @@ function renderCalendar(rows) {
   const todayKey = toDateKeyLocal(new Date());
 
   calTitleEl.textContent = formatMonthTitle(calendarMonthDate);
+  calGridEl.classList.remove("month-enter");
+  void calGridEl.offsetWidth;
+  calGridEl.classList.add("month-enter");
   calGridEl.innerHTML = "";
 
   for (let i = 0; i < 42; i += 1) {
@@ -1254,6 +1273,7 @@ async function quickAddExpense(category) {
   updateQuickAmountPlaceholder(category);
   quickDetailEl.value = "";
   setStatus(`Carga rapida guardada: ${category} ${money(amount)}.`);
+  showToast(`Guardado: ${category}`);
 }
 
 function updateQuickAmountPlaceholder(category = lastQuickCategory) {
@@ -1383,6 +1403,7 @@ async function duplicateTransaction(id) {
     detalle: base.detalle || ""
   });
   setStatus(`Movimiento duplicado en fecha ${today}.`);
+  showToast("Movimiento duplicado");
 }
 
 async function disableServiceWorkerCache() {
@@ -1419,6 +1440,7 @@ form.addEventListener("submit", async (e) => {
     if (ok) {
       animatePrimarySave();
       setStatus("Movimiento editado correctamente.");
+      showToast("Cambios guardados");
       resetTransactionForm();
     }
     return;
@@ -1434,6 +1456,7 @@ form.addEventListener("submit", async (e) => {
   });
 
   animatePrimarySave();
+  showToast("Movimiento guardado");
   resetTransactionForm();
 });
 

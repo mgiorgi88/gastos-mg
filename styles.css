@@ -392,6 +392,21 @@ button:focus {
   margin-top: 8px;
 }
 
+.calendar-grid.month-enter {
+  animation: monthFade 0.2s ease;
+}
+
+@keyframes monthFade {
+  from {
+    opacity: 0.35;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .calendar-weekdays span {
   text-align: center;
   color: var(--muted);
@@ -725,6 +740,28 @@ details summary {
 .detail-kpis span {
   color: var(--muted);
   display: block;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 86px;
+  transform: translateX(-50%);
+  z-index: 120;
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 10px 14px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-2px);
 }
 
 @media (min-width: 901px) {
