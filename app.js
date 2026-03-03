@@ -530,6 +530,7 @@ function renderSelectedDayRows(rows) {
         </div>
         <div class="item-actions">
           <strong class="monto ${String(item.tipo).toLowerCase()}">${item.tipo === "Gasto" ? "-" : "+"}${money(Number(item.monto))}</strong>
+          <button class="danger" data-action="duplicate" data-id="${item.id}" type="button">Duplicar</button>
           <button class="danger" data-action="edit" data-id="${item.id}" type="button">Editar</button>
           <button class="danger" data-action="delete" data-id="${item.id}" type="button">Eliminar</button>
         </div>
@@ -1249,6 +1250,25 @@ async function deleteTransaction(id) {
   await loadCloudData();
 }
 
+async function duplicateTransaction(id) {
+  const base = txData.find((x) => String(x.id) === String(id));
+  if (!base) {
+    setStatus("No se encontro el movimiento para duplicar.");
+    return;
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  await addTransaction({
+    id: crypto.randomUUID(),
+    fecha: today,
+    tipo: base.tipo,
+    monto: Number(base.monto),
+    categoria: base.categoria,
+    detalle: base.detalle || ""
+  });
+  setStatus(`Movimiento duplicado en fecha ${today}.`);
+}
+
 async function disableServiceWorkerCache() {
   if (!("serviceWorker" in navigator)) return;
   try {
@@ -1342,6 +1362,10 @@ lista.addEventListener("click", async (e) => {
 
   if (action === "edit") {
     startEditTransaction(id);
+    return;
+  }
+  if (action === "duplicate") {
+    await duplicateTransaction(id);
     return;
   }
   if (action === "delete") {
