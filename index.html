@@ -60,7 +60,7 @@
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v79</p>
+      <p class="muted">Version: v80</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -181,21 +181,28 @@
     </section>
 
     <section class="card" data-panel="resumen">
-      <h2>Evolucion ultimos 6 meses</h2>
-      <p id="chart-monthly-insight" class="muted">Sin datos suficientes.</p>
-      <div class="chart-wrap">
-        <canvas id="chart-monthly" aria-label="Ingresos y gastos por mes"></canvas>
-      </div>
-      <div id="chart-monthly-legend" class="chart-legend"></div>
-    </section>
+      <details id="analysis-panel" class="analysis-panel">
+        <summary>Ver analisis detallado</summary>
+        <div class="analysis-body">
+          <div class="analysis-chart-block">
+            <h2>Evolucion mensual de ingresos y gastos</h2>
+            <p id="chart-monthly-insight" class="muted">Sin datos suficientes.</p>
+            <div class="chart-wrap">
+              <canvas id="chart-monthly" aria-label="Ingresos y gastos por mes"></canvas>
+            </div>
+            <div id="chart-monthly-legend" class="chart-legend"></div>
+          </div>
 
-    <section class="card" data-panel="resumen">
-      <h2>Distribucion de gastos del mes</h2>
-      <p id="chart-category-insight" class="muted">Sin gastos para el mes seleccionado.</p>
-      <div class="chart-wrap donut-wrap">
-        <canvas id="chart-category" aria-label="Distribucion de gastos por categoria"></canvas>
-      </div>
-      <div id="chart-category-legend" class="chart-legend"></div>
+          <div class="analysis-chart-block">
+            <h2>Distribucion de gastos del mes</h2>
+            <p id="chart-category-insight" class="muted">Sin gastos para el mes seleccionado.</p>
+            <div class="chart-wrap donut-wrap">
+              <canvas id="chart-category" aria-label="Distribucion de gastos por categoria"></canvas>
+            </div>
+            <div id="chart-category-legend" class="chart-legend"></div>
+          </div>
+        </div>
+      </details>
     </section>
 
     <section class="card" data-panel="resumen">

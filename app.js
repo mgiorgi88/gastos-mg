@@ -45,6 +45,7 @@ const chartMonthlyLegendEl = document.getElementById("chart-monthly-legend");
 const chartCategoryEl = document.getElementById("chart-category");
 const chartCategoryInsightEl = document.getElementById("chart-category-insight");
 const chartCategoryLegendEl = document.getElementById("chart-category-legend");
+const analysisPanelEl = document.getElementById("analysis-panel");
 const budgetCategoryEl = document.getElementById("budget-category");
 const budgetAmountEl = document.getElementById("budget-amount");
 const btnBudgetSave = document.getElementById("btn-budget-save");
@@ -520,6 +521,7 @@ function getRecentMonthKeys(count = 6) {
 
 function drawMonthlyIncomeExpenseChart(all) {
   if (!chartMonthlyEl) return;
+  if (analysisPanelEl && !analysisPanelEl.open) return;
 
   const width = chartMonthlyEl.clientWidth || 300;
   const height = chartMonthlyEl.clientHeight || 250;
@@ -547,20 +549,20 @@ function drawMonthlyIncomeExpenseChart(all) {
   const chartH = bottom - top;
   const groupW = chartW / rows.length;
   const barW = Math.min(14, (groupW - 8) / 2);
-  const gridColor = getCssVar("--line", "#e5e7eb");
+  const gridColor = selectedTheme === "dark" ? "rgba(148, 163, 184, 0.18)" : "rgba(100, 116, 139, 0.22)";
 
   ctx.strokeStyle = gridColor;
   ctx.lineWidth = 1;
-  for (let i = 0; i <= 4; i += 1) {
-    const y = top + (chartH * i) / 4;
+  for (let i = 0; i <= 3; i += 1) {
+    const y = top + (chartH * i) / 3;
     ctx.beginPath();
     ctx.moveTo(left, y);
     ctx.lineTo(right, y);
     ctx.stroke();
   }
 
-  const incomeColor = "#34d399";
-  const expenseColor = "#f87171";
+  const incomeColor = "#22c55e";
+  const expenseColor = "#ef4444";
   const textColor = getCssVar("--muted", "#6b7280");
   const fontFamily = getFontFamily();
   ctx.font = `11px ${fontFamily}`;
@@ -585,8 +587,11 @@ function drawMonthlyIncomeExpenseChart(all) {
   const prev = rows[rows.length - 2];
   if (chartMonthlyInsightEl && last && prev) {
     const delta = last.gastos - prev.gastos;
-    const pct = prev.gastos > 0 ? `${((delta / prev.gastos) * 100).toFixed(1)}%` : "n/a";
-    chartMonthlyInsightEl.textContent = `Gastos ${delta >= 0 ? "+" : ""}${money(delta)} (${pct}) vs mes anterior.`;
+    const pct = prev.gastos > 0 ? `${Math.abs((delta / prev.gastos) * 100).toFixed(1)}%` : "n/a";
+    const trendWord = delta > 0 ? "subieron" : delta < 0 ? "bajaron" : "se mantuvieron";
+    const balanceRows = rows.map((r) => ({ key: r.key, balance: r.ingresos - r.gastos }));
+    const best = balanceRows.reduce((acc, x) => (x.balance > acc.balance ? x : acc), balanceRows[0]);
+    chartMonthlyInsightEl.textContent = `Gastos ${trendWord} ${money(Math.abs(delta))} (${pct}) vs mes anterior. Mejor balance reciente: ${monthLabel(best.key)} (${money(best.balance)}).`;
   }
 
   if (chartMonthlyLegendEl) {
@@ -599,6 +604,7 @@ function drawMonthlyIncomeExpenseChart(all) {
 
 function drawCategoryDonutChart(all, selectedMonth) {
   if (!chartCategoryEl) return;
+  if (analysisPanelEl && !analysisPanelEl.open) return;
 
   const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
   const byCategory = {};
@@ -650,6 +656,7 @@ function drawCategoryDonutChart(all, selectedMonth) {
 
   const [topCat, topVal] = entries[0];
   const share = ((topVal / total) * 100).toFixed(1);
+  const top3Share = ((topEntries.slice(0, 3).reduce((acc, [, v]) => acc + v, 0) / total) * 100).toFixed(1);
   const fontFamily = getFontFamily();
   ctx.fillStyle = getCssVar("--ink", "#111827");
   ctx.textAlign = "center";
@@ -660,7 +667,7 @@ function drawCategoryDonutChart(all, selectedMonth) {
   ctx.fillText(topCat, cx, cy + 14);
 
   if (chartCategoryInsightEl) {
-    chartCategoryInsightEl.textContent = `${topCat} es tu categoria principal este mes (${share}%).`;
+    chartCategoryInsightEl.textContent = `${topCat} es tu categoria principal este mes (${share}%). Las 3 primeras categorias concentran ${top3Share}% del gasto.`;
   }
 
   if (chartCategoryLegendEl) {
@@ -1687,6 +1694,14 @@ if (themeEl) {
   themeEl.addEventListener("change", () => {
     saveTheme(themeEl.value);
     applyTheme(selectedTheme);
+    refresh();
+  });
+}
+
+if (analysisPanelEl) {
+  analysisPanelEl.open = window.innerWidth > 600;
+  analysisPanelEl.addEventListener("toggle", () => {
+    if (analysisPanelEl.open) requestAnimationFrame(() => refresh());
   });
 }
 

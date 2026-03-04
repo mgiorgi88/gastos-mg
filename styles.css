@@ -318,7 +318,8 @@ button:focus {
   background: transparent;
   padding: 2px;
   width: min(100%, 740px);
-  aspect-ratio: 16 / 7;
+  aspect-ratio: 16 / 8;
+  max-height: 300px;
 }
 
 .chart-wrap canvas {
@@ -330,6 +331,50 @@ button:focus {
 .donut-wrap {
   width: min(100%, 360px);
   aspect-ratio: 1 / 1;
+  max-height: 320px;
+}
+
+.analysis-panel {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--soft);
+  padding: 8px 10px;
+}
+
+.analysis-panel summary {
+  list-style: none;
+  margin: 0;
+  padding: 2px 0;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.analysis-panel summary::-webkit-details-marker {
+  display: none;
+}
+
+.analysis-panel summary::after {
+  content: " \25BE";
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.analysis-panel[open] summary::after {
+  content: " \25B4";
+}
+
+.analysis-body {
+  margin-top: 10px;
+  display: grid;
+  gap: 14px;
+}
+
+.analysis-chart-block h2 {
+  margin-bottom: 8px;
+}
+
+.analysis-chart-block .muted {
+  margin: 0 0 4px;
 }
 
 .chart-legend {
@@ -845,12 +890,14 @@ details summary {
 
   .chart-wrap {
     width: 100%;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 16 / 10;
+    max-height: 260px;
   }
 
   .donut-wrap {
     width: min(100%, 300px);
     aspect-ratio: 1 / 1;
+    max-height: 260px;
   }
 
   .quick-actions {
@@ -937,5 +984,11 @@ details summary {
     font-size: 0.95rem;
     border-radius: 14px;
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
+  }
+}
+
+@media (min-width: 601px) {
+  .analysis-panel {
+    padding: 10px 12px;
   }
 }
