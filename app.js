@@ -631,9 +631,9 @@ function renderSelectedDayRows(rows) {
         </div>
         <div class="item-actions">
           <strong class="monto ${String(item.tipo).toLowerCase()}">${item.tipo === "Gasto" ? "-" : "+"}${money(Number(item.monto))}</strong>
-          <button class="danger" data-action="duplicate" data-id="${item.id}" type="button">Duplicar</button>
-          <button class="danger" data-action="edit" data-id="${item.id}" type="button">Editar</button>
-          <button class="danger" data-action="delete" data-id="${item.id}" type="button">Eliminar</button>
+          <button class="danger action-btn" data-action="duplicate" data-id="${item.id}" type="button"><span class="action-icon">⧉</span><span class="action-label">Duplicar</span></button>
+          <button class="danger action-btn" data-action="edit" data-id="${item.id}" type="button"><span class="action-icon">✎</span><span class="action-label">Editar</span></button>
+          <button class="danger action-btn" data-action="delete" data-id="${item.id}" type="button"><span class="action-icon">🗑</span><span class="action-label">Eliminar</span></button>
         </div>
       `;
       lista.appendChild(li);
