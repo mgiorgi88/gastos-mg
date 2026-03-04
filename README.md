@@ -4,6 +4,20 @@ Aplicacion web tipo PWA para registrar gastos e ingresos, analizar balances mens
 
 Demo: https://gastos-mg.vercel.app/
 
+## Capturas
+
+### Web
+
+![Pantalla Cargar](docs/images/01-cargar.png)
+![Pantalla Resumen](docs/images/02-resumen.png)
+![Pantalla Mas](docs/images/03-mas.png)
+
+### Mobile
+
+![Pantalla Mobile 1](docs/images/04-mobile-1.png)
+![Pantalla Mobile 2](docs/images/05-mobile-2.png)
+![Pantalla Mobile 3](docs/images/06-mobile-3.png)
+
 ## Objetivo del proyecto
 
 Construir una app de finanzas personales simple y rapida de usar desde iPhone y web, con foco en:
