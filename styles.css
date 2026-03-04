@@ -111,6 +111,39 @@ body {
   color: var(--income);
 }
 
+.sync-indicator {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.sync-indicator::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  margin-right: 7px;
+  vertical-align: baseline;
+  background: #94a3b8;
+}
+
+.sync-indicator.sync-local::before {
+  background: #94a3b8;
+}
+
+.sync-indicator.sync-online::before {
+  background: #22c55e;
+}
+
+.sync-indicator.sync-syncing::before {
+  background: #3b82f6;
+}
+
+.sync-indicator.sync-error::before {
+  background: #ef4444;
+}
+
 .session-bar {
   margin-top: 10px;
   display: flex;

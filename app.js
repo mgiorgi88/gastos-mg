@@ -89,6 +89,7 @@ const btnRecover = document.getElementById("btn-recover");
 const btnLogout = document.getElementById("btn-logout");
 const authStatusEl = document.getElementById("auth-status");
 const cloudIndicatorEl = document.getElementById("cloud-indicator");
+const syncIndicatorEl = document.getElementById("sync-indicator");
 const authCardEl = document.getElementById("auth-card");
 const accountMiniEl = document.getElementById("account-mini");
 const accountMiniEmailEl = document.getElementById("account-mini-email");
@@ -168,6 +169,8 @@ let toastTimer = null;
 let chartTooltipEl = null;
 let monthlyTooltipPoints = [];
 let donutTooltipSlices = [];
+let syncOpsInFlight = 0;
+let hadRecentSyncError = false;
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -223,6 +226,41 @@ function setStatus(msg) {
   } catch {
     // Ignore console issues.
   }
+}
+
+function refreshSyncIndicator() {
+  if (!syncIndicatorEl) return;
+
+  syncIndicatorEl.classList.remove("sync-local", "sync-online", "sync-syncing", "sync-error");
+  if (!currentUser) {
+    syncIndicatorEl.classList.add("sync-local");
+    syncIndicatorEl.textContent = "Sincronizacion: Local";
+    return;
+  }
+  if (syncOpsInFlight > 0) {
+    syncIndicatorEl.classList.add("sync-syncing");
+    syncIndicatorEl.textContent = "Sincronizacion: Sincronizando...";
+    return;
+  }
+  if (hadRecentSyncError) {
+    syncIndicatorEl.classList.add("sync-error");
+    syncIndicatorEl.textContent = "Sincronizacion: Error";
+    return;
+  }
+  syncIndicatorEl.classList.add("sync-online");
+  syncIndicatorEl.textContent = "Sincronizacion: OK";
+}
+
+function beginSyncOperation() {
+  syncOpsInFlight += 1;
+  refreshSyncIndicator();
+}
+
+function endSyncOperation(success) {
+  syncOpsInFlight = Math.max(0, syncOpsInFlight - 1);
+  if (success && syncOpsInFlight === 0) hadRecentSyncError = false;
+  if (!success) hadRecentSyncError = true;
+  refreshSyncIndicator();
 }
 
 function setImportStatus(msg) {
@@ -1768,6 +1806,8 @@ function setAuthButtons() {
   if (emailEl) emailEl.disabled = logged;
   if (passwordEl) passwordEl.disabled = logged;
   if (btnLogoutMini) btnLogoutMini.disabled = !logged;
+  if (!logged) hadRecentSyncError = false;
+  refreshSyncIndicator();
   updateEntryGate();
 }
 
@@ -1830,6 +1870,7 @@ async function sbFetch(path, options = {}) {
   const upperMethod = String(method || "GET").toUpperCase();
   const canRetry = retry && (upperMethod === "GET" || upperMethod === "HEAD");
   const attempts = canRetry ? NETWORK_RETRY_ATTEMPTS : 1;
+  const trackSync = options.trackSync ?? Boolean(currentUser);
   const headers = {
     apikey: SUPABASE_ANON_KEY,
     "Content-Type": "application/json"
@@ -1838,6 +1879,14 @@ async function sbFetch(path, options = {}) {
   if (auth && authSession?.access_token) {
     headers.Authorization = `Bearer ${authSession.access_token}`;
   }
+
+  let closed = false;
+  const closeSync = (ok) => {
+    if (closed || !trackSync) return;
+    closed = true;
+    endSyncOperation(ok);
+  };
+  if (trackSync) beginSyncOperation();
 
   for (let i = 1; i <= attempts; i += 1) {
     try {
@@ -1851,6 +1900,7 @@ async function sbFetch(path, options = {}) {
         await wait(260 * i);
         continue;
       }
+      closeSync(resp.ok);
       return resp;
     } catch (err) {
       if (i < attempts) {
@@ -1858,12 +1908,15 @@ async function sbFetch(path, options = {}) {
         continue;
       }
       if (err?.name === "AbortError") {
+        closeSync(false);
         return buildErrorResponse("Tiempo de espera agotado al conectar con la nube.", 504);
       }
+      closeSync(false);
       return buildErrorResponse("No se pudo conectar con la nube. Revisa internet.", 599);
     }
   }
 
+  closeSync(false);
   return buildErrorResponse("Error de red inesperado.", 599);
 }
 
