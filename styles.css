@@ -838,7 +838,7 @@ details summary {
 }
 
 [data-panel].panel-enter {
-  animation: panelFade 0.2s ease;
+  animation: panelFade 0.22s ease;
 }
 
 @keyframes panelFade {
@@ -924,14 +924,22 @@ details summary {
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: 12px;
-    padding: 18px;
-    margin-top: 14px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    padding: 20px;
+    margin-top: 16px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
   }
 
   .card:hover {
     transform: translateY(-1px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.16);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.17);
+  }
+}
+
+@media (min-width: 1200px) {
+  .app {
+    max-width: 1040px;
+    padding-left: 30px;
+    padding-right: 30px;
   }
 }
 

@@ -674,7 +674,15 @@ function drawMonthlyIncomeExpenseChart(all) {
     const pct = prev.gastos > 0 ? `${Math.abs((delta / prev.gastos) * 100).toFixed(1)}%` : "n/a";
     const icon = delta > 0 ? "\u{1F53A}" : delta < 0 ? "\u{1F7E2}" : "\u{26AA}";
     const trendWord = delta > 0 ? "subieron" : delta < 0 ? "bajaron" : "estables";
-    chartMonthlyInsightEl.textContent = `${icon} Gastos ${trendWord}: ${money(Math.abs(delta))} (${pct}) vs mes anterior.`;
+    let streakText = "";
+    if (rows.length >= 3) {
+      const g0 = rows[rows.length - 3].gastos;
+      const g1 = rows[rows.length - 2].gastos;
+      const g2 = rows[rows.length - 1].gastos;
+      if (g2 < g1 && g1 < g0) streakText = " \u{1F4C9} 2 meses seguidos bajando gastos.";
+      else if (g2 > g1 && g1 > g0) streakText = " \u{1F4C8} 2 meses seguidos subiendo gastos.";
+    }
+    chartMonthlyInsightEl.textContent = `${icon} Gastos ${trendWord}: ${money(Math.abs(delta))} (${pct}) vs mes anterior.${streakText}`;
   }
 
   if (chartMonthlyLegendEl) {
@@ -765,7 +773,8 @@ function drawCategoryDonutChart(all, selectedMonth) {
   ctx.fillText(topCat, cx, cy + 14);
 
   if (chartCategoryInsightEl) {
-    chartCategoryInsightEl.textContent = `\u{1F7E2} Principal: ${topCat} (${share}%). Top 3 categorias: ${top3Share}%.`;
+    const ratioText = `${Math.round((Number(share) / 100) * 10)}/10`;
+    chartCategoryInsightEl.textContent = `\u{1F7E2} Mayor categoria: ${topCat} (${share}%). Peso: ${ratioText} del gasto mensual. Top 3: ${top3Share}%.`;
   }
 
   if (chartCategoryLegendEl) {
