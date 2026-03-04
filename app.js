@@ -39,6 +39,10 @@ const cmpTitleEl = document.getElementById("cmp-title");
 const cmpIngresosEl = document.getElementById("cmp-ingresos");
 const cmpGastosEl = document.getElementById("cmp-gastos");
 const cmpBalanceEl = document.getElementById("cmp-balance");
+const chartMonthlyEl = document.getElementById("chart-monthly");
+const chartMonthlyInsightEl = document.getElementById("chart-monthly-insight");
+const chartCategoryEl = document.getElementById("chart-category");
+const chartCategoryInsightEl = document.getElementById("chart-category-insight");
 const budgetCategoryEl = document.getElementById("budget-category");
 const budgetAmountEl = document.getElementById("budget-amount");
 const btnBudgetSave = document.getElementById("btn-budget-save");
@@ -474,6 +478,166 @@ function monthLabel(key) {
   return `${monthNames[idx]} ${y}`;
 }
 
+function getCssVar(name, fallback = "#3b82f6") {
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return v || fallback;
+}
+
+function setupCanvas(canvas, width, height) {
+  const ratio = Math.max(1, window.devicePixelRatio || 1);
+  canvas.width = Math.floor(width * ratio);
+  canvas.height = Math.floor(height * ratio);
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  return ctx;
+}
+
+function getRecentMonthKeys(count = 6) {
+  const keys = [];
+  const now = new Date();
+  for (let i = count - 1; i >= 0; i -= 1) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    keys.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
+  }
+  return keys;
+}
+
+function drawMonthlyIncomeExpenseChart(all) {
+  if (!chartMonthlyEl) return;
+
+  const width = chartMonthlyEl.clientWidth || 300;
+  const height = chartMonthlyEl.clientHeight || 250;
+  const ctx = setupCanvas(chartMonthlyEl, width, height);
+  ctx.clearRect(0, 0, width, height);
+
+  const keys = getRecentMonthKeys(6);
+  const rows = keys.map((k) => {
+    let ingresos = 0;
+    let gastos = 0;
+    all.forEach((x) => {
+      if (getMonth(x.fecha) !== k) return;
+      if (x.tipo === "Ingreso") ingresos += Number(x.monto);
+      else gastos += Number(x.monto);
+    });
+    return { key: k, ingresos, gastos };
+  });
+
+  const maxVal = Math.max(1, ...rows.flatMap((r) => [r.ingresos, r.gastos]));
+  const left = 36;
+  const right = width - 10;
+  const top = 16;
+  const bottom = height - 26;
+  const chartW = right - left;
+  const chartH = bottom - top;
+  const groupW = chartW / rows.length;
+  const barW = Math.min(14, (groupW - 8) / 2);
+  const gridColor = getCssVar("--line", "#e5e7eb");
+
+  ctx.strokeStyle = gridColor;
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i += 1) {
+    const y = top + (chartH * i) / 4;
+    ctx.beginPath();
+    ctx.moveTo(left, y);
+    ctx.lineTo(right, y);
+    ctx.stroke();
+  }
+
+  const incomeColor = "#22c55e";
+  const expenseColor = "#ef4444";
+  const textColor = getCssVar("--muted", "#6b7280");
+  ctx.font = "11px Helvetica Neue, Arial";
+  ctx.textAlign = "center";
+  ctx.fillStyle = textColor;
+
+  rows.forEach((r, idx) => {
+    const gx = left + idx * groupW + groupW / 2;
+    const hIn = (r.ingresos / maxVal) * chartH;
+    const hEx = (r.gastos / maxVal) * chartH;
+
+    ctx.fillStyle = incomeColor;
+    ctx.fillRect(gx - barW - 2, bottom - hIn, barW, hIn);
+    ctx.fillStyle = expenseColor;
+    ctx.fillRect(gx + 2, bottom - hEx, barW, hEx);
+
+    ctx.fillStyle = textColor;
+    ctx.fillText(monthLabel(r.key).split(" ")[0], gx, height - 8);
+  });
+
+  const last = rows[rows.length - 1];
+  const prev = rows[rows.length - 2];
+  if (chartMonthlyInsightEl && last && prev) {
+    const delta = last.gastos - prev.gastos;
+    const pct = prev.gastos > 0 ? `${((delta / prev.gastos) * 100).toFixed(1)}%` : "n/a";
+    const icon = delta > 0 ? "🔺" : delta < 0 ? "🟢" : "⚪";
+    chartMonthlyInsightEl.textContent = `${icon} Gastos ${delta >= 0 ? "+" : ""}${money(delta)} (${pct}) vs mes anterior.`;
+  }
+}
+
+function drawCategoryDonutChart(all, selectedMonth) {
+  if (!chartCategoryEl) return;
+
+  const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
+  const byCategory = {};
+  all.forEach((x) => {
+    if (x.tipo !== "Gasto") return;
+    if (getMonth(x.fecha) !== monthKey) return;
+    byCategory[x.categoria] = (byCategory[x.categoria] || 0) + Number(x.monto);
+  });
+
+  const entries = Object.entries(byCategory).sort((a, b) => b[1] - a[1]);
+  const width = chartCategoryEl.clientWidth || 300;
+  const height = chartCategoryEl.clientHeight || 250;
+  const ctx = setupCanvas(chartCategoryEl, width, height);
+  ctx.clearRect(0, 0, width, height);
+
+  if (entries.length === 0) {
+    if (chartCategoryInsightEl) chartCategoryInsightEl.textContent = "Sin gastos para el mes seleccionado.";
+    ctx.fillStyle = getCssVar("--muted", "#6b7280");
+    ctx.textAlign = "center";
+    ctx.font = "13px Helvetica Neue, Arial";
+    ctx.fillText("Sin datos", width / 2, height / 2);
+    return;
+  }
+
+  const palette = ["#3b82f6", "#1d4ed8", "#60a5fa", "#93c5fd", "#22c55e", "#ef4444", "#a78bfa"];
+  const total = entries.reduce((acc, [, v]) => acc + v, 0);
+  const cx = width / 2;
+  const cy = height / 2;
+  const r = Math.min(width, height) * 0.33;
+  let start = -Math.PI / 2;
+
+  entries.slice(0, 7).forEach(([cat, val], idx) => {
+    const angle = (val / total) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.fillStyle = palette[idx % palette.length];
+    ctx.arc(cx, cy, r, start, start + angle);
+    ctx.closePath();
+    ctx.fill();
+    start += angle;
+  });
+
+  ctx.beginPath();
+  ctx.fillStyle = getCssVar("--card", "#ffffff");
+  ctx.arc(cx, cy, r * 0.58, 0, Math.PI * 2);
+  ctx.fill();
+
+  const [topCat, topVal] = entries[0];
+  const share = ((topVal / total) * 100).toFixed(1);
+  ctx.fillStyle = getCssVar("--ink", "#111827");
+  ctx.textAlign = "center";
+  ctx.font = "bold 13px Helvetica Neue, Arial";
+  ctx.fillText(`${share}%`, cx, cy - 2);
+  ctx.fillStyle = getCssVar("--muted", "#6b7280");
+  ctx.font = "11px Helvetica Neue, Arial";
+  ctx.fillText(topCat, cx, cy + 14);
+
+  if (chartCategoryInsightEl) {
+    chartCategoryInsightEl.textContent = `🟢 ${topCat} es tu categoria principal este mes (${share}%).`;
+  }
+}
+
 function previousMonthKey(monthKey) {
   const [y, m] = String(monthKey).split("-").map(Number);
   if (!y || !m) return CURRENT_MONTH;
@@ -827,6 +991,8 @@ function refresh() {
 
   renderCalendar(detailRows);
   renderSelectedDayRows(detailRows);
+  drawMonthlyIncomeExpenseChart(all);
+  drawCategoryDonutChart(all, filtroMes.value);
   renderMonthlyComparison(all, filtroMes.value);
   renderLast3Months(all);
   renderBudgetStatus(all);
@@ -1594,6 +1760,12 @@ if (btnExportExcel) {
     exportFilteredToExcel();
   });
 }
+
+let resizeTimer = null;
+window.addEventListener("resize", () => {
+  if (resizeTimer) clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => refresh(), 120);
+});
 
 btnSignup.addEventListener("click", async () => {
   try {

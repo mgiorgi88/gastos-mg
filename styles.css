@@ -311,6 +311,25 @@ button:focus {
   gap: 10px;
 }
 
+.chart-wrap {
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--soft);
+  padding: 8px;
+  height: 280px;
+}
+
+.chart-wrap canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.donut-wrap {
+  height: 260px;
+}
+
 .trend-item {
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -797,6 +816,14 @@ details summary {
 
   .trend-grid {
     grid-template-columns: 1fr;
+  }
+
+  .chart-wrap {
+    height: 250px;
+  }
+
+  .donut-wrap {
+    height: 250px;
   }
 
   .quick-actions {
