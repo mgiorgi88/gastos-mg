@@ -114,22 +114,22 @@ const CATEGORIAS = {
 };
 
 const CATEGORY_ICONS = {
-  Alquiler: "🏠",
-  Hipoteca: "🏡",
-  Supermercado: "🛒",
-  Auto: "🚗",
-  Seguro: "🛡️",
-  Compras: "🛍️",
-  Ropa: "👕",
-  Servicios: "💡",
-  Viajes: "✈️",
-  Salidas: "🍽️",
-  Gasolina: "⛽",
-  Salud: "💊",
-  Transporte: "🚌",
-  Sueldo: "💼",
-  Depositos: "🏦",
-  "Alquiler Depto Argentina": "🏘️"
+  Alquiler: "\u{1F3E0}",
+  Hipoteca: "\u{1F3E1}",
+  Supermercado: "\u{1F6D2}",
+  Auto: "\u{1F697}",
+  Seguro: "\u{1F6E1}\uFE0F",
+  Compras: "\u{1F6CD}\uFE0F",
+  Ropa: "\u{1F455}",
+  Servicios: "\u{1F4A1}",
+  Viajes: "\u{2708}\uFE0F",
+  Salidas: "\u{1F37D}\uFE0F",
+  Gasolina: "\u{26FD}",
+  Salud: "\u{1F48A}",
+  Transporte: "\u{1F68C}",
+  Sueldo: "\u{1F4BC}",
+  Depositos: "\u{1F3E6}",
+  "Alquiler Depto Argentina": "\u{1F3D8}\uFE0F"
 };
 
 let currentUser = null;
