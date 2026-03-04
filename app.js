@@ -841,12 +841,31 @@ function handleMonthlyTooltip(clientX, clientY) {
   const rect = chartMonthlyEl.getBoundingClientRect();
   const x = clientX - rect.left;
   const y = clientY - rect.top;
-  const hit = monthlyTooltipPoints.find((p) => (
+  const directHit = monthlyTooltipPoints.find((p) => (
     x >= p.x - 3 &&
     x <= p.x + p.w + 3 &&
     y >= p.y - 3 &&
     y <= p.y + p.h + 3
   ));
+
+  let hit = directHit;
+  if (!hit) {
+    // Snap: on touch/mouse near the bars, attach tooltip to the closest bar.
+    const SNAP_RADIUS = 28;
+    let best = null;
+    let bestDist = Number.POSITIVE_INFINITY;
+    monthlyTooltipPoints.forEach((p) => {
+      const cx = p.x + p.w / 2;
+      const cy = p.y + p.h / 2;
+      const d = Math.hypot(x - cx, y - cy);
+      if (d < bestDist) {
+        bestDist = d;
+        best = p;
+      }
+    });
+    if (best && bestDist <= SNAP_RADIUS) hit = best;
+  }
+
   if (!hit) {
     hideChartTooltip();
     return;
