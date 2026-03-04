@@ -1611,6 +1611,11 @@ function parseImportedAmount(value) {
   return Number(s);
 }
 
+function parseDecimalInputValue(value) {
+  const n = parseImportedAmount(value);
+  return Number.isFinite(n) ? n : 0;
+}
+
 function formatDateKey(date) {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -2390,13 +2395,13 @@ async function updateTransaction(id, tx) {
 async function quickAddExpense(category) {
   lastQuickCategory = category;
   updateQuickAmountPlaceholder(category);
-  const inputAmount = Number(quickAmountEl.value);
+  const inputAmount = parseDecimalInputValue(quickAmountEl.value);
   const rememberedAmount = Number(quickAmounts[category] || 0);
 
   let amount = inputAmount > 0 ? inputAmount : rememberedAmount;
   if (amount <= 0) {
     const typed = prompt(`Importe para ${category}:`, "");
-    amount = Number(typed);
+    amount = parseDecimalInputValue(typed);
   }
 
   if (!(amount > 0)) {
@@ -2452,9 +2457,9 @@ function updateArsConvertVisibility() {
 }
 
 function convertArsToSelectedCurrency() {
-  const ars = Number(arsAmountEl.value || 0);
-  const rate = Number(arsRateEl.value || arsRate || 0);
-  const spread = Number(spreadPctEl?.value || spreadPct || 0);
+  const ars = parseDecimalInputValue(arsAmountEl.value || 0);
+  const rate = parseDecimalInputValue(arsRateEl.value || arsRate || 0);
+  const spread = parseDecimalInputValue(spreadPctEl?.value || spreadPct || 0);
   if (!(ars > 0) || !(rate > 0)) {
     setStatus("No se pudo convertir: falta ARS o tipo de cambio.");
     return null;
@@ -2500,8 +2505,8 @@ async function fetchArsRateForSelectedCurrency() {
 
 function updateArsResultPreview() {
   if (!arsResultEl || !arsAmountEl || !arsRateEl) return;
-  const ars = Number(arsAmountEl.value || 0);
-  const rate = Number(arsRateEl.value || 0);
+  const ars = parseDecimalInputValue(arsAmountEl.value || 0);
+  const rate = parseDecimalInputValue(arsRateEl.value || 0);
   if (!(ars > 0) || !(rate > 0)) {
     arsResultEl.value = "";
     return;
@@ -2598,7 +2603,7 @@ async function handleFormSubmit(e) {
 
   const fecha = document.getElementById("fecha").value;
   const tipo = tipoEl.value;
-  const monto = Number(document.getElementById("monto").value);
+  const monto = parseDecimalInputValue(document.getElementById("monto").value);
   const categoria = categoriaEl.value.trim();
   const detalle = document.getElementById("detalle").value.trim();
 
@@ -2925,7 +2930,7 @@ if (btnRefreshRate) {
 if (arsAmountEl) arsAmountEl.addEventListener("input", updateArsResultPreview);
 if (spreadPctEl) {
   spreadPctEl.addEventListener("input", () => {
-    const v = Number(spreadPctEl.value || 0);
+    const v = parseDecimalInputValue(spreadPctEl.value || 0);
     if (v >= 0) saveSpreadPct(v);
     updateArsResultPreview();
   });
@@ -2933,7 +2938,7 @@ if (spreadPctEl) {
 
 btnBudgetSave.addEventListener("click", () => {
   const cat = budgetCategoryEl.value;
-  const amount = Number(budgetAmountEl.value || 0);
+  const amount = parseDecimalInputValue(budgetAmountEl.value || 0);
   const next = { ...budgets };
   if (amount > 0) next[cat] = amount;
   else delete next[cat];
