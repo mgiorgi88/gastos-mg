@@ -623,7 +623,7 @@ function drawCategoryDonutChart(all, selectedMonth) {
   const total = entries.reduce((acc, [, v]) => acc + v, 0);
   const cx = width / 2;
   const cy = height / 2;
-  const r = Math.min(width, height) * 0.33;
+  const r = Math.min(width, height) * 0.43;
   let start = -Math.PI / 2;
 
   const topEntries = entries.slice(0, 7);
@@ -639,8 +639,8 @@ function drawCategoryDonutChart(all, selectedMonth) {
   });
 
   ctx.beginPath();
-  ctx.fillStyle = getCssVar("--card", "#ffffff");
-  ctx.arc(cx, cy, r * 0.58, 0, Math.PI * 2);
+  ctx.fillStyle = getCssVar("--bg", "#f6f7f9");
+  ctx.arc(cx, cy, r * 0.56, 0, Math.PI * 2);
   ctx.fill();
 
   const [topCat, topVal] = entries[0];
