@@ -306,6 +306,70 @@ button:focus {
   font-size: 1.45rem;
 }
 
+.summary-alert {
+  margin: 12px 0 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--soft);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.summary-alert::before {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  margin-right: 8px;
+  vertical-align: baseline;
+}
+
+.summary-alert-good {
+  color: #15803d;
+}
+
+.summary-alert-good::before {
+  background: #22c55e;
+}
+
+.summary-alert-warn {
+  color: #a16207;
+}
+
+.summary-alert-warn::before {
+  background: #f59e0b;
+}
+
+.summary-alert-bad {
+  color: #b91c1c;
+}
+
+.summary-alert-bad::before {
+  background: #ef4444;
+}
+
+.summary-alert-neutral {
+  color: var(--muted);
+}
+
+.summary-alert-neutral::before {
+  background: #94a3b8;
+}
+
+:root[data-theme="dark"] .summary-alert-good {
+  color: #86efac;
+}
+
+:root[data-theme="dark"] .summary-alert-warn {
+  color: #fcd34d;
+}
+
+:root[data-theme="dark"] .summary-alert-bad {
+  color: #fda4af;
+}
+
 .trend-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

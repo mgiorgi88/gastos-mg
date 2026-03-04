@@ -74,6 +74,7 @@ const categoriaEl = document.getElementById("categoria");
 const ingresosEl = document.getElementById("ingresos");
 const gastosEl = document.getElementById("gastos");
 const balanceEl = document.getElementById("balance");
+const spendingAlertEl = document.getElementById("spending-alert");
 
 const emailEl = document.getElementById("auth-email");
 const passwordEl = document.getElementById("auth-password");
@@ -1089,6 +1090,55 @@ function renderLast3Months(all) {
   trend3mEl.innerHTML = cards.join("");
 }
 
+function renderSpendingAlert(all) {
+  if (!spendingAlertEl) return;
+
+  const current = monthTotals(all, CURRENT_MONTH).gastos;
+  const last3Keys = getLast3MonthKeys();
+  const prevValues = last3Keys
+    .map((k) => monthTotals(all, k).gastos)
+    .filter((v) => v > 0);
+
+  spendingAlertEl.classList.remove(
+    "summary-alert-good",
+    "summary-alert-warn",
+    "summary-alert-bad",
+    "summary-alert-neutral"
+  );
+
+  if (prevValues.length === 0) {
+    spendingAlertEl.classList.add("summary-alert-neutral");
+    spendingAlertEl.textContent = "Sin historial suficiente para comparar gasto mensual.";
+    return;
+  }
+
+  const avg = prevValues.reduce((acc, v) => acc + v, 0) / prevValues.length;
+  if (avg <= 0) {
+    spendingAlertEl.classList.add("summary-alert-neutral");
+    spendingAlertEl.textContent = "Sin promedio valido para comparar gasto mensual.";
+    return;
+  }
+
+  const delta = current - avg;
+  const pct = (delta / avg) * 100;
+  const absPct = Math.abs(pct).toFixed(1);
+  const avgLabel = money(avg);
+
+  if (pct <= -10) {
+    spendingAlertEl.classList.add("summary-alert-good");
+    spendingAlertEl.textContent = `Gasto del mes ${absPct}% por debajo del promedio 3M (${avgLabel}).`;
+    return;
+  }
+  if (pct >= 10) {
+    spendingAlertEl.classList.add("summary-alert-bad");
+    spendingAlertEl.textContent = `Alerta: gasto del mes ${absPct}% por encima del promedio 3M (${avgLabel}).`;
+    return;
+  }
+
+  spendingAlertEl.classList.add("summary-alert-warn");
+  spendingAlertEl.textContent = `Gasto del mes en linea con el promedio 3M (${avgLabel}).`;
+}
+
 function renderBudgetStatus(all) {
   if (!budgetListEl) return;
 
@@ -1208,6 +1258,7 @@ function refresh() {
   drawCategoryDonutChart(all, filtroMes.value);
   renderMonthlyComparison(all, filtroMes.value);
   renderLast3Months(all);
+  renderSpendingAlert(all);
   renderBudgetStatus(all);
 }
 
