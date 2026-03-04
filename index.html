@@ -60,7 +60,7 @@
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v67</p>
+      <p class="muted">Version: v68</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -242,6 +242,9 @@
           <span><i class="dot today"></i>Hoy</span>
         </div>
       </div>
+      <p id="day-title" class="muted"></p>
+      <ul id="lista"></ul>
+      <p id="vacio" class="muted">No hay movimientos en el periodo seleccionado.</p>
       <div class="detail-filters">
         <label>Tipo
           <select id="detail-type">
@@ -283,9 +286,6 @@
           <strong id="detail-avg">$0.00</strong>
         </article>
       </div>
-      <p id="day-title" class="muted"></p>
-      <ul id="lista"></ul>
-      <p id="vacio" class="muted">No hay movimientos en el periodo seleccionado.</p>
     </section>
   </main>
   <div id="toast" class="toast" hidden></div>
