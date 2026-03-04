@@ -74,6 +74,7 @@ Abrir en navegador:
 - La sesion puede guardarse de forma persistente en el dispositivo.
 - La app funciona en modo local aunque no haya login.
 - El archivo `historico.json` publicado contiene solo datos demo (sin datos personales reales).
+- Si quieres usar historico real en tu PC, crea `historico.private.json` (se ignora en Git) tomando como base `historico.private.example.json`.
 
 ---
 

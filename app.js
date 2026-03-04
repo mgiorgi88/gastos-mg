@@ -400,10 +400,22 @@ async function bootstrapHistorico() {
   if (localStorage.getItem(BOOTSTRAP_KEY) === "done") return;
 
   try {
-    const resp = await fetch("./historico.json", { cache: "no-store" });
-    if (!resp.ok) return;
+    const sources = ["./historico.private.json", "./historico.json"];
+    let historico = null;
+    for (const src of sources) {
+      try {
+        const resp = await fetch(src, { cache: "no-store" });
+        if (!resp.ok) continue;
+        const data = await resp.json();
+        if (Array.isArray(data)) {
+          historico = data;
+          break;
+        }
+      } catch {
+        // Try next source.
+      }
+    }
 
-    const historico = await resp.json();
     if (!Array.isArray(historico) || historico.length === 0) {
       localStorage.setItem(BOOTSTRAP_KEY, "done");
       return;

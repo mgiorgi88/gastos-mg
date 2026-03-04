@@ -1,0 +1,10 @@
+[
+  {
+    "id": "private-demo-1",
+    "fecha": "2026-01-01",
+    "tipo": "Ingreso",
+    "categoria": "Sueldo",
+    "monto": 1000,
+    "detalle": "Tu historico privado"
+  }
+]
