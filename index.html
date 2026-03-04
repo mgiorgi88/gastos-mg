@@ -61,7 +61,7 @@
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contraseÃ±a".</p>
-      <p class="muted">Version: v100</p>
+      <p class="muted">Version: v101</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -159,7 +159,7 @@
     </section>
 
     <section class="card" data-panel="resumen">
-      <h2>Resumen</h2>
+      <h2>Resumen mes actual</h2>
       <div class="grid">
         <label>Filtrar por mes
           <select id="filtro-mes"></select>
@@ -177,45 +177,17 @@
         <article>
           <span>Balance / Ahorro</span>
           <strong id="balance">$0.00</strong>
-          <small class="muted">Balance mensual de los ultimos 6 meses</small>
-          <canvas id="balance-sparkline" class="balance-sparkline" aria-label="Tendencia de balance ultimos 6 meses"></canvas>
-          <small id="balance-trend" class="muted">Verde = ahorro, rojo = deficit. Ultimo balance: -</small>
         </article>
       </div>
-      <p id="spending-alert" class="summary-alert summary-alert-neutral">Sin datos suficientes para comparar gasto mensual.</p>
-      <div class="yoy-compare">
-        <label>Comparar categorÃ­a (vs mismo mes aÃ±o anterior)
-          <select id="yoy-category"></select>
-        </label>
-        <p id="yoy-summary" class="muted">Selecciona una categoria para ver comparativa anual.</p>
-        <canvas id="yoy-mini-chart" class="yoy-mini-chart" aria-label="Comparativa anual por categoria"></canvas>
+      <p id="spending-alert" class="summary-alert summary-alert-neutral">Sin datos suficientes para comparar gasto mensual.</p>      <div id="budget-summary-list" class="budget-summary-list"></div>
+    </section>    <section class="card" data-panel="resumen">
+      <h2>Evolucion y resumen ultimos 6 meses</h2>
+      <p id="chart-monthly-insight" class="muted">Sin datos suficientes.</p>
+      <div class="chart-wrap">
+        <canvas id="chart-monthly" aria-label="Ingresos y gastos por mes"></canvas>
       </div>
-      <div id="budget-summary-list" class="budget-summary-list"></div>
-    </section>
-
-    <section class="card" data-panel="resumen">
-      <details id="analysis-panel" class="analysis-panel">
-        <summary>Ver analisis detallado</summary>
-        <div class="analysis-body">
-          <div class="analysis-chart-block">
-            <h2>Evolucion ultimos 6 meses</h2>
-            <p id="chart-monthly-insight" class="muted">Sin datos suficientes.</p>
-            <div class="chart-wrap">
-              <canvas id="chart-monthly" aria-label="Ingresos y gastos por mes"></canvas>
-            </div>
-            <div id="chart-monthly-legend" class="chart-legend"></div>
-          </div>
-
-          <div class="analysis-chart-block">
-            <h2>Distribucion de gastos del mes actual</h2>
-            <p id="chart-category-insight" class="muted">Sin gastos para el mes seleccionado.</p>
-            <div class="chart-wrap donut-wrap">
-              <canvas id="chart-category" aria-label="Distribucion de gastos por categoria"></canvas>
-            </div>
-            <div id="chart-category-legend" class="chart-legend"></div>
-          </div>
-        </div>
-      </details>
+      <div id="chart-monthly-legend" class="chart-legend"></div>
+      <div id="trend-3m" class="trend-grid"></div>
     </section>
 
     <section class="card" data-panel="resumen">
@@ -235,11 +207,15 @@
           <strong id="cmp-balance">-</strong>
         </article>
       </div>
-    </section>
-
-    <section class="card" data-panel="resumen">
-      <h2>Ultimos 3 meses cerrados</h2>
-      <div id="trend-3m" class="trend-grid"></div>
+    </section>    <section class="card" data-panel="resumen">
+      <h2>Comparativa vs mismo periodo del año anterior</h2>
+      <div class="yoy-compare">
+        <label>Comparar categoría (vs mismo mes año anterior)
+          <select id="yoy-category"></select>
+        </label>
+        <p id="yoy-summary" class="muted">Selecciona una categoría para ver comparativa anual.</p>
+        <canvas id="yoy-mini-chart" class="yoy-mini-chart" aria-label="Comparativa anual por categoria"></canvas>
+      </div>
     </section>
 
     <section class="card" data-panel="mas">
@@ -350,3 +326,6 @@
   <script src="app.js"></script>
 </body>
 </html>
+
+
+

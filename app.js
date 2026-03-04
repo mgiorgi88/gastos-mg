@@ -1134,7 +1134,7 @@ function animatePrimarySave() {
 function renderLast3Months(all) {
   if (!trend3mEl) return;
 
-  const monthKeys = getLast3MonthKeys();
+  const monthKeys = getRecentMonthKeys(6);
   const statsByMonth = StatsUtils.buildMonthlyStats(all);
   const cards = monthKeys.map((key) => {
     const stats = StatsUtils.getMonthStats(statsByMonth, key);
