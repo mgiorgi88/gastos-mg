@@ -315,8 +315,8 @@ button:focus {
   margin-top: 8px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: var(--soft);
-  padding: 8px;
+  background: color-mix(in srgb, var(--soft) 92%, transparent);
+  padding: 10px;
   height: 280px;
 }
 
@@ -328,6 +328,27 @@ button:focus {
 
 .donut-wrap {
   height: 260px;
+}
+
+.chart-legend {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+
+.chart-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
 }
 
 .trend-item {

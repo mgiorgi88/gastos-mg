@@ -41,8 +41,10 @@ const cmpGastosEl = document.getElementById("cmp-gastos");
 const cmpBalanceEl = document.getElementById("cmp-balance");
 const chartMonthlyEl = document.getElementById("chart-monthly");
 const chartMonthlyInsightEl = document.getElementById("chart-monthly-insight");
+const chartMonthlyLegendEl = document.getElementById("chart-monthly-legend");
 const chartCategoryEl = document.getElementById("chart-category");
 const chartCategoryInsightEl = document.getElementById("chart-category-insight");
+const chartCategoryLegendEl = document.getElementById("chart-category-legend");
 const budgetCategoryEl = document.getElementById("budget-category");
 const budgetAmountEl = document.getElementById("budget-amount");
 const btnBudgetSave = document.getElementById("btn-budget-save");
@@ -492,6 +494,16 @@ function setupCanvas(canvas, width, height) {
   return ctx;
 }
 
+function fillRoundedRect(ctx, x, y, w, h, r = 4) {
+  if (typeof ctx.roundRect === "function") {
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, r);
+    ctx.fill();
+    return;
+  }
+  ctx.fillRect(x, y, w, h);
+}
+
 function getRecentMonthKeys(count = 6) {
   const keys = [];
   const now = new Date();
@@ -543,8 +555,8 @@ function drawMonthlyIncomeExpenseChart(all) {
     ctx.stroke();
   }
 
-  const incomeColor = "#22c55e";
-  const expenseColor = "#ef4444";
+  const incomeColor = "#34d399";
+  const expenseColor = "#f87171";
   const textColor = getCssVar("--muted", "#6b7280");
   ctx.font = "11px Helvetica Neue, Arial";
   ctx.textAlign = "center";
@@ -556,9 +568,9 @@ function drawMonthlyIncomeExpenseChart(all) {
     const hEx = (r.gastos / maxVal) * chartH;
 
     ctx.fillStyle = incomeColor;
-    ctx.fillRect(gx - barW - 2, bottom - hIn, barW, hIn);
+    fillRoundedRect(ctx, gx - barW - 2, bottom - hIn, barW, hIn, 4);
     ctx.fillStyle = expenseColor;
-    ctx.fillRect(gx + 2, bottom - hEx, barW, hEx);
+    fillRoundedRect(ctx, gx + 2, bottom - hEx, barW, hEx, 4);
 
     ctx.fillStyle = textColor;
     ctx.fillText(monthLabel(r.key).split(" ")[0], gx, height - 8);
@@ -569,8 +581,14 @@ function drawMonthlyIncomeExpenseChart(all) {
   if (chartMonthlyInsightEl && last && prev) {
     const delta = last.gastos - prev.gastos;
     const pct = prev.gastos > 0 ? `${((delta / prev.gastos) * 100).toFixed(1)}%` : "n/a";
-    const icon = delta > 0 ? "🔺" : delta < 0 ? "🟢" : "⚪";
-    chartMonthlyInsightEl.textContent = `${icon} Gastos ${delta >= 0 ? "+" : ""}${money(delta)} (${pct}) vs mes anterior.`;
+    chartMonthlyInsightEl.textContent = `Gastos ${delta >= 0 ? "+" : ""}${money(delta)} (${pct}) vs mes anterior.`;
+  }
+
+  if (chartMonthlyLegendEl) {
+    chartMonthlyLegendEl.innerHTML = `
+      <span class="chart-legend-item"><i class="chart-swatch" style="background:${incomeColor}"></i>Ingresos</span>
+      <span class="chart-legend-item"><i class="chart-swatch" style="background:${expenseColor}"></i>Gastos</span>
+    `;
   }
 }
 
@@ -593,6 +611,7 @@ function drawCategoryDonutChart(all, selectedMonth) {
 
   if (entries.length === 0) {
     if (chartCategoryInsightEl) chartCategoryInsightEl.textContent = "Sin gastos para el mes seleccionado.";
+    if (chartCategoryLegendEl) chartCategoryLegendEl.innerHTML = "";
     ctx.fillStyle = getCssVar("--muted", "#6b7280");
     ctx.textAlign = "center";
     ctx.font = "13px Helvetica Neue, Arial";
@@ -600,14 +619,15 @@ function drawCategoryDonutChart(all, selectedMonth) {
     return;
   }
 
-  const palette = ["#3b82f6", "#1d4ed8", "#60a5fa", "#93c5fd", "#22c55e", "#ef4444", "#a78bfa"];
+  const palette = ["#3b82f6", "#2563eb", "#60a5fa", "#93c5fd", "#1d4ed8", "#38bdf8", "#0ea5e9"];
   const total = entries.reduce((acc, [, v]) => acc + v, 0);
   const cx = width / 2;
   const cy = height / 2;
   const r = Math.min(width, height) * 0.33;
   let start = -Math.PI / 2;
 
-  entries.slice(0, 7).forEach(([cat, val], idx) => {
+  const topEntries = entries.slice(0, 7);
+  topEntries.forEach(([cat, val], idx) => {
     const angle = (val / total) * Math.PI * 2;
     ctx.beginPath();
     ctx.moveTo(cx, cy);
@@ -634,7 +654,14 @@ function drawCategoryDonutChart(all, selectedMonth) {
   ctx.fillText(topCat, cx, cy + 14);
 
   if (chartCategoryInsightEl) {
-    chartCategoryInsightEl.textContent = `🟢 ${topCat} es tu categoria principal este mes (${share}%).`;
+    chartCategoryInsightEl.textContent = `${topCat} es tu categoria principal este mes (${share}%).`;
+  }
+
+  if (chartCategoryLegendEl) {
+    chartCategoryLegendEl.innerHTML = topEntries.slice(0, 5).map(([cat, val], idx) => {
+      const pct = ((val / total) * 100).toFixed(1);
+      return `<span class="chart-legend-item"><i class="chart-swatch" style="background:${palette[idx % palette.length]}"></i>${cat} (${pct}%)</span>`;
+    }).join("");
   }
 }
 
