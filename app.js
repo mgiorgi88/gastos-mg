@@ -150,6 +150,9 @@ let selectedDayKey = null;
 let currentDetailRows = [];
 let lastQuickCategory = "Supermercado";
 let toastTimer = null;
+let chartTooltipEl = null;
+let monthlyTooltipPoints = [];
+let donutTooltipSlices = [];
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -499,6 +502,60 @@ function setupCanvas(canvas, width, height) {
   return ctx;
 }
 
+function ensureChartTooltip() {
+  if (chartTooltipEl) return chartTooltipEl;
+  const el = document.createElement("div");
+  el.className = "chart-tooltip";
+  el.hidden = true;
+  document.body.appendChild(el);
+  chartTooltipEl = el;
+  return el;
+}
+
+function hideChartTooltip() {
+  if (!chartTooltipEl) return;
+  chartTooltipEl.classList.remove("show");
+  chartTooltipEl.hidden = true;
+}
+
+function showChartTooltip(clientX, clientY, title, line, color = "#3b82f6") {
+  const el = ensureChartTooltip();
+  el.innerHTML = `
+    <div class="chart-tooltip-title">${escapeHtml(title)}</div>
+    <div class="chart-tooltip-line">
+      <i class="chart-tooltip-dot" style="background:${color}"></i>
+      <span>${escapeHtml(line)}</span>
+    </div>
+  `;
+  el.hidden = false;
+  el.classList.add("show");
+
+  const pad = 10;
+  const tooltipRect = el.getBoundingClientRect();
+  let left = clientX + 14;
+  let top = clientY + 14;
+
+  if (left + tooltipRect.width + pad > window.innerWidth) {
+    left = clientX - tooltipRect.width - 14;
+  }
+  if (top + tooltipRect.height + pad > window.innerHeight) {
+    top = clientY - tooltipRect.height - 14;
+  }
+
+  left = Math.max(pad, left);
+  top = Math.max(pad, top);
+  el.style.left = `${left}px`;
+  el.style.top = `${top}px`;
+}
+
+function normalizeAngle(value) {
+  const full = Math.PI * 2;
+  let v = value;
+  while (v < 0) v += full;
+  while (v >= full) v -= full;
+  return v;
+}
+
 function fillRoundedRect(ctx, x, y, w, h, r = 4) {
   if (typeof ctx.roundRect === "function") {
     ctx.beginPath();
@@ -522,6 +579,7 @@ function getRecentMonthKeys(count = 6) {
 function drawMonthlyIncomeExpenseChart(all) {
   if (!chartMonthlyEl) return;
   if (analysisPanelEl && !analysisPanelEl.open) return;
+  monthlyTooltipPoints = [];
 
   const width = chartMonthlyEl.clientWidth || 300;
   const height = chartMonthlyEl.clientHeight || 250;
@@ -573,11 +631,37 @@ function drawMonthlyIncomeExpenseChart(all) {
     const gx = left + idx * groupW + groupW / 2;
     const hIn = (r.ingresos / maxVal) * chartH;
     const hEx = (r.gastos / maxVal) * chartH;
+    const monthTitle = monthLabel(r.key);
+    const ingresoX = gx - barW - 2;
+    const ingresoY = bottom - hIn;
+    const gastoX = gx + 2;
+    const gastoY = bottom - hEx;
 
     ctx.fillStyle = incomeColor;
-    fillRoundedRect(ctx, gx - barW - 2, bottom - hIn, barW, hIn, 4);
+    fillRoundedRect(ctx, ingresoX, ingresoY, barW, hIn, 4);
     ctx.fillStyle = expenseColor;
-    fillRoundedRect(ctx, gx + 2, bottom - hEx, barW, hEx, 4);
+    fillRoundedRect(ctx, gastoX, gastoY, barW, hEx, 4);
+
+    monthlyTooltipPoints.push({
+      month: monthTitle,
+      type: "Ingresos",
+      value: r.ingresos,
+      color: incomeColor,
+      x: ingresoX,
+      y: ingresoY,
+      w: barW,
+      h: Math.max(hIn, 1)
+    });
+    monthlyTooltipPoints.push({
+      month: monthTitle,
+      type: "Gastos",
+      value: r.gastos,
+      color: expenseColor,
+      x: gastoX,
+      y: gastoY,
+      w: barW,
+      h: Math.max(hEx, 1)
+    });
 
     ctx.fillStyle = textColor;
     ctx.fillText(monthLabel(r.key).split(" ")[0], gx, height - 8);
@@ -604,6 +688,7 @@ function drawMonthlyIncomeExpenseChart(all) {
 function drawCategoryDonutChart(all, selectedMonth) {
   if (!chartCategoryEl) return;
   if (analysisPanelEl && !analysisPanelEl.open) return;
+  donutTooltipSlices = [];
 
   const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
   const byCategory = {};
@@ -639,13 +724,27 @@ function drawCategoryDonutChart(all, selectedMonth) {
   const topEntries = entries.slice(0, 7);
   topEntries.forEach(([cat, val], idx) => {
     const angle = (val / total) * Math.PI * 2;
+    const end = start + angle;
     ctx.beginPath();
     ctx.moveTo(cx, cy);
     ctx.fillStyle = palette[idx % palette.length];
-    ctx.arc(cx, cy, r, start, start + angle);
+    ctx.arc(cx, cy, r, start, end);
     ctx.closePath();
     ctx.fill();
-    start += angle;
+    donutTooltipSlices.push({
+      category: cat,
+      value: val,
+      pct: ((val / total) * 100).toFixed(1),
+      color: palette[idx % palette.length],
+      cx,
+      cy,
+      outerR: r,
+      innerR: r * 0.56,
+      start: normalizeAngle(start),
+      end: normalizeAngle(end),
+      wraps: normalizeAngle(end) < normalizeAngle(start)
+    });
+    start = end;
   });
 
   ctx.beginPath();
@@ -732,6 +831,53 @@ function renderMonthlyComparison(all, selectedMonth) {
   const b = fmtDelta(curr.balance, prev.balance);
   cmpBalanceEl.className = b.cls;
   cmpBalanceEl.textContent = b.text;
+}
+
+function handleMonthlyTooltip(clientX, clientY) {
+  if (!chartMonthlyEl || monthlyTooltipPoints.length === 0) {
+    hideChartTooltip();
+    return;
+  }
+  const rect = chartMonthlyEl.getBoundingClientRect();
+  const x = clientX - rect.left;
+  const y = clientY - rect.top;
+  const hit = monthlyTooltipPoints.find((p) => (
+    x >= p.x - 3 &&
+    x <= p.x + p.w + 3 &&
+    y >= p.y - 3 &&
+    y <= p.y + p.h + 3
+  ));
+  if (!hit) {
+    hideChartTooltip();
+    return;
+  }
+  showChartTooltip(clientX, clientY, hit.month, `${hit.type}: ${money(hit.value)}`, hit.color);
+}
+
+function handleDonutTooltip(clientX, clientY) {
+  if (!chartCategoryEl || donutTooltipSlices.length === 0) {
+    hideChartTooltip();
+    return;
+  }
+  const rect = chartCategoryEl.getBoundingClientRect();
+  const x = clientX - rect.left;
+  const y = clientY - rect.top;
+
+  const dx = x - donutTooltipSlices[0].cx;
+  const dy = y - donutTooltipSlices[0].cy;
+  const dist = Math.hypot(dx, dy);
+  const angle = normalizeAngle(Math.atan2(dy, dx));
+
+  const hit = donutTooltipSlices.find((s) => {
+    if (dist < s.innerR || dist > s.outerR) return false;
+    if (s.wraps) return angle >= s.start || angle <= s.end;
+    return angle >= s.start && angle <= s.end;
+  });
+  if (!hit) {
+    hideChartTooltip();
+    return;
+  }
+  showChartTooltip(clientX, clientY, hit.category, `${money(hit.value)} (${hit.pct}%)`, hit.color);
 }
 
 function formatDateLabel(dateStr) {
@@ -1700,8 +1846,41 @@ if (themeEl) {
 if (analysisPanelEl) {
   analysisPanelEl.open = window.innerWidth > 600;
   analysisPanelEl.addEventListener("toggle", () => {
+    hideChartTooltip();
     if (analysisPanelEl.open) requestAnimationFrame(() => refresh());
   });
+}
+
+if (chartMonthlyEl) {
+  chartMonthlyEl.addEventListener("mousemove", (e) => handleMonthlyTooltip(e.clientX, e.clientY));
+  chartMonthlyEl.addEventListener("mouseleave", hideChartTooltip);
+  chartMonthlyEl.addEventListener("touchstart", (e) => {
+    const t = e.touches[0];
+    if (!t) return;
+    handleMonthlyTooltip(t.clientX, t.clientY);
+  }, { passive: true });
+  chartMonthlyEl.addEventListener("touchmove", (e) => {
+    const t = e.touches[0];
+    if (!t) return;
+    handleMonthlyTooltip(t.clientX, t.clientY);
+  }, { passive: true });
+  chartMonthlyEl.addEventListener("touchend", hideChartTooltip, { passive: true });
+}
+
+if (chartCategoryEl) {
+  chartCategoryEl.addEventListener("mousemove", (e) => handleDonutTooltip(e.clientX, e.clientY));
+  chartCategoryEl.addEventListener("mouseleave", hideChartTooltip);
+  chartCategoryEl.addEventListener("touchstart", (e) => {
+    const t = e.touches[0];
+    if (!t) return;
+    handleDonutTooltip(t.clientX, t.clientY);
+  }, { passive: true });
+  chartCategoryEl.addEventListener("touchmove", (e) => {
+    const t = e.touches[0];
+    if (!t) return;
+    handleDonutTooltip(t.clientX, t.clientY);
+  }, { passive: true });
+  chartCategoryEl.addEventListener("touchend", hideChartTooltip, { passive: true });
 }
 
 if (rememberEl) {
@@ -1811,9 +1990,12 @@ if (btnExportExcel) {
 
 let resizeTimer = null;
 window.addEventListener("resize", () => {
+  hideChartTooltip();
   if (resizeTimer) clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => refresh(), 120);
 });
+
+window.addEventListener("scroll", hideChartTooltip, { passive: true });
 
 btnSignup.addEventListener("click", async () => {
   try {
