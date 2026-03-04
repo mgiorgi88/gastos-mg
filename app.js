@@ -1704,6 +1704,7 @@ tabBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
     const tab = btn.getAttribute("data-tab") || "cargar";
     setActiveTab(tab);
+    requestAnimationFrame(() => refresh());
   });
 });
 
