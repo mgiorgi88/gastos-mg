@@ -1581,6 +1581,31 @@ function downloadImportTemplate() {
     { wch: 32 },
     { wch: 10 }
   ];
+  ws["!freeze"] = { xSplit: 0, ySplit: 1 };
+
+  const allCategories = [...CATEGORIAS.Gasto, ...CATEGORIAS.Ingreso];
+  const listFormula = (values) => `"${values.join(",").replaceAll('"', '""')}"`;
+  // Data validation dropdowns to reduce import errors for non-technical users.
+  ws["!dataValidation"] = [
+    {
+      sqref: "B2:B2000",
+      type: "list",
+      allowBlank: true,
+      formula1: listFormula(["Ingreso", "Gasto"])
+    },
+    {
+      sqref: "C2:C2000",
+      type: "list",
+      allowBlank: true,
+      formula1: listFormula(allCategories)
+    },
+    {
+      sqref: "F2:F2000",
+      type: "list",
+      allowBlank: true,
+      formula1: listFormula(["EUR", "USD", "ARS"])
+    }
+  ];
   XLSX.utils.book_append_sheet(wb, ws, "Movimientos");
 
   const catalogRows = [

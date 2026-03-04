@@ -26,7 +26,7 @@ Construir una app de finanzas personales simple y rapida de usar desde iPhone y 
 - Insight automatico de alerta de gasto (semaforo vs promedio de 3 meses cerrados).
 - Calendario de movimientos por dia con edicion, duplicado y borrado.
 - Exportacion a Excel de movimientos filtrados.
-- Importacion de historico por archivo (.xlsx, .csv, .json) con validacion.
+- Importacion de historico por archivo (.xlsx, .csv, .json) con validacion y plantilla Excel con desplegables.
 - Tema claro/oscuro.
 - Soporte PWA (instalable en iPhone desde Safari).
 - Sincronizacion en la nube con Supabase (auth + RLS).
@@ -99,7 +99,7 @@ Build a simple, fast personal finance PWA for iPhone and web, focused on:
 - Automatic spending alert (traffic light vs last 3 closed months average).
 - Day-by-day calendar with edit, duplicate and delete actions.
 - Excel export for filtered transactions.
-- Historical import from file (.xlsx, .csv, .json) with validation.
+- Historical import from file (.xlsx, .csv, .json) with validation and an Excel template with dropdowns.
 - Light/dark theme.
 - PWA support (installable on iPhone from Safari).
 - Cloud sync with Supabase (auth + row-level security).
