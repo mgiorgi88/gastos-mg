@@ -485,6 +485,10 @@ function getCssVar(name, fallback = "#3b82f6") {
   return v || fallback;
 }
 
+function getFontFamily() {
+  return getCssVar("--font-main", "Helvetica Neue, Helvetica, Arial, sans-serif");
+}
+
 function setupCanvas(canvas, width, height) {
   const ratio = Math.max(1, window.devicePixelRatio || 1);
   canvas.width = Math.floor(width * ratio);
@@ -558,7 +562,8 @@ function drawMonthlyIncomeExpenseChart(all) {
   const incomeColor = "#34d399";
   const expenseColor = "#f87171";
   const textColor = getCssVar("--muted", "#6b7280");
-  ctx.font = "11px Helvetica Neue, Arial";
+  const fontFamily = getFontFamily();
+  ctx.font = `11px ${fontFamily}`;
   ctx.textAlign = "center";
   ctx.fillStyle = textColor;
 
@@ -614,7 +619,7 @@ function drawCategoryDonutChart(all, selectedMonth) {
     if (chartCategoryLegendEl) chartCategoryLegendEl.innerHTML = "";
     ctx.fillStyle = getCssVar("--muted", "#6b7280");
     ctx.textAlign = "center";
-    ctx.font = "13px Helvetica Neue, Arial";
+    ctx.font = `13px ${getFontFamily()}`;
     ctx.fillText("Sin datos", width / 2, height / 2);
     return;
   }
@@ -645,12 +650,13 @@ function drawCategoryDonutChart(all, selectedMonth) {
 
   const [topCat, topVal] = entries[0];
   const share = ((topVal / total) * 100).toFixed(1);
+  const fontFamily = getFontFamily();
   ctx.fillStyle = getCssVar("--ink", "#111827");
   ctx.textAlign = "center";
-  ctx.font = "bold 13px Helvetica Neue, Arial";
+  ctx.font = `bold 13px ${fontFamily}`;
   ctx.fillText(`${share}%`, cx, cy - 2);
   ctx.fillStyle = getCssVar("--muted", "#6b7280");
-  ctx.font = "11px Helvetica Neue, Arial";
+  ctx.font = `11px ${fontFamily}`;
   ctx.fillText(topCat, cx, cy + 14);
 
   if (chartCategoryInsightEl) {
