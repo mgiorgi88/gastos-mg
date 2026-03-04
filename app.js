@@ -1,4 +1,4 @@
-﻿const KEY = "mis_gastos_v1";
+const KEY = "mis_gastos_v1";
 const BOOTSTRAP_KEY = "mis_gastos_bootstrap_v1";
 const MIGRATION_KEY = "mis_gastos_migration_v2";
 const SESSION_KEY = "mis_gastos_supabase_session_v1";
@@ -99,6 +99,16 @@ const btnGateLogin = document.getElementById("btn-gate-login");
 const toastEl = document.getElementById("toast");
 const tabBtns = document.querySelectorAll(".tab-btn");
 const tabPanels = document.querySelectorAll("[data-panel]");
+
+/**
+ * @typedef {Object} Transaction
+ * @property {string} id
+ * @property {string} fecha ISO date (YYYY-MM-DD)
+ * @property {"Ingreso"|"Gasto"} tipo
+ * @property {string} categoria
+ * @property {number} monto
+ * @property {string} [detalle]
+ */
 
 const CATEGORIAS = {
   Gasto: [
@@ -598,6 +608,41 @@ function getRecentMonthKeys(count = 6) {
   return keys;
 }
 
+/**
+ * @typedef {Object} MonthStats
+ * @property {number} ingresos
+ * @property {number} gastos
+ * @property {number} balance
+ */
+
+/**
+ * Calcula totales por mes en una sola pasada.
+ * @param {Transaction[]} rows
+ * @returns {Record<string, MonthStats>}
+ */
+function buildMonthlyStats(rows) {
+  const byMonth = {};
+  rows.forEach((x) => {
+    const key = getMonth(x.fecha);
+    if (!key) return;
+    const m = byMonth[key] || { ingresos: 0, gastos: 0, balance: 0 };
+    if (x.tipo === "Ingreso") {
+      m.ingresos += Number(x.monto);
+    } else {
+      m.gastos += Number(x.monto);
+    }
+    m.balance = m.ingresos - m.gastos;
+    byMonth[key] = m;
+  });
+  return byMonth;
+}
+
+const EMPTY_MONTH_STATS = Object.freeze({ ingresos: 0, gastos: 0, balance: 0 });
+
+function getMonthStats(statsByMonth, key) {
+  return statsByMonth[key] || EMPTY_MONTH_STATS;
+}
+
 function drawMonthlyIncomeExpenseChart(all) {
   if (!chartMonthlyEl) return;
   if (analysisPanelEl && !analysisPanelEl.open) return;
@@ -609,15 +654,10 @@ function drawMonthlyIncomeExpenseChart(all) {
   ctx.clearRect(0, 0, width, height);
 
   const keys = getRecentMonthKeys(6);
+  const statsByMonth = buildMonthlyStats(all);
   const rows = keys.map((k) => {
-    let ingresos = 0;
-    let gastos = 0;
-    all.forEach((x) => {
-      if (getMonth(x.fecha) !== k) return;
-      if (x.tipo === "Ingreso") ingresos += Number(x.monto);
-      else gastos += Number(x.monto);
-    });
-    return { key: k, ingresos, gastos };
+    const s = getMonthStats(statsByMonth, k);
+    return { key: k, ingresos: s.ingresos, gastos: s.gastos };
   });
 
   const maxVal = Math.max(1, ...rows.flatMap((r) => [r.ingresos, r.gastos]));
@@ -814,15 +854,10 @@ function previousMonthKey(monthKey) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
-function monthTotals(rows, monthKey) {
-  let ingresos = 0;
-  let gastos = 0;
-  rows.forEach((x) => {
-    if (getMonth(x.fecha) !== monthKey) return;
-    if (x.tipo === "Ingreso") ingresos += Number(x.monto);
-    else gastos += Number(x.monto);
-  });
-  return { ingresos, gastos, balance: ingresos - gastos };
+function monthTotals(rows, monthKey, precomputedStats = null) {
+  const statsByMonth = precomputedStats || buildMonthlyStats(rows);
+  const s = getMonthStats(statsByMonth, monthKey);
+  return { ingresos: s.ingresos, gastos: s.gastos, balance: s.balance };
 }
 
 function fmtDelta(curr, prev) {
@@ -846,8 +881,9 @@ function renderMonthlyComparison(all, selectedMonth) {
 
   const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
   const prevKey = previousMonthKey(monthKey);
-  const curr = monthTotals(all, monthKey);
-  const prev = monthTotals(all, prevKey);
+  const statsByMonth = buildMonthlyStats(all);
+  const curr = monthTotals(all, monthKey, statsByMonth);
+  const prev = monthTotals(all, prevKey, statsByMonth);
 
   cmpTitleEl.textContent = `${monthKey} vs ${prevKey}`;
 
@@ -1087,17 +1123,10 @@ function renderLast3Months(all) {
   if (!trend3mEl) return;
 
   const monthKeys = getLast3MonthKeys();
+  const statsByMonth = buildMonthlyStats(all);
   const cards = monthKeys.map((key) => {
-    let ingresos = 0;
-    let gastos = 0;
-
-    all.forEach((x) => {
-      if (getMonth(x.fecha) !== key) return;
-      if (x.tipo === "Ingreso") ingresos += Number(x.monto);
-      else gastos += Number(x.monto);
-    });
-
-    const saldo = ingresos - gastos;
+    const stats = getMonthStats(statsByMonth, key);
+    const saldo = stats.balance;
     const saldoClass = saldo > 0 ? "saldo-pos" : saldo < 0 ? "saldo-neg" : "saldo-neu";
 
     return `
@@ -1114,10 +1143,11 @@ function renderLast3Months(all) {
 function renderSpendingAlert(all) {
   if (!spendingAlertEl) return;
 
-  const current = monthTotals(all, CURRENT_MONTH).gastos;
+  const statsByMonth = buildMonthlyStats(all);
+  const current = getMonthStats(statsByMonth, CURRENT_MONTH).gastos;
   const last3Keys = getLast3MonthKeys();
   const prevValues = last3Keys
-    .map((k) => monthTotals(all, k).gastos)
+    .map((k) => getMonthStats(statsByMonth, k).gastos)
     .filter((v) => v > 0);
 
   spendingAlertEl.classList.remove(
@@ -1212,34 +1242,56 @@ function refreshDetailCategoryOptions(rows) {
   detailCategoryEl.value = categories.includes(prev) ? prev : "Todos";
 }
 
-function refresh() {
-  const all = [...txData].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
-  const options = buildMonthOptions(all);
+function getAllSortedTransactions() {
+  return [...txData].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
+}
 
+function updateMonthFilterOptions(all) {
+  const options = buildMonthOptions(all);
   const previous = filtroMes.value || CURRENT_MONTH;
+
   filtroMes.innerHTML = options
     .map((opt) => `<option value="${opt.value}">${opt.label}</option>`)
     .join("");
 
   const validValues = new Set(options.map((x) => x.value));
-  filtroMes.value = hasUserChosenMonth && validValues.has(previous) ? previous : CURRENT_MONTH;
+  const nextValue = hasUserChosenMonth && validValues.has(previous) ? previous : CURRENT_MONTH;
+  filtroMes.value = nextValue;
+  return nextValue;
+}
 
-  const filtered =
-    filtroMes.value === "Todos" ? all : all.filter((x) => getMonth(x.fecha) === filtroMes.value);
+function computeMonthlySummary(all, monthKey) {
+  const rows =
+    monthKey === "Todos"
+      ? all
+      : all.filter((x) => getMonth(x.fecha) === monthKey);
 
   let ingresos = 0;
   let gastos = 0;
-  filtered.forEach((x) => (x.tipo === "Ingreso" ? (ingresos += Number(x.monto)) : (gastos += Number(x.monto))));
+
+  rows.forEach((x) => {
+    if (x.tipo === "Ingreso") ingresos += Number(x.monto);
+    else gastos += Number(x.monto);
+  });
+
   const balanceValue = ingresos - gastos;
+  return { ingresos, gastos, balanceValue, rows };
+}
+
+function updateMonthlySummaryUI(summary) {
+  const { ingresos, gastos, balanceValue } = summary;
   ingresosEl.textContent = money(ingresos);
   gastosEl.textContent = money(gastos);
   balanceEl.textContent = money(balanceValue);
   balanceEl.classList.remove("saldo-pos", "saldo-neg", "saldo-neu");
-  balanceEl.classList.add(balanceValue > 0 ? "saldo-pos" : balanceValue < 0 ? "saldo-neg" : "saldo-neu");
+  balanceEl.classList.add(
+    balanceValue > 0 ? "saldo-pos" : balanceValue < 0 ? "saldo-neg" : "saldo-neu"
+  );
+}
 
-  refreshDetailCategoryOptions(all);
-
+function getFilteredDetailRows(all) {
   let detailRows = [...all];
+
   const filterType = detailTypeEl ? detailTypeEl.value : "Todos";
   const filterCategory = detailCategoryEl ? detailCategoryEl.value : "Todos";
   const filterFrom = detailFromEl ? detailFromEl.value : "";
@@ -1264,23 +1316,44 @@ function refresh() {
       return hay.includes(filterSearch);
     });
   }
-  currentDetailRows = detailRows;
 
+  return detailRows;
+}
+
+function updateDetailSummaryUI(detailRows) {
   const detailTotal = detailRows.reduce((acc, x) => acc + Number(x.monto || 0), 0);
   const detailCount = detailRows.length;
   const detailAvg = detailCount > 0 ? detailTotal / detailCount : 0;
+
   if (detailTotalEl) detailTotalEl.textContent = money(detailTotal);
   if (detailCountEl) detailCountEl.textContent = String(detailCount);
   if (detailAvgEl) detailAvgEl.textContent = money(detailAvg);
+}
 
+function updateCalendarAndAnalytics(all, detailRows, monthKey) {
   renderCalendar(detailRows);
   renderSelectedDayRows(detailRows);
   drawMonthlyIncomeExpenseChart(all);
-  drawCategoryDonutChart(all, filtroMes.value);
-  renderMonthlyComparison(all, filtroMes.value);
+  drawCategoryDonutChart(all, monthKey);
+  renderMonthlyComparison(all, monthKey);
   renderLast3Months(all);
   renderSpendingAlert(all);
   renderBudgetStatus(all);
+}
+
+function refresh() {
+  const all = getAllSortedTransactions();
+  const selectedMonth = updateMonthFilterOptions(all);
+
+  const summary = computeMonthlySummary(all, selectedMonth);
+  updateMonthlySummaryUI(summary);
+
+  refreshDetailCategoryOptions(all);
+  const detailRows = getFilteredDetailRows(all);
+  currentDetailRows = detailRows;
+
+  updateDetailSummaryUI(detailRows);
+  updateCalendarAndAnalytics(all, detailRows, selectedMonth);
 }
 
 function escapeHtml(value) {
@@ -2202,7 +2275,35 @@ async function disableServiceWorkerCache() {
   }
 }
 
-form.addEventListener("submit", async (e) => {
+async function handleImportFileClick() {
+  try {
+    const file = importFileEl?.files?.[0];
+    if (!file) {
+      setImportStatus("Selecciona un archivo para importar.");
+      return;
+    }
+    setImportStatus("Procesando archivo...");
+    const rawRows = await parseImportFile(file);
+    if (!Array.isArray(rawRows) || rawRows.length === 0) {
+      setImportStatus("El archivo no contiene filas para importar.");
+      return;
+    }
+    const { normalized, errors } = normalizeImportedRows(rawRows);
+    if (errors.length > 0) {
+      const preview = errors.slice(0, 4).join(" ");
+      setImportStatus(`Se detectaron ${errors.length} errores. ${preview}`);
+      return;
+    }
+    const imported = await importTransactions(normalized);
+    setImportStatus(`Importacion finalizada. Nuevos movimientos: ${imported}.`);
+    if (importFileEl) importFileEl.value = "";
+    showToast(`Importados: ${imported}`);
+  } catch (err) {
+    setImportStatus(`Error al importar: ${err?.message || String(err)}`);
+  }
+}
+
+async function handleFormSubmit(e) {
   e.preventDefault();
 
   const fecha = document.getElementById("fecha").value;
@@ -2242,7 +2343,9 @@ form.addEventListener("submit", async (e) => {
   animatePrimarySave();
   showToast("Movimiento guardado");
   resetTransactionForm();
-});
+}
+
+form.addEventListener("submit", handleFormSubmit);
 
 filtroMes.addEventListener("change", () => {
   hasUserChosenMonth = true;
@@ -2428,32 +2531,8 @@ if (btnDownloadTemplate) {
 }
 
 if (btnImportFile) {
-  btnImportFile.addEventListener("click", async () => {
-    try {
-      const file = importFileEl?.files?.[0];
-      if (!file) {
-        setImportStatus("Selecciona un archivo para importar.");
-        return;
-      }
-      setImportStatus("Procesando archivo...");
-      const rawRows = await parseImportFile(file);
-      if (!Array.isArray(rawRows) || rawRows.length === 0) {
-        setImportStatus("El archivo no contiene filas para importar.");
-        return;
-      }
-      const { normalized, errors } = normalizeImportedRows(rawRows);
-      if (errors.length > 0) {
-        const preview = errors.slice(0, 4).join(" ");
-        setImportStatus(`Se detectaron ${errors.length} errores. ${preview}`);
-        return;
-      }
-      const imported = await importTransactions(normalized);
-      setImportStatus(`Importacion finalizada. Nuevos movimientos: ${imported}.`);
-      if (importFileEl) importFileEl.value = "";
-      showToast(`Importados: ${imported}`);
-    } catch (err) {
-      setImportStatus(`Error al importar: ${err?.message || String(err)}`);
-    }
+  btnImportFile.addEventListener("click", () => {
+    handleImportFileClick();
   });
 }
 
