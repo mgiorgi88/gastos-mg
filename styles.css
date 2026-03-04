@@ -776,6 +776,10 @@ details summary {
 }
 
 @media (max-width: 600px) {
+  .app {
+    padding-bottom: 120px;
+  }
+
   .stats {
     grid-template-columns: 1fr;
   }
@@ -817,9 +821,9 @@ details summary {
 
   .tab-nav {
     position: fixed;
-    left: max(18px, calc(env(safe-area-inset-left) + 10px));
-    right: max(18px, calc(env(safe-area-inset-right) + 10px));
-    bottom: calc(12px + env(safe-area-inset-bottom));
+    left: max(24px, calc(env(safe-area-inset-left) + 12px));
+    right: max(24px, calc(env(safe-area-inset-right) + 12px));
+    bottom: calc(24px + env(safe-area-inset-bottom));
     z-index: 50;
     background: transparent;
     border: 0;
