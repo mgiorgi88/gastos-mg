@@ -1702,7 +1702,7 @@ btnBudgetSave.addEventListener("click", () => {
     if (themeEl) themeEl.value = selectedTheme;
     if (rememberEl) rememberEl.checked = loadRememberMe();
     applyTheme(selectedTheme);
-    setActiveTab(loadActiveTab());
+    setActiveTab("cargar");
     updateQuickAmountPlaceholder();
     updateArsConvertVisibility();
     refresh();
