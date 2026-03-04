@@ -32,6 +32,7 @@ Construir una app de finanzas personales simple y rapida de usar desde iPhone y 
 - Soporte PWA (instalable en iPhone desde Safari).
 - Sincronizacion en la nube con Supabase (auth + RLS).
 - Archivo SQL versionado con politicas RLS (`sql/policies.sql`).
+- Health check SQL de seguridad para Supabase (`sql/health_check.sql`).
 
 ### Capturas
 
@@ -127,6 +128,7 @@ Build a simple, fast personal finance PWA for iPhone and web, focused on:
 - Deployment: Vercel
 - Version control: Git + GitHub
 - Security headers and CSP via `vercel.json`
+- Security health check query for Supabase (`sql/health_check.sql`)
 
 ### Run locally
 
@@ -154,6 +156,7 @@ Open in browser:
 |- stats-utils.js
 |- sql/
 |  |- policies.sql
+|  |- health_check.sql
 |- icons/
 |- docs/
 |  |- images/
