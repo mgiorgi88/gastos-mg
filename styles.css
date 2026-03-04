@@ -817,9 +817,9 @@ details summary {
 
   .tab-nav {
     position: fixed;
-    left: max(10px, env(safe-area-inset-left));
-    right: max(10px, env(safe-area-inset-right));
-    bottom: calc(10px + env(safe-area-inset-bottom));
+    left: max(18px, calc(env(safe-area-inset-left) + 10px));
+    right: max(18px, calc(env(safe-area-inset-right) + 10px));
+    bottom: calc(12px + env(safe-area-inset-bottom));
     z-index: 50;
     background: transparent;
     border: 0;
@@ -830,7 +830,7 @@ details summary {
   }
 
   .tab-btn {
-    padding: 12px 8px;
+    padding: 12px 10px;
     font-size: 0.95rem;
     border-radius: 14px;
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
