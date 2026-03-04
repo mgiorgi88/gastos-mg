@@ -60,7 +60,7 @@
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v88</p>
+      <p class="muted">Version: v89</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -251,6 +251,23 @@
     </section>
 
     <section class="card" data-panel="mas">
+      <h2>Importar historico</h2>
+      <p class="muted">Descarga una plantilla y carga tu historial en lote. Se valida antes de guardar.</p>
+      <div class="auth-actions">
+        <button id="btn-download-template" type="button" class="btn-secondary">Descargar plantilla Excel</button>
+      </div>
+      <div class="grid">
+        <label>Archivo
+          <input id="import-file" type="file" accept=".xlsx,.xls,.csv,.json">
+        </label>
+      </div>
+      <div class="auth-actions">
+        <button id="btn-import-file" type="button" class="btn-primary">Importar archivo</button>
+      </div>
+      <p id="import-status" class="muted">Formato esperado: fecha, tipo, categoria, monto, detalle, moneda.</p>
+    </section>
+
+    <section class="card" data-panel="mas">
       <h2>Movimientos por dia</h2>
       <div class="calendar-panel">
         <div class="calendar-head">
@@ -316,6 +333,7 @@
   </main>
   <div id="toast" class="toast" hidden></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
