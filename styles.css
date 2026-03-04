@@ -339,6 +339,13 @@ button:focus {
   font-size: 1.45rem;
 }
 
+.balance-sparkline {
+  margin-top: 8px;
+  width: 100%;
+  height: 46px;
+  display: block;
+}
+
 .summary-alert {
   margin: 12px 0 0;
   border: 1px solid var(--line);

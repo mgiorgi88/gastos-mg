@@ -24,12 +24,14 @@ Construir una app de finanzas personales simple y rapida de usar desde iPhone y 
 - Comparativas y tendencia de ultimos meses.
 - Graficos interactivos (barras + donut) con tooltip en mouse/touch.
 - Insight automatico de alerta de gasto (semaforo vs promedio de 3 meses cerrados).
+- Sparkline de tendencia de balance en el resumen.
 - Calendario de movimientos por dia con edicion, duplicado y borrado.
 - Exportacion a Excel de movimientos filtrados.
 - Importacion de historico por archivo (.xlsx, .csv, .json) con validacion y plantilla Excel con desplegables.
 - Tema claro/oscuro.
 - Soporte PWA (instalable en iPhone desde Safari).
 - Sincronizacion en la nube con Supabase (auth + RLS).
+- Archivo SQL versionado con politicas RLS (`sql/policies.sql`).
 
 ### Capturas
 
@@ -124,6 +126,7 @@ Build a simple, fast personal finance PWA for iPhone and web, focused on:
 - Backend as a Service: Supabase (Auth + Postgres + REST)
 - Deployment: Vercel
 - Version control: Git + GitHub
+- Security headers and CSP via `vercel.json`
 
 ### Run locally
 
@@ -148,6 +151,9 @@ Open in browser:
 |- historico.json
 |- manifest.webmanifest
 |- sw.js
+|- stats-utils.js
+|- sql/
+|  |- policies.sql
 |- icons/
 |- docs/
 |  |- images/

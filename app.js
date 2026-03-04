@@ -78,6 +78,8 @@ const categoriaEl = document.getElementById("categoria");
 const ingresosEl = document.getElementById("ingresos");
 const gastosEl = document.getElementById("gastos");
 const balanceEl = document.getElementById("balance");
+const balanceSparklineEl = document.getElementById("balance-sparkline");
+const balanceTrendEl = document.getElementById("balance-trend");
 const spendingAlertEl = document.getElementById("spending-alert");
 
 const emailEl = document.getElementById("auth-email");
@@ -646,41 +648,6 @@ function getRecentMonthKeys(count = 6) {
   return keys;
 }
 
-/**
- * @typedef {Object} MonthStats
- * @property {number} ingresos
- * @property {number} gastos
- * @property {number} balance
- */
-
-/**
- * Calcula totales por mes en una sola pasada.
- * @param {Transaction[]} rows
- * @returns {Record<string, MonthStats>}
- */
-function buildMonthlyStats(rows) {
-  const byMonth = {};
-  rows.forEach((x) => {
-    const key = getMonth(x.fecha);
-    if (!key) return;
-    const m = byMonth[key] || { ingresos: 0, gastos: 0, balance: 0 };
-    if (x.tipo === "Ingreso") {
-      m.ingresos += Number(x.monto);
-    } else {
-      m.gastos += Number(x.monto);
-    }
-    m.balance = m.ingresos - m.gastos;
-    byMonth[key] = m;
-  });
-  return byMonth;
-}
-
-const EMPTY_MONTH_STATS = Object.freeze({ ingresos: 0, gastos: 0, balance: 0 });
-
-function getMonthStats(statsByMonth, key) {
-  return statsByMonth[key] || EMPTY_MONTH_STATS;
-}
-
 function drawMonthlyIncomeExpenseChart(all) {
   if (!chartMonthlyEl) return;
   if (analysisPanelEl && !analysisPanelEl.open) return;
@@ -692,9 +659,9 @@ function drawMonthlyIncomeExpenseChart(all) {
   ctx.clearRect(0, 0, width, height);
 
   const keys = getRecentMonthKeys(6);
-  const statsByMonth = buildMonthlyStats(all);
+  const statsByMonth = StatsUtils.buildMonthlyStats(all);
   const rows = keys.map((k) => {
-    const s = getMonthStats(statsByMonth, k);
+    const s = StatsUtils.getMonthStats(statsByMonth, k);
     return { key: k, ingresos: s.ingresos, gastos: s.gastos };
   });
 
@@ -892,12 +859,6 @@ function previousMonthKey(monthKey) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
-function monthTotals(rows, monthKey, precomputedStats = null) {
-  const statsByMonth = precomputedStats || buildMonthlyStats(rows);
-  const s = getMonthStats(statsByMonth, monthKey);
-  return { ingresos: s.ingresos, gastos: s.gastos, balance: s.balance };
-}
-
 function fmtDelta(curr, prev) {
   const delta = curr - prev;
   const cls = delta > 0 ? "saldo-pos" : delta < 0 ? "saldo-neg" : "saldo-neu";
@@ -919,9 +880,9 @@ function renderMonthlyComparison(all, selectedMonth) {
 
   const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
   const prevKey = previousMonthKey(monthKey);
-  const statsByMonth = buildMonthlyStats(all);
-  const curr = monthTotals(all, monthKey, statsByMonth);
-  const prev = monthTotals(all, prevKey, statsByMonth);
+  const statsByMonth = StatsUtils.buildMonthlyStats(all);
+  const curr = StatsUtils.monthTotals(all, monthKey, statsByMonth);
+  const prev = StatsUtils.monthTotals(all, prevKey, statsByMonth);
 
   cmpTitleEl.textContent = `${monthKey} vs ${prevKey}`;
 
@@ -1161,9 +1122,9 @@ function renderLast3Months(all) {
   if (!trend3mEl) return;
 
   const monthKeys = getLast3MonthKeys();
-  const statsByMonth = buildMonthlyStats(all);
+  const statsByMonth = StatsUtils.buildMonthlyStats(all);
   const cards = monthKeys.map((key) => {
-    const stats = getMonthStats(statsByMonth, key);
+    const stats = StatsUtils.getMonthStats(statsByMonth, key);
     const saldo = stats.balance;
     const saldoClass = saldo > 0 ? "saldo-pos" : saldo < 0 ? "saldo-neg" : "saldo-neu";
 
@@ -1181,11 +1142,11 @@ function renderLast3Months(all) {
 function renderSpendingAlert(all) {
   if (!spendingAlertEl) return;
 
-  const statsByMonth = buildMonthlyStats(all);
-  const current = getMonthStats(statsByMonth, CURRENT_MONTH).gastos;
+  const statsByMonth = StatsUtils.buildMonthlyStats(all);
+  const current = StatsUtils.getMonthStats(statsByMonth, CURRENT_MONTH).gastos;
   const last3Keys = getLast3MonthKeys();
   const prevValues = last3Keys
-    .map((k) => getMonthStats(statsByMonth, k).gastos)
+    .map((k) => StatsUtils.getMonthStats(statsByMonth, k).gastos)
     .filter((v) => v > 0);
 
   spendingAlertEl.classList.remove(
@@ -1327,6 +1288,63 @@ function updateMonthlySummaryUI(summary) {
   );
 }
 
+function drawBalanceSparkline(all) {
+  if (!balanceSparklineEl) return;
+  const width = balanceSparklineEl.clientWidth || 220;
+  const height = balanceSparklineEl.clientHeight || 46;
+  const ctx = setupCanvas(balanceSparklineEl, width, height);
+  ctx.clearRect(0, 0, width, height);
+
+  const keys = getRecentMonthKeys(6);
+  const statsByMonth = StatsUtils.buildMonthlyStats(all);
+  const points = keys.map((k) => StatsUtils.getMonthStats(statsByMonth, k).balance);
+  const min = Math.min(...points, 0);
+  const max = Math.max(...points, 0);
+  const range = Math.max(1, max - min);
+
+  const left = 4;
+  const right = width - 4;
+  const top = 6;
+  const bottom = height - 6;
+  const step = points.length > 1 ? (right - left) / (points.length - 1) : 0;
+  const yFor = (v) => bottom - ((v - min) / range) * (bottom - top);
+
+  const axisY = yFor(0);
+  ctx.strokeStyle = selectedTheme === "dark" ? "rgba(148,163,184,0.35)" : "rgba(100,116,139,0.28)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(left, axisY);
+  ctx.lineTo(right, axisY);
+  ctx.stroke();
+
+  const endVal = points[points.length - 1] || 0;
+  const lineColor = endVal >= 0 ? "#22c55e" : "#ef4444";
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  points.forEach((v, i) => {
+    const x = left + i * step;
+    const y = yFor(v);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  const lastX = left + (points.length - 1) * step;
+  const lastY = yFor(endVal);
+  ctx.fillStyle = lineColor;
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, 2.8, 0, Math.PI * 2);
+  ctx.fill();
+
+  if (balanceTrendEl) {
+    const prevVal = points[points.length - 2] || 0;
+    const delta = endVal - prevVal;
+    const trendIcon = delta > 0 ? "\u{1F4C8}" : delta < 0 ? "\u{1F4C9}" : "\u{27A1}";
+    balanceTrendEl.textContent = `${trendIcon} Ultimo balance: ${money(endVal)}`;
+  }
+}
+
 function getFilteredDetailRows(all) {
   let detailRows = [...all];
 
@@ -1385,6 +1403,7 @@ function refresh() {
 
   const summary = computeMonthlySummary(all, selectedMonth);
   updateMonthlySummaryUI(summary);
+  drawBalanceSparkline(all);
 
   refreshDetailCategoryOptions(all);
   const detailRows = getFilteredDetailRows(all);
