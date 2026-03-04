@@ -410,6 +410,18 @@ button:focus {
   color: #fda4af;
 }
 
+.yoy-compare {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--soft);
+}
+
+.yoy-compare p {
+  margin: 8px 0 0;
+}
+
 .budget-summary-list {
   margin-top: 10px;
   display: grid;

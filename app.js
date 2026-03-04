@@ -81,6 +81,8 @@ const balanceEl = document.getElementById("balance");
 const balanceSparklineEl = document.getElementById("balance-sparkline");
 const balanceTrendEl = document.getElementById("balance-trend");
 const spendingAlertEl = document.getElementById("spending-alert");
+const yoyCategoryEl = document.getElementById("yoy-category");
+const yoySummaryEl = document.getElementById("yoy-summary");
 const budgetSummaryListEl = document.getElementById("budget-summary-list");
 
 const emailEl = document.getElementById("auth-email");
@@ -527,6 +529,15 @@ function setupBudgetCategoryOptions() {
   budgetCategoryEl.innerHTML = CATEGORIAS.Gasto
     .map((c) => `<option value="${c}">${CATEGORY_ICONS[c] || "•"} ${c}</option>`)
     .join("");
+}
+
+function setupYoyCategoryOptions() {
+  if (!yoyCategoryEl) return;
+  const previous = yoyCategoryEl.value;
+  yoyCategoryEl.innerHTML = CATEGORIAS.Gasto
+    .map((c) => `<option value="${c}">${CATEGORY_ICONS[c] || "•"} ${c}</option>`)
+    .join("");
+  if (previous && CATEGORIAS.Gasto.includes(previous)) yoyCategoryEl.value = previous;
 }
 
 function buildMonthOptions(all) {
@@ -1190,6 +1201,48 @@ function renderSpendingAlert(all) {
   spendingAlertEl.textContent = `Gasto del mes en linea con el promedio 3M (${avgLabel}).`;
 }
 
+function previousYearMonthKey(monthKey) {
+  const [y, m] = String(monthKey || "").split("-").map(Number);
+  if (!y || !m) return monthKey;
+  return `${String(y - 1)}-${String(m).padStart(2, "0")}`;
+}
+
+function renderYearOverYearCategory(all, selectedMonth) {
+  if (!yoySummaryEl || !yoyCategoryEl) return;
+  const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
+  const prevKey = previousYearMonthKey(monthKey);
+  const cat = yoyCategoryEl.value || CATEGORIAS.Gasto[0];
+
+  let current = 0;
+  let previous = 0;
+  all.forEach((x) => {
+    if (x.tipo !== "Gasto" || x.categoria !== cat) return;
+    const mk = getMonth(x.fecha);
+    if (mk === monthKey) current += Number(x.monto);
+    else if (mk === prevKey) previous += Number(x.monto);
+  });
+
+  yoySummaryEl.classList.remove("saldo-pos", "saldo-neg", "saldo-neu");
+
+  if (current === 0 && previous === 0) {
+    yoySummaryEl.classList.add("saldo-neu");
+    yoySummaryEl.textContent = `${cat}: sin movimientos en ${monthLabel(monthKey)} ni en ${monthLabel(prevKey)}.`;
+    return;
+  }
+
+  if (previous === 0) {
+    yoySummaryEl.classList.add("saldo-neu");
+    yoySummaryEl.textContent = `${cat}: ${money(current)} en ${monthLabel(monthKey)}. Sin dato para ${monthLabel(prevKey)}.`;
+    return;
+  }
+
+  const delta = current - previous;
+  const pct = ((delta / previous) * 100).toFixed(1);
+  const improving = delta < 0;
+  yoySummaryEl.classList.add(improving ? "saldo-pos" : delta > 0 ? "saldo-neg" : "saldo-neu");
+  yoySummaryEl.textContent = `${cat}: ${money(current)} vs ${money(previous)} (${pct >= 0 ? "+" : ""}${pct}%) respecto a ${monthLabel(prevKey)}.`;
+}
+
 function renderBudgetStatus(all) {
   if (!budgetListEl) return;
 
@@ -1439,6 +1492,7 @@ function updateCalendarAndAnalytics(all, detailRows, monthKey) {
   renderMonthlyComparison(all, monthKey);
   renderLast3Months(all);
   renderSpendingAlert(all);
+  renderYearOverYearCategory(all, monthKey);
   renderBudgetSummary(all, monthKey);
   renderBudgetStatus(all);
 }
@@ -2696,6 +2750,7 @@ if (detailCategoryEl) detailCategoryEl.addEventListener("change", refresh);
 if (detailFromEl) detailFromEl.addEventListener("change", refresh);
 if (detailToEl) detailToEl.addEventListener("change", refresh);
 if (detailSearchEl) detailSearchEl.addEventListener("input", refresh);
+if (yoyCategoryEl) yoyCategoryEl.addEventListener("change", refresh);
 if (btnDetailClear) {
   btnDetailClear.addEventListener("click", () => {
     if (detailTypeEl) detailTypeEl.value = "Todos";
@@ -2846,6 +2901,7 @@ btnBudgetSave.addEventListener("click", () => {
     setStatus("Inicializando app...");
     await disableServiceWorkerCache();
     setupBudgetCategoryOptions();
+    setupYoyCategoryOptions();
     updateCategoryOptions(tipoEl.value);
     updateArsConvertVisibility();
     if (arsRateEl) arsRateEl.value = Number(arsRate).toFixed(4);

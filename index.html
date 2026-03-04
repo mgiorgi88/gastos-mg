@@ -61,7 +61,7 @@
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v95</p>
+      <p class="muted">Version: v96</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -87,7 +87,7 @@
       <h2>Carga rapida</h2>
       <div class="grid">
         <label>Importe rapido
-          <input type="number" id="quick-amount" min="0.01" step="0.01" placeholder="0.00">
+          <input type="number" id="quick-amount" min="0.01" step="0.01" inputmode="decimal" enterkeyhint="done" placeholder="0.00">
         </label>
         <label>Detalle rapido (opcional)
           <input type="text" id="quick-detail" placeholder="Ej: compra semanal">
@@ -116,7 +116,7 @@
             </select>
           </label>
           <label>Monto
-            <input type="number" id="monto" min="0.01" step="0.01" required>
+            <input type="number" id="monto" min="0.01" step="0.01" inputmode="decimal" enterkeyhint="done" required>
           </label>
           <label>Categoria
             <select id="categoria" required></select>
@@ -127,13 +127,13 @@
         </div>
         <div id="ars-convert-box" class="grid" hidden style="display:none;">
           <label>Monto en ARS
-            <input type="number" id="ars-amount" min="0.01" step="0.01" placeholder="0.00">
+            <input type="number" id="ars-amount" min="0.01" step="0.01" inputmode="decimal" enterkeyhint="done" placeholder="0.00">
           </label>
           <label>Tipo de cambio ARS por 1 unidad
-            <input type="number" id="ars-rate" min="0.0001" step="0.0001" placeholder="Cargando..." readonly>
+            <input type="number" id="ars-rate" min="0.0001" step="0.0001" inputmode="decimal" enterkeyhint="done" placeholder="Cargando..." readonly>
           </label>
           <label>Spread casa de cambio (%)
-            <input type="number" id="spread-pct" min="0" step="0.1" placeholder="3.0">
+            <input type="number" id="spread-pct" min="0" step="0.1" inputmode="decimal" enterkeyhint="done" placeholder="3.0">
           </label>
           <label>Resultado convertido
             <input type="text" id="ars-result" readonly>
@@ -182,6 +182,12 @@
         </article>
       </div>
       <p id="spending-alert" class="summary-alert summary-alert-neutral">Sin datos suficientes para comparar gasto mensual.</p>
+      <div class="yoy-compare">
+        <label>Comparar categoria (vs mismo mes anio anterior)
+          <select id="yoy-category"></select>
+        </label>
+        <p id="yoy-summary" class="muted">Selecciona una categoria para ver comparativa anual.</p>
+      </div>
       <div id="budget-summary-list" class="budget-summary-list"></div>
     </section>
 
@@ -243,7 +249,7 @@
             <select id="budget-category"></select>
           </label>
           <label>Presupuesto mes actual
-            <input type="number" id="budget-amount" min="0" step="0.01" placeholder="0.00">
+            <input type="number" id="budget-amount" min="0" step="0.01" inputmode="decimal" enterkeyhint="done" placeholder="0.00">
           </label>
         </div>
         <div class="auth-actions">
