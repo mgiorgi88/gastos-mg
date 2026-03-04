@@ -1447,10 +1447,10 @@ function drawBalanceSparkline(all) {
   const max = Math.max(...points, 0);
   const range = Math.max(1, max - min);
 
-  const left = 4;
-  const right = width - 4;
+  const left = 8;
+  const right = width - 8;
   const top = 6;
-  const bottom = height - 6;
+  const bottom = height - 14;
   const step = points.length > 1 ? (right - left) / (points.length - 1) : 0;
   const yFor = (v) => bottom - ((v - min) / range) * (bottom - top);
 
@@ -1462,31 +1462,31 @@ function drawBalanceSparkline(all) {
   ctx.lineTo(right, axisY);
   ctx.stroke();
 
-  const endVal = points[points.length - 1] || 0;
-  const lineColor = endVal >= 0 ? "#22c55e" : "#ef4444";
-  ctx.strokeStyle = lineColor;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
+  const barW = Math.max(8, Math.min(18, (right - left) / (points.length * 1.8)));
   points.forEach((v, i) => {
     const x = left + i * step;
     const y = yFor(v);
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
+    const h = Math.abs(y - axisY);
+    const barX = x - barW / 2;
+    const barY = v >= 0 ? y : axisY;
+    ctx.fillStyle = v >= 0 ? "#22c55e" : "#ef4444";
+    fillRoundedRect(ctx, barX, barY, barW, Math.max(1, h), 4);
   });
-  ctx.stroke();
 
-  const lastX = left + (points.length - 1) * step;
-  const lastY = yFor(endVal);
-  ctx.fillStyle = lineColor;
-  ctx.beginPath();
-  ctx.arc(lastX, lastY, 2.8, 0, Math.PI * 2);
-  ctx.fill();
+  const textColor = getCssVar("--muted", "#6b7280");
+  ctx.fillStyle = textColor;
+  ctx.font = `10px ${getFontFamily()}`;
+  ctx.textAlign = "left";
+  ctx.fillText(monthLabel(keys[0]).split(" ")[0], left, height - 2);
+  ctx.textAlign = "right";
+  ctx.fillText(monthLabel(keys[keys.length - 1]).split(" ")[0], right, height - 2);
 
   if (balanceTrendEl) {
+    const endVal = points[points.length - 1] || 0;
     const prevVal = points[points.length - 2] || 0;
     const delta = endVal - prevVal;
     const trendIcon = delta > 0 ? "\u{1F4C8}" : delta < 0 ? "\u{1F4C9}" : "\u{27A1}";
-    balanceTrendEl.textContent = `${trendIcon} Ultimo balance: ${money(endVal)}`;
+    balanceTrendEl.textContent = `${trendIcon} Verde = ahorro, rojo = deficit. Ultimo balance: ${money(endVal)}`;
   }
 }
 
