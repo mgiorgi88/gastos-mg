@@ -410,6 +410,59 @@ button:focus {
   color: #fda4af;
 }
 
+.budget-summary-list {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.budget-summary-item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--soft);
+  padding: 9px 10px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.budget-summary-item-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+.budget-summary-item small {
+  color: var(--muted);
+}
+
+.budget-progress {
+  width: 100%;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.18);
+  overflow: hidden;
+}
+
+.budget-progress-bar {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.budget-summary-item.good .budget-progress-bar {
+  background: #22c55e;
+}
+
+.budget-summary-item.warn .budget-progress-bar {
+  background: #f59e0b;
+}
+
+.budget-summary-item.bad .budget-progress-bar {
+  background: #ef4444;
+}
+
 .trend-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

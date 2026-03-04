@@ -81,6 +81,7 @@ const balanceEl = document.getElementById("balance");
 const balanceSparklineEl = document.getElementById("balance-sparkline");
 const balanceTrendEl = document.getElementById("balance-trend");
 const spendingAlertEl = document.getElementById("spending-alert");
+const budgetSummaryListEl = document.getElementById("budget-summary-list");
 
 const emailEl = document.getElementById("auth-email");
 const passwordEl = document.getElementById("auth-password");
@@ -1220,6 +1221,50 @@ function renderBudgetStatus(all) {
   }).join("");
 }
 
+function renderBudgetSummary(all, selectedMonth) {
+  if (!budgetSummaryListEl) return;
+
+  const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
+  const spentByCategory = {};
+  all.forEach((x) => {
+    if (x.tipo !== "Gasto") return;
+    if (getMonth(x.fecha) !== monthKey) return;
+    spentByCategory[x.categoria] = (spentByCategory[x.categoria] || 0) + Number(x.monto);
+  });
+
+  const items = CATEGORIAS.Gasto
+    .filter((cat) => Number(budgets[cat] || 0) > 0)
+    .map((cat) => {
+      const budget = Number(budgets[cat] || 0);
+      const spent = Number(spentByCategory[cat] || 0);
+      const pct = budget > 0 ? (spent / budget) * 100 : 0;
+      const status = pct > 100 ? "bad" : pct >= 80 ? "warn" : "good";
+      return { cat, budget, spent, pct, status };
+    })
+    .sort((a, b) => b.pct - a.pct)
+    .slice(0, 4);
+
+  if (items.length === 0) {
+    budgetSummaryListEl.innerHTML = "";
+    return;
+  }
+
+  budgetSummaryListEl.innerHTML = `
+    <h3 class="muted" style="margin: 2px 0 2px; font-size: 0.9rem;">Presupuesto por categoria (${monthLabel(monthKey)})</h3>
+    ${items.map((x) => `
+      <button type="button" class="budget-summary-item ${x.status}" data-budget-cat="${x.cat}">
+        <div class="budget-summary-item-head">
+          <strong>${CATEGORY_ICONS[x.cat] || "•"} ${x.cat}</strong>
+          <small>${money(x.spent)} / ${money(x.budget)} (${x.pct.toFixed(0)}%)</small>
+        </div>
+        <div class="budget-progress">
+          <div class="budget-progress-bar" style="width:${Math.min(100, Math.max(0, x.pct))}%;"></div>
+        </div>
+      </button>
+    `).join("")}
+  `;
+}
+
 function refreshDetailCategoryOptions(rows) {
   if (!detailCategoryEl) return;
   const prev = detailCategoryEl.value || "Todos";
@@ -1394,6 +1439,7 @@ function updateCalendarAndAnalytics(all, detailRows, monthKey) {
   renderMonthlyComparison(all, monthKey);
   renderLast3Months(all);
   renderSpendingAlert(all);
+  renderBudgetSummary(all, monthKey);
   renderBudgetStatus(all);
 }
 
@@ -2658,6 +2704,22 @@ if (btnDetailClear) {
     if (detailToEl) detailToEl.value = "";
     if (detailSearchEl) detailSearchEl.value = "";
     refresh();
+  });
+}
+
+if (budgetSummaryListEl) {
+  budgetSummaryListEl.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-budget-cat]");
+    if (!btn) return;
+    const cat = btn.getAttribute("data-budget-cat");
+    if (!cat) return;
+    setActiveTab("mas");
+    if (detailTypeEl) detailTypeEl.value = "Gasto";
+    if (detailCategoryEl) detailCategoryEl.value = cat;
+    if (detailSearchEl) detailSearchEl.value = "";
+    selectedDayKey = null;
+    refresh();
+    showToast(`Filtro: ${cat}`);
   });
 }
 
