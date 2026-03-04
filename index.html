@@ -28,12 +28,6 @@
     <header class="hero">
       <div class="hero-head">
         <h1>Mis Gastos</h1>
-        <label class="theme-picker">Tema
-          <select id="theme-select">
-            <option value="light">Claro</option>
-            <option value="dark">Oscuro</option>
-          </select>
-        </label>
       </div>
       <p id="cloud-indicator" class="cloud-indicator">Nube: Local</p>
       <p>Registra ingresos y gastos en segundos.</p>
@@ -66,8 +60,18 @@
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesion</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar contrasena".</p>
-      <p class="muted">Version: v66</p>
+      <p class="muted">Version: v67</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
+    </section>
+
+    <section class="card" data-panel="mas">
+      <h2>Apariencia</h2>
+      <label class="theme-picker">Tema
+        <select id="theme-select">
+          <option value="light">Claro</option>
+          <option value="dark">Oscuro</option>
+        </select>
+      </label>
     </section>
 
     <section id="account-mini" class="card" data-panel="mas" hidden>
