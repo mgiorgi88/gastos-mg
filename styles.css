@@ -817,19 +817,21 @@ details summary {
 
   .tab-nav {
     position: fixed;
-    left: 8px;
-    right: 8px;
-    bottom: 10px;
+    left: max(10px, env(safe-area-inset-left));
+    right: max(10px, env(safe-area-inset-right));
+    bottom: calc(10px + env(safe-area-inset-bottom));
     z-index: 50;
     background: var(--card);
     border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 6px;
+    border-radius: 18px;
+    padding: 8px;
+    overflow: hidden;
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.14);
   }
 
   .tab-btn {
     padding: 12px 8px;
     font-size: 0.95rem;
+    border-radius: 12px;
   }
 }
