@@ -588,10 +588,9 @@ function drawMonthlyIncomeExpenseChart(all) {
   if (chartMonthlyInsightEl && last && prev) {
     const delta = last.gastos - prev.gastos;
     const pct = prev.gastos > 0 ? `${Math.abs((delta / prev.gastos) * 100).toFixed(1)}%` : "n/a";
-    const trendWord = delta > 0 ? "subieron" : delta < 0 ? "bajaron" : "se mantuvieron";
-    const balanceRows = rows.map((r) => ({ key: r.key, balance: r.ingresos - r.gastos }));
-    const best = balanceRows.reduce((acc, x) => (x.balance > acc.balance ? x : acc), balanceRows[0]);
-    chartMonthlyInsightEl.textContent = `Gastos ${trendWord} ${money(Math.abs(delta))} (${pct}) vs mes anterior. Mejor balance reciente: ${monthLabel(best.key)} (${money(best.balance)}).`;
+    const icon = delta > 0 ? "\u{1F53A}" : delta < 0 ? "\u{1F7E2}" : "\u{26AA}";
+    const trendWord = delta > 0 ? "subieron" : delta < 0 ? "bajaron" : "estables";
+    chartMonthlyInsightEl.textContent = `${icon} Gastos ${trendWord}: ${money(Math.abs(delta))} (${pct}) vs mes anterior.`;
   }
 
   if (chartMonthlyLegendEl) {
@@ -667,7 +666,7 @@ function drawCategoryDonutChart(all, selectedMonth) {
   ctx.fillText(topCat, cx, cy + 14);
 
   if (chartCategoryInsightEl) {
-    chartCategoryInsightEl.textContent = `${topCat} es tu categoria principal este mes (${share}%). Las 3 primeras categorias concentran ${top3Share}% del gasto.`;
+    chartCategoryInsightEl.textContent = `\u{1F7E2} Principal: ${topCat} (${share}%). Top 3 categorias: ${top3Share}%.`;
   }
 
   if (chartCategoryLegendEl) {
