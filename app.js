@@ -1613,8 +1613,8 @@ async function importTransactions(rows) {
     body: payload
   });
   if (!resp.ok) {
-    const txt = await resp.text().catch(() => "");
-    throw new Error(txt || `HTTP ${resp.status}`);
+    const msg = await getResponseErrorMessage(resp);
+    throw new Error(msg);
   }
   await loadCloudData();
   return deduped.length;
@@ -1776,8 +1776,60 @@ function updateEntryGate() {
   entryGateEl.hidden = Boolean(currentUser);
 }
 
+const NETWORK_TIMEOUT_MS = 12000;
+const NETWORK_RETRY_ATTEMPTS = 2;
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function fetchWithTimeout(url, init, timeoutMs = NETWORK_TIMEOUT_MS) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...init, signal: ctrl.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function buildErrorResponse(message, status = 599) {
+  const payload = JSON.stringify({ error: message, msg: message, message });
+  return new Response(payload, {
+    status,
+    headers: { "Content-Type": "application/json" }
+  });
+}
+
+async function getResponseErrorMessage(resp) {
+  if (!resp) return "Error de red";
+  try {
+    const data = await resp.clone().json();
+    const msg = data?.msg || data?.error_description || data?.error || data?.message || data?.hint;
+    if (msg) return String(msg);
+  } catch {
+    // Ignore JSON parse errors.
+  }
+  try {
+    const txt = await resp.clone().text();
+    const clean = String(txt || "").trim();
+    if (clean) return clean.slice(0, 240);
+  } catch {
+    // Ignore text parse errors.
+  }
+  return `HTTP ${resp.status}`;
+}
+
+function getPayloadErrorMessage(data, resp) {
+  const msg = data?.msg || data?.error_description || data?.error || data?.message || data?.hint;
+  return msg || `HTTP ${resp.status}`;
+}
+
 async function sbFetch(path, options = {}) {
-  const { method = "GET", body, auth = false } = options;
+  const { method = "GET", body, auth = false, retry = true, timeoutMs = NETWORK_TIMEOUT_MS } = options;
+  const upperMethod = String(method || "GET").toUpperCase();
+  const canRetry = retry && (upperMethod === "GET" || upperMethod === "HEAD");
+  const attempts = canRetry ? NETWORK_RETRY_ATTEMPTS : 1;
   const headers = {
     apikey: SUPABASE_ANON_KEY,
     "Content-Type": "application/json"
@@ -1787,13 +1839,32 @@ async function sbFetch(path, options = {}) {
     headers.Authorization = `Bearer ${authSession.access_token}`;
   }
 
-  const resp = await fetch(`${SUPABASE_URL}${path}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined
-  });
+  for (let i = 1; i <= attempts; i += 1) {
+    try {
+      const resp = await fetchWithTimeout(`${SUPABASE_URL}${path}`, {
+        method: upperMethod,
+        headers,
+        body: body ? JSON.stringify(body) : undefined
+      }, timeoutMs);
 
-  return resp;
+      if (canRetry && (resp.status >= 500 || resp.status === 429) && i < attempts) {
+        await wait(260 * i);
+        continue;
+      }
+      return resp;
+    } catch (err) {
+      if (i < attempts) {
+        await wait(260 * i);
+        continue;
+      }
+      if (err?.name === "AbortError") {
+        return buildErrorResponse("Tiempo de espera agotado al conectar con la nube.", 504);
+      }
+      return buildErrorResponse("No se pudo conectar con la nube. Revisa internet.", 599);
+    }
+  }
+
+  return buildErrorResponse("Error de red inesperado.", 599);
 }
 
 async function refreshAuthToken() {
@@ -1848,8 +1919,8 @@ async function loadCloudData() {
   );
 
   if (!resp.ok) {
-    const txt = await resp.text().catch(() => "");
-    setStatus(`Error cargando nube: ${txt || resp.status}`);
+    const msg = await getResponseErrorMessage(resp);
+    setStatus(`Error cargando nube: ${msg}`);
     txData = loadTx();
     refresh();
     return;
@@ -1900,8 +1971,8 @@ async function seedCloudIfEmpty() {
   });
 
   if (!resp.ok) {
-    const txt = await resp.text().catch(() => "");
-    setStatus(`No se pudo migrar historico: ${txt || resp.status}`);
+    const msg = await getResponseErrorMessage(resp);
+    setStatus(`No se pudo migrar historico: ${msg}`);
   }
 }
 
@@ -1922,7 +1993,7 @@ async function signup() {
 
   const data = await resp.json().catch(() => null);
   if (!resp.ok) {
-    const msg = data?.msg || data?.error_description || data?.error || `HTTP ${resp.status}`;
+    const msg = getPayloadErrorMessage(data, resp);
     setStatus(`Error al crear cuenta: ${msg}`);
     return;
   }
@@ -1957,7 +2028,7 @@ async function login() {
 
   const data = await resp.json().catch(() => null);
   if (!resp.ok || !data?.access_token) {
-    const msg = data?.msg || data?.error_description || data?.error || `HTTP ${resp.status}`;
+    const msg = getPayloadErrorMessage(data, resp);
     setStatus(`Error de inicio de sesion: ${msg}`);
     return;
   }
@@ -1986,7 +2057,7 @@ async function recoverPassword() {
 
   if (!resp.ok) {
     const data = await resp.json().catch(() => null);
-    const msg = data?.msg || data?.error_description || data?.error || `HTTP ${resp.status}`;
+    const msg = getPayloadErrorMessage(data, resp);
     setStatus(`Error al enviar recuperacion: ${msg}`);
     return;
   }
@@ -2058,8 +2129,8 @@ async function addTransaction(tx) {
   });
 
   if (!resp.ok) {
-    const txt = await resp.text().catch(() => "");
-    setStatus(`Error guardando en nube: ${txt || resp.status}`);
+    const msg = await getResponseErrorMessage(resp);
+    setStatus(`Error guardando en nube: ${msg}`);
     return;
   }
 
@@ -2088,8 +2159,8 @@ async function updateTransaction(id, tx) {
   });
 
   if (!resp.ok) {
-    const txt = await resp.text().catch(() => "");
-    setStatus(`Error actualizando en nube: ${txt || resp.status}`);
+    const msg = await getResponseErrorMessage(resp);
+    setStatus(`Error actualizando en nube: ${msg}`);
     return false;
   }
 
@@ -2235,8 +2306,8 @@ async function deleteTransaction(id) {
   });
 
   if (!resp.ok) {
-    const txt = await resp.text().catch(() => "");
-    setStatus(`Error eliminando en nube: ${txt || resp.status}`);
+    const msg = await getResponseErrorMessage(resp);
+    setStatus(`Error eliminando en nube: ${msg}`);
     return;
   }
 
