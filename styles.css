@@ -337,6 +337,8 @@ button:focus {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 14px;
+  justify-content: center;
+  text-align: center;
 }
 
 .chart-legend-item {
