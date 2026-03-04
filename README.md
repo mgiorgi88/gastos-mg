@@ -4,21 +4,11 @@ Aplicacion web tipo PWA para registrar gastos e ingresos, analizar balances mens
 
 Demo: https://gastos-mg.vercel.app/
 
-## Capturas
+---
 
-### Web
+## ES - Descripcion
 
-![Pantalla Cargar](docs/images/01-cargar.png)
-![Pantalla Resumen](docs/images/02-resumen.png)
-![Pantalla Mas](docs/images/03-mas.png)
-
-### Mobile
-
-![Pantalla Mobile 1](docs/images/04-mobile-1.png)
-![Pantalla Mobile 2](docs/images/05-mobile-2.png)
-![Pantalla Mobile 3](docs/images/06-mobile-3.png)
-
-## Objetivo del proyecto
+### Objetivo del proyecto
 
 Construir una app de finanzas personales simple y rapida de usar desde iPhone y web, con foco en:
 
@@ -26,7 +16,7 @@ Construir una app de finanzas personales simple y rapida de usar desde iPhone y 
 - lectura mensual clara (ingresos, gastos, ahorro)
 - seguimiento visual con graficos e insights
 
-## Funcionalidades principales
+### Funcionalidades principales
 
 - Carga rapida en 1 toque para categorias frecuentes.
 - Alta manual de transacciones con categoria, fecha, detalle y tipo.
@@ -40,14 +30,111 @@ Construir una app de finanzas personales simple y rapida de usar desde iPhone y 
 - Soporte PWA (instalable en iPhone desde Safari).
 - Sincronizacion en la nube con Supabase (auth + RLS).
 
-## Stack tecnico
+### Capturas
+
+#### Web
+
+![Pantalla Cargar](docs/images/01-cargar.png)
+![Pantalla Resumen](docs/images/02-resumen.png)
+![Pantalla Mas](docs/images/03-mas.png)
+
+#### Mobile
+
+![Pantalla Mobile 1](docs/images/04-mobile-1.png)
+![Pantalla Mobile 2](docs/images/05-mobile-2.png)
+![Pantalla Mobile 3](docs/images/06-mobile-3.png)
+
+### Stack tecnico
 
 - Frontend: HTML, CSS, JavaScript vanilla
 - Backend as a Service: Supabase (Auth + Postgres + REST)
 - Deploy: Vercel
 - Versionado: Git + GitHub
 
-## Arquitectura del repo
+### Ejecucion local
+
+```powershell
+cd "C:\Users\MARIANO\OneDrive\Scripts\Gastos MG"
+py -m http.server 8091
+```
+
+Abrir en navegador:
+
+`http://localhost:8091/index.html?app=gastos-mg-personal`
+
+### Uso en iPhone (como app)
+
+1. Abrir la URL publica en Safari.
+2. Compartir.
+3. Agregar a pantalla de inicio.
+
+### Seguridad y datos
+
+- Cada usuario ve solo sus movimientos (RLS en Supabase).
+- La sesion puede guardarse de forma persistente en el dispositivo.
+- La app funciona en modo local aunque no haya login.
+
+---
+
+## EN - Overview
+
+### Project goal
+
+Build a simple, fast personal finance PWA for iPhone and web, focused on:
+
+- quick transaction logging
+- clear monthly financial overview (income, expenses, savings)
+- visual tracking through charts and insights
+
+### Key features
+
+- One-tap quick entry for frequent expense categories.
+- Manual transaction form with date, type, category and details.
+- Monthly summary with income, expenses and balance.
+- Monthly comparisons and trend view.
+- Interactive charts (bars + donut) with mouse/touch tooltips.
+- Automatic spending alert (traffic light vs last 3 closed months average).
+- Day-by-day calendar with edit, duplicate and delete actions.
+- Excel export for filtered transactions.
+- Light/dark theme.
+- PWA support (installable on iPhone from Safari).
+- Cloud sync with Supabase (auth + row-level security).
+
+### Screenshots
+
+#### Web
+
+![Load Screen](docs/images/01-cargar.png)
+![Summary Screen](docs/images/02-resumen.png)
+![More Screen](docs/images/03-mas.png)
+
+#### Mobile
+
+![Mobile Screen 1](docs/images/04-mobile-1.png)
+![Mobile Screen 2](docs/images/05-mobile-2.png)
+![Mobile Screen 3](docs/images/06-mobile-3.png)
+
+### Tech stack
+
+- Frontend: HTML, CSS, Vanilla JavaScript
+- Backend as a Service: Supabase (Auth + Postgres + REST)
+- Deployment: Vercel
+- Version control: Git + GitHub
+
+### Run locally
+
+```powershell
+cd "C:\Users\MARIANO\OneDrive\Scripts\Gastos MG"
+py -m http.server 8091
+```
+
+Open in browser:
+
+`http://localhost:8091/index.html?app=gastos-mg-personal`
+
+---
+
+## Repository structure
 
 ```text
 .
@@ -65,39 +152,6 @@ Construir una app de finanzas personales simple y rapida de usar desde iPhone y 
 |- README.md
 ```
 
-## Ejecucion local
+## Author
 
-```powershell
-cd "C:\Users\MARIANO\OneDrive\Scripts\Gastos MG"
-py -m http.server 8091
-```
-
-Abrir en navegador:
-
-`http://localhost:8091/index.html?app=gastos-mg-personal`
-
-## Deploy
-
-La app esta desplegada en Vercel y conectada a este repositorio de GitHub. Cada push a `main` publica una nueva version.
-
-## Uso en iPhone (como app)
-
-1. Abrir la URL publica en Safari.
-2. Compartir.
-3. Agregar a pantalla de inicio.
-
-## Seguridad y datos
-
-- Cada usuario ve solo sus movimientos (RLS en Supabase).
-- La sesion puede guardarse de forma persistente en el dispositivo.
-- La app funciona en modo local aunque no haya login.
-
-## Proximas mejoras
-
-- Capturas de pantalla en `docs/images`.
-- Mas insights automaticos (gasto por categoria vs promedio).
-- Mejoras de UX en filtros y comparativas.
-
-## Autor
-
-Proyecto personal de Mariano Giorgi.
+Personal project by Mariano Giorgi.
