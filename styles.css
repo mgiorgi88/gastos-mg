@@ -312,12 +312,13 @@ button:focus {
 }
 
 .chart-wrap {
-  margin-top: 8px;
+  margin: 8px auto 0;
   border: 1px solid var(--line);
   border-radius: 10px;
   background: color-mix(in srgb, var(--soft) 92%, transparent);
   padding: 10px;
-  height: 280px;
+  height: 250px;
+  max-width: 760px;
 }
 
 .chart-wrap canvas {
@@ -327,7 +328,8 @@ button:focus {
 }
 
 .donut-wrap {
-  height: 260px;
+  height: 300px;
+  max-width: 420px;
 }
 
 .chart-legend {
@@ -840,11 +842,13 @@ details summary {
   }
 
   .chart-wrap {
-    height: 250px;
+    height: 230px;
+    max-width: 100%;
   }
 
   .donut-wrap {
-    height: 250px;
+    height: 230px;
+    max-width: 100%;
   }
 
   .quick-actions {
