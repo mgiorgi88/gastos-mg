@@ -73,6 +73,7 @@ Abrir en navegador:
 - Cada usuario ve solo sus movimientos (RLS en Supabase).
 - La sesion puede guardarse de forma persistente en el dispositivo.
 - La app funciona en modo local aunque no haya login.
+- El archivo `historico.json` publicado contiene solo datos demo (sin datos personales reales).
 
 ---
 
