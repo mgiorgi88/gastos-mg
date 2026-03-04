@@ -2205,7 +2205,7 @@ async function signup() {
   const password = passwordEl.value;
 
   if (!email || password.length < 6) {
-    setStatus("Completa email y contrasena (minimo 6 caracteres).");
+    setStatus("Completa email y contraseña (mínimo 6 caracteres).");
     return;
   }
 
@@ -2240,7 +2240,7 @@ async function login() {
   const password = passwordEl.value;
 
   if (!email || !password) {
-    setStatus("Ingresa email y contrasena.");
+    setStatus("Ingresa email y contraseña.");
     return;
   }
 
@@ -2269,7 +2269,7 @@ async function login() {
 async function recoverPassword() {
   const email = emailEl.value.trim();
   if (!email) {
-    setStatus("Escribe tu email para recuperar contrasena.");
+    setStatus("Escribe tu email para recuperar contraseña.");
     return;
   }
 
@@ -2880,7 +2880,7 @@ btnRecover.addEventListener("click", async () => {
     setStatus("Enviando recuperacion...");
     await recoverPassword();
   } catch (err) {
-    setStatus(`Fallo en Recuperar contrasena: ${err?.message || String(err)}`);
+    setStatus(`Fallo en Recuperar contraseña: ${err?.message || String(err)}`);
   }
 });
 
