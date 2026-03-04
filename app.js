@@ -83,6 +83,7 @@ const balanceTrendEl = document.getElementById("balance-trend");
 const spendingAlertEl = document.getElementById("spending-alert");
 const yoyCategoryEl = document.getElementById("yoy-category");
 const yoySummaryEl = document.getElementById("yoy-summary");
+const yoyMiniChartEl = document.getElementById("yoy-mini-chart");
 const budgetSummaryListEl = document.getElementById("budget-summary-list");
 
 const emailEl = document.getElementById("auth-email");
@@ -1222,6 +1223,8 @@ function renderYearOverYearCategory(all, selectedMonth) {
     else if (mk === prevKey) previous += Number(x.monto);
   });
 
+  drawYoyMiniChart(current, previous, monthKey, prevKey);
+
   yoySummaryEl.classList.remove("saldo-pos", "saldo-neg", "saldo-neu");
 
   if (current === 0 && previous === 0) {
@@ -1241,6 +1244,50 @@ function renderYearOverYearCategory(all, selectedMonth) {
   const improving = delta < 0;
   yoySummaryEl.classList.add(improving ? "saldo-pos" : delta > 0 ? "saldo-neg" : "saldo-neu");
   yoySummaryEl.textContent = `${cat}: ${money(current)} vs ${money(previous)} (${pct >= 0 ? "+" : ""}${pct}%) respecto a ${monthLabel(prevKey)}.`;
+}
+
+function drawYoyMiniChart(current, previous, monthKey, prevKey) {
+  if (!yoyMiniChartEl) return;
+  const width = yoyMiniChartEl.clientWidth || 280;
+  const height = yoyMiniChartEl.clientHeight || 78;
+  const ctx = setupCanvas(yoyMiniChartEl, width, height);
+  ctx.clearRect(0, 0, width, height);
+
+  const max = Math.max(1, current, previous);
+  const top = 10;
+  const bottom = height - 18;
+  const h = bottom - top;
+
+  const prevX = Math.round(width * 0.3);
+  const currX = Math.round(width * 0.7);
+  const barW = Math.max(22, Math.min(36, Math.round(width * 0.12)));
+  const prevH = (previous / max) * h;
+  const currH = (current / max) * h;
+  const prevY = bottom - prevH;
+  const currY = bottom - currH;
+
+  const prevColor = selectedTheme === "dark" ? "#60a5fa" : "#3b82f6";
+  const currColor = current <= previous ? "#22c55e" : "#ef4444";
+  const axisColor = selectedTheme === "dark" ? "rgba(148,163,184,0.35)" : "rgba(100,116,139,0.28)";
+  const textColor = getCssVar("--muted", "#6b7280");
+
+  ctx.strokeStyle = axisColor;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(8, bottom + 0.5);
+  ctx.lineTo(width - 8, bottom + 0.5);
+  ctx.stroke();
+
+  ctx.fillStyle = prevColor;
+  fillRoundedRect(ctx, prevX - barW / 2, prevY, barW, prevH, 6);
+  ctx.fillStyle = currColor;
+  fillRoundedRect(ctx, currX - barW / 2, currY, barW, currH, 6);
+
+  ctx.fillStyle = textColor;
+  ctx.font = `10px ${getFontFamily()}`;
+  ctx.textAlign = "center";
+  ctx.fillText(monthLabel(prevKey).split(" ")[0], prevX, height - 4);
+  ctx.fillText(monthLabel(monthKey).split(" ")[0], currX, height - 4);
 }
 
 function renderBudgetStatus(all) {
