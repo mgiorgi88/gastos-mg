@@ -110,6 +110,7 @@ const btnLogoutMini = document.getElementById("btn-logout-mini");
 const entryGateEl = document.getElementById("entry-gate");
 const btnGateSignin = document.getElementById("btn-gate-signin");
 const btnGateSignup = document.getElementById("btn-gate-signup");
+const movimientosSectionEl = document.getElementById("movimientos-section");
 const toastEl = document.getElementById("toast");
 const tabBtns = document.querySelectorAll(".tab-btn");
 const tabPanels = document.querySelectorAll("[data-panel]");
@@ -543,6 +544,13 @@ function setupYoyCategoryOptions() {
   } else {
     yoyCategoryEl.value = "__ALL__";
   }
+}
+
+function scrollToMovimientosSection() {
+  if (!movimientosSectionEl) return;
+  requestAnimationFrame(() => {
+    movimientosSectionEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 }
 
 function buildMonthOptions(all) {
@@ -2983,6 +2991,7 @@ if (topExpensesListEl) {
 
     setActiveTab("mas");
     refresh();
+    scrollToMovimientosSection();
     setStatus(`Filtro aplicado: ${cat} (${monthLabel(CURRENT_MONTH)}).`);
   });
 }
@@ -2999,6 +3008,7 @@ if (budgetSummaryListEl) {
     if (detailSearchEl) detailSearchEl.value = "";
     selectedDayKey = null;
     refresh();
+    scrollToMovimientosSection();
     showToast(`Filtro: ${cat}`);
   });
 }
