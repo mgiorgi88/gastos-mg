@@ -2,7 +2,6 @@ const KEY = "mis_gastos_v1";
 const BOOTSTRAP_KEY = "mis_gastos_bootstrap_v1";
 const MIGRATION_KEY = "mis_gastos_migration_v2";
 const SESSION_KEY = "mis_gastos_supabase_session_v1";
-const QUICK_AMOUNTS_KEY = "mis_gastos_quick_amounts_v1";
 const CURRENCY_KEY = "mis_gastos_currency_v1";
 const BUDGETS_KEY = "mis_gastos_budgets_v1";
 const ARS_RATE_KEY = "mis_gastos_ars_rate_v1";
@@ -167,7 +166,6 @@ let txData = [];
 let hasUserChosenMonth = false;
 let sessionPersistMode = "local";
 let authSession = loadSession();
-let quickAmounts = loadQuickAmounts();
 let selectedCurrency = loadCurrency();
 let budgets = loadBudgets();
 let arsRate = loadArsRate();
@@ -177,7 +175,6 @@ let editingTxId = null;
 let calendarMonthDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 let selectedDayKey = null;
 let currentDetailRows = [];
-let lastQuickCategory = "Supermercado";
 let toastTimer = null;
 let chartTooltipEl = null;
 let monthlyTooltipPoints = [];
@@ -305,19 +302,6 @@ function loadTx() {
 
 function saveTx(items) {
   localStorage.setItem(KEY, JSON.stringify(items));
-}
-
-function loadQuickAmounts() {
-  try {
-    return JSON.parse(localStorage.getItem(QUICK_AMOUNTS_KEY) || "{}");
-  } catch {
-    return {};
-  }
-}
-
-function saveQuickAmounts(data) {
-  quickAmounts = data;
-  localStorage.setItem(QUICK_AMOUNTS_KEY, JSON.stringify(data));
 }
 
 function loadBudgets() {
@@ -2493,19 +2477,10 @@ async function updateTransaction(id, tx) {
 }
 
 async function quickAddExpense(category) {
-  lastQuickCategory = category;
-  updateQuickAmountPlaceholder(category);
-  const inputAmount = parseDecimalInputValue(quickAmountEl.value);
-  const rememberedAmount = Number(quickAmounts[category] || 0);
-
-  let amount = inputAmount > 0 ? inputAmount : rememberedAmount;
-  if (amount <= 0) {
-    const typed = prompt(`Importe para ${category}:`, "");
-    amount = parseDecimalInputValue(typed);
-  }
-
+  const amount = parseDecimalInputValue(quickAmountEl.value);
   if (!(amount > 0)) {
-    setStatus("Importe invalido para carga rapida.");
+    setStatus("Debes ingresar un importe valido para carga rapida.");
+    if (quickAmountEl) quickAmountEl.focus();
     return;
   }
 
@@ -2520,22 +2495,10 @@ async function quickAddExpense(category) {
     categoria: category,
     detalle: detail
   });
-
-  saveQuickAmounts({ ...quickAmounts, [category]: amount });
-  updateQuickAmountPlaceholder(category);
+  quickAmountEl.value = "";
   quickDetailEl.value = "";
   setStatus(`Carga rapida guardada: ${category} ${money(amount)}.`);
   showToast(`Guardado: ${category}`);
-}
-
-function updateQuickAmountPlaceholder(category = lastQuickCategory) {
-  if (!quickAmountEl) return;
-  const remembered = Number(quickAmounts[category] || 0);
-  if (remembered > 0) {
-    quickAmountEl.placeholder = `${remembered.toFixed(2)} (ultimo ${category.toLowerCase()})`;
-  } else {
-    quickAmountEl.placeholder = "0.00";
-  }
 }
 
 function updateArsConvertVisibility() {
@@ -3008,10 +2971,6 @@ btnQuickSuper.addEventListener("click", async () => quickAddExpense("Supermercad
 btnQuickComp.addEventListener("click", async () => quickAddExpense("Compras"));
 btnQuickSal.addEventListener("click", async () => quickAddExpense("Salidas"));
 btnQuickGas.addEventListener("click", async () => quickAddExpense("Gasolina"));
-btnQuickSuper.addEventListener("mouseenter", () => updateQuickAmountPlaceholder("Supermercado"));
-btnQuickComp.addEventListener("mouseenter", () => updateQuickAmountPlaceholder("Compras"));
-btnQuickSal.addEventListener("mouseenter", () => updateQuickAmountPlaceholder("Salidas"));
-btnQuickGas.addEventListener("mouseenter", () => updateQuickAmountPlaceholder("Gasolina"));
 
 if (btnConvertArs) {
   btnConvertArs.addEventListener("click", async () => {
@@ -3070,7 +3029,6 @@ btnBudgetSave.addEventListener("click", () => {
     if (rememberEl) rememberEl.checked = loadRememberMe();
     applyTheme(selectedTheme);
     setActiveTab("cargar");
-    updateQuickAmountPlaceholder();
     updateArsConvertVisibility();
     refresh();
     await initAuth();
