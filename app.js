@@ -616,9 +616,9 @@ function renderQuickButtons() {
 function setupQuickCategoryOptions() {
   quickCategorySelects.forEach((selectEl, idx) => {
     if (!selectEl) return;
-    selectEl.innerHTML = CATEGORIAS.Gasto.map((cat) => `<option value="${cat}">${cat}</option>`).join("");
     selectEl.value = quickCategories[idx] || QUICK_CATEGORY_DEFAULTS[idx] || CATEGORIAS.Gasto[0];
   });
+  syncQuickCategorySelectOptions();
   refreshQuickConfigValidation();
 }
 
@@ -676,6 +676,28 @@ function refreshQuickConfigValidation() {
     return;
   }
   setQuickConfigStatus("Configura 4 categorias distintas para los botones rapidos.", "neutral");
+}
+
+function syncQuickCategorySelectOptions() {
+  const selected = quickCategorySelects.map((x) => (x ? String(x.value || "") : ""));
+  quickCategorySelects.forEach((selectEl, idx) => {
+    if (!selectEl) return;
+    const current = selected[idx];
+    const selectedByOthers = new Set(
+      selected
+        .filter((val, i) => i !== idx && val)
+    );
+    const options = CATEGORIAS.Gasto
+      .filter((cat) => cat === current || !selectedByOthers.has(cat))
+      .map((cat) => `<option value="${cat}">${cat}</option>`)
+      .join("");
+    selectEl.innerHTML = options;
+    if (current && CATEGORIAS.Gasto.includes(current)) {
+      selectEl.value = current;
+    } else if (selectEl.options.length > 0) {
+      selectEl.selectedIndex = 0;
+    }
+  });
 }
 
 function scrollToMovimientosSection() {
@@ -3236,7 +3258,10 @@ quickButtons.forEach((btn) => {
 
 quickCategorySelects.forEach((selectEl) => {
   if (!selectEl) return;
-  selectEl.addEventListener("change", refreshQuickConfigValidation);
+  selectEl.addEventListener("change", () => {
+    syncQuickCategorySelectOptions();
+    refreshQuickConfigValidation();
+  });
 });
 
 if (btnQuickConfigSave) {
