@@ -175,6 +175,7 @@ let selectedTheme = loadTheme();
 let editingTxId = null;
 let calendarMonthDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 let selectedDayKey = null;
+let showAllFilteredRows = false;
 let currentDetailRows = [];
 let toastTimer = null;
 let chartTooltipEl = null;
@@ -1068,6 +1069,36 @@ function renderCalendar(rows) {
 }
 
 function renderSelectedDayRows(rows) {
+  if (showAllFilteredRows) {
+    const allRows = [...rows].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
+    const uniqueDays = new Set(allRows.map((x) => String(x.fecha).slice(0, 10))).size;
+    if (dayTitleEl) dayTitleEl.textContent = `Movimientos filtrados: ${allRows.length} (${uniqueDays} dias)`;
+    lista.innerHTML = "";
+    allRows.forEach((item) => {
+      const li = document.createElement("li");
+      li.className = "item";
+      li.innerHTML = `
+        <div class="meta">
+          <strong>${CATEGORY_ICONS[item.categoria] || "\u2022"} ${item.categoria}</strong>
+          <small>
+            ${formatDateLabel(String(item.fecha).slice(0, 10))} - 
+            <span class="tx-type ${item.tipo === "Ingreso" ? "ingreso" : "gasto"}">${item.tipo === "Ingreso" ? "Ingreso" : "Gasto"}</span>
+            ${item.detalle ? " - " + item.detalle : ""}
+          </small>
+        </div>
+        <div class="item-actions">
+          <strong class="monto ${String(item.tipo).toLowerCase()}">${item.tipo === "Gasto" ? "-" : "+"}${money(Number(item.monto))}</strong>
+          <button class="danger action-btn" data-action="duplicate" data-id="${item.id}" type="button"><span class="action-icon">\u29C9</span><span class="action-label">Duplicar</span></button>
+          <button class="danger action-btn" data-action="edit" data-id="${item.id}" type="button"><span class="action-icon">\u270E</span><span class="action-label">Editar</span></button>
+          <button class="danger action-btn" data-action="delete" data-id="${item.id}" type="button"><span class="action-icon">\u{1F5D1}</span><span class="action-label">Eliminar</span></button>
+        </div>
+      `;
+      lista.appendChild(li);
+    });
+    vacio.hidden = allRows.length > 0;
+    return;
+  }
+
   if (!selectedDayKey) {
     if (dayTitleEl) dayTitleEl.textContent = "Selecciona un dia para ver movimientos.";
     lista.innerHTML = "";
@@ -2878,6 +2909,7 @@ if (calGridEl) {
   calGridEl.addEventListener("click", (e) => {
     const cell = e.target.closest(".calendar-cell[data-date]");
     if (!cell) return;
+    showAllFilteredRows = false;
     selectedDayKey = cell.getAttribute("data-date");
     refresh();
   });
@@ -2923,6 +2955,7 @@ if (btnDetailClear) {
     if (detailFromEl) detailFromEl.value = "";
     if (detailToEl) detailToEl.value = "";
     if (detailSearchEl) detailSearchEl.value = "";
+    showAllFilteredRows = false;
     refresh();
   });
 }
@@ -2941,23 +2974,13 @@ if (topExpensesListEl) {
     if (detailSearchEl) detailSearchEl.value = "";
     if (detailCategoryEl) detailCategoryEl.value = cat;
 
-    // Pick a day that actually has data for this category so "Movimientos del dia"
-    // does not look empty after navigating from Resumen.
-    const candidate = getAllSortedTransactions().find(
-      (x) => x.tipo === "Gasto" && x.categoria === cat
-    );
-    if (candidate?.fecha) {
-      selectedDayKey = String(candidate.fecha).slice(0, 10);
-      const [yy, mm] = selectedDayKey.split("-").map(Number);
-      if (yy && mm) calendarMonthDate = new Date(yy, mm - 1, 1);
-    } else {
-      selectedDayKey = toDateKeyLocal(new Date());
-      calendarMonthDate = new Date();
-    }
+    showAllFilteredRows = true;
+    selectedDayKey = null;
+    calendarMonthDate = new Date();
 
     setActiveTab("mas");
     refresh();
-    setStatus(`Filtro aplicado: ${cat}.`);
+    setStatus(`Filtro aplicado: ${cat} (todos los dias).`);
   });
 }
 
