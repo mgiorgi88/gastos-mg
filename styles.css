@@ -122,10 +122,6 @@ body {
   font-weight: 600;
 }
 
-.gate-actions .gate-local {
-  grid-column: 1 / -1;
-}
-
 .entry-footnote {
   margin: 10px 0 0;
   font-size: 0.82rem;
