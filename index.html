@@ -61,7 +61,7 @@
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesi&oacute;n</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar Contrase&ntilde;a".</p>
-      <p class="muted">Version: v107</p>
+      <p class="muted">Version: v108</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -215,6 +215,14 @@
 
     <section class="card" data-panel="resumen">
       <h2>Comparativa vs mismo periodo del a&ntilde;o anterior</h2>
+      <div class="grid">
+        <label>Periodo A
+          <select id="yoy-period-a"></select>
+        </label>
+        <label>Periodo B
+          <select id="yoy-period-b"></select>
+        </label>
+      </div>
       <p id="yoy-title" class="muted"></p>
       <div class="detail-kpis">
         <article>

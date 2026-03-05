@@ -83,6 +83,8 @@ const balanceSparklineEl = document.getElementById("balance-sparkline");
 const balanceTrendEl = document.getElementById("balance-trend");
 const spendingAlertEl = document.getElementById("spending-alert");
 const yoyCategoryEl = document.getElementById("yoy-category");
+const yoyPeriodAEl = document.getElementById("yoy-period-a");
+const yoyPeriodBEl = document.getElementById("yoy-period-b");
 const yoySummaryEl = document.getElementById("yoy-summary");
 const yoyMiniChartEl = document.getElementById("yoy-mini-chart");
 const yoyTitleEl = document.getElementById("yoy-title");
@@ -1233,10 +1235,10 @@ function previousYearMonthKey(monthKey) {
   return `${String(y - 1)}-${String(m).padStart(2, "0")}`;
 }
 
-function renderYearOverYearCategory(all, selectedMonth) {
+function renderYearOverYearCategory(all, periodA = CURRENT_MONTH, periodB = previousYearMonthKey(CURRENT_MONTH)) {
   if (!yoySummaryEl || !yoyCategoryEl) return;
-  const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
-  const prevKey = previousYearMonthKey(monthKey);
+  const monthKey = periodA === "Todos" ? CURRENT_MONTH : periodA;
+  const prevKey = periodB === "Todos" ? previousYearMonthKey(CURRENT_MONTH) : periodB;
   const cat = yoyCategoryEl.value || "__ALL__";
   const isAll = cat === "__ALL__";
 
@@ -1274,11 +1276,11 @@ function renderYearOverYearCategory(all, selectedMonth) {
   yoySummaryEl.textContent = `${scopeLabel}: ${money(current)} vs ${money(previous)} (${pct >= 0 ? "+" : ""}${pct}%) respecto a ${monthLabel(prevKey)}.`;
 }
 
-function renderYearOverYearTotals(all, selectedMonth) {
+function renderYearOverYearTotals(all, periodA = CURRENT_MONTH, periodB = previousYearMonthKey(CURRENT_MONTH)) {
   if (!yoyTitleEl || !yoyIngresosEl || !yoyGastosEl || !yoyBalanceEl) return;
 
-  const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
-  const prevKey = previousYearMonthKey(monthKey);
+  const monthKey = periodA === "Todos" ? CURRENT_MONTH : periodA;
+  const prevKey = periodB === "Todos" ? previousYearMonthKey(CURRENT_MONTH) : periodB;
   const statsByMonth = StatsUtils.buildMonthlyStats(all);
   const curr = StatsUtils.monthTotals(all, monthKey, statsByMonth);
   const prev = StatsUtils.monthTotals(all, prevKey, statsByMonth);
@@ -1456,6 +1458,43 @@ function updateMonthFilterOptions(all) {
   return nextValue;
 }
 
+function updateYoyPeriodOptions(all) {
+  if (!yoyPeriodAEl || !yoyPeriodBEl) {
+    return { periodA: CURRENT_MONTH, periodB: previousYearMonthKey(CURRENT_MONTH) };
+  }
+
+  const months = buildMonthOptions(all)
+    .map((opt) => opt.value)
+    .filter((v) => v && v !== "Todos");
+  const defaultA = CURRENT_MONTH;
+  const defaultB = previousYearMonthKey(defaultA);
+  const uniqueMonths = [...new Set([defaultA, defaultB, ...months])];
+  const prevA = yoyPeriodAEl.value;
+  const prevB = yoyPeriodBEl.value;
+
+  const html = uniqueMonths
+    .map((m) => `<option value="${m}">${monthLabel(m)}</option>`)
+    .join("");
+
+  yoyPeriodAEl.innerHTML = html;
+  yoyPeriodBEl.innerHTML = html;
+
+  const selectedA = uniqueMonths.includes(prevA)
+    ? prevA
+    : (uniqueMonths.includes(defaultA) ? defaultA : (uniqueMonths[0] || defaultA));
+  yoyPeriodAEl.value = selectedA;
+
+  let selectedB = uniqueMonths.includes(prevB)
+    ? prevB
+    : (uniqueMonths.includes(defaultB) ? defaultB : "");
+  if (!selectedB) {
+    selectedB = uniqueMonths.find((m) => m !== selectedA) || selectedA;
+  }
+  yoyPeriodBEl.value = selectedB;
+
+  return { periodA: selectedA, periodB: selectedB };
+}
+
 function computeMonthlySummary(all, monthKey) {
   const rows =
     monthKey === "Todos"
@@ -1583,7 +1622,13 @@ function updateDetailSummaryUI(detailRows) {
   if (detailAvgEl) detailAvgEl.textContent = money(detailAvg);
 }
 
-function updateCalendarAndAnalytics(all, detailRows, monthKey) {
+function updateCalendarAndAnalytics(
+  all,
+  detailRows,
+  monthKey,
+  yoyPeriodA = CURRENT_MONTH,
+  yoyPeriodB = previousYearMonthKey(CURRENT_MONTH)
+) {
   renderCalendar(detailRows);
   renderSelectedDayRows(detailRows);
   drawMonthlyIncomeExpenseChart(all, monthKey);
@@ -1591,8 +1636,8 @@ function updateCalendarAndAnalytics(all, detailRows, monthKey) {
   renderMonthlyComparison(all, monthKey);
   renderLast3Months(all, monthKey);
   renderSpendingAlert(all);
-  renderYearOverYearTotals(all, monthKey);
-  renderYearOverYearCategory(all, monthKey);
+  renderYearOverYearTotals(all, yoyPeriodA, yoyPeriodB);
+  renderYearOverYearCategory(all, yoyPeriodA, yoyPeriodB);
   renderBudgetSummary(all, monthKey);
   renderBudgetStatus(all);
 }
@@ -1600,6 +1645,7 @@ function updateCalendarAndAnalytics(all, detailRows, monthKey) {
 function refresh() {
   const all = getAllSortedTransactions();
   const selectedMonth = updateMonthFilterOptions(all);
+  const yoyPeriods = updateYoyPeriodOptions(all);
 
   const summary = computeMonthlySummary(all, CURRENT_MONTH);
   updateMonthlySummaryUI(summary);
@@ -1611,7 +1657,7 @@ function refresh() {
   currentDetailRows = detailRows;
 
   updateDetailSummaryUI(detailRows);
-  updateCalendarAndAnalytics(all, detailRows, selectedMonth);
+  updateCalendarAndAnalytics(all, detailRows, selectedMonth, yoyPeriods.periodA, yoyPeriods.periodB);
 }
 
 function escapeHtml(value) {
@@ -2858,6 +2904,8 @@ if (detailCategoryEl) detailCategoryEl.addEventListener("change", refresh);
 if (detailFromEl) detailFromEl.addEventListener("change", refresh);
 if (detailToEl) detailToEl.addEventListener("change", refresh);
 if (detailSearchEl) detailSearchEl.addEventListener("input", refresh);
+if (yoyPeriodAEl) yoyPeriodAEl.addEventListener("change", refresh);
+if (yoyPeriodBEl) yoyPeriodBEl.addEventListener("change", refresh);
 if (yoyCategoryEl) yoyCategoryEl.addEventListener("change", refresh);
 if (btnDetailClear) {
   btnDetailClear.addEventListener("click", () => {
