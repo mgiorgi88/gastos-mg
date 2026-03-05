@@ -66,6 +66,8 @@ const btnDownloadTemplate = document.getElementById("btn-download-template");
 const importFileEl = document.getElementById("import-file");
 const btnImportFile = document.getElementById("btn-import-file");
 const importStatusEl = document.getElementById("import-status");
+const btnClearMyData = document.getElementById("btn-clear-my-data");
+const clearMyDataStatusEl = document.getElementById("clear-my-data-status");
 const arsConvertBoxEl = document.getElementById("ars-convert-box");
 const arsAmountEl = document.getElementById("ars-amount");
 const arsRateEl = document.getElementById("ars-rate");
@@ -321,6 +323,10 @@ function endSyncOperation(success) {
 function setImportStatus(msg) {
   if (importStatusEl) importStatusEl.textContent = msg;
   setStatus(msg);
+}
+
+function setClearMyDataStatus(msg) {
+  if (clearMyDataStatusEl) clearMyDataStatusEl.textContent = msg;
 }
 
 function showToast(message) {
@@ -2956,6 +2962,38 @@ async function deleteTransaction(id) {
   await loadCloudData();
 }
 
+async function clearMyData() {
+  const confirmed = window.confirm("Vas a borrar todos tus movimientos. ¿Continuar?");
+  if (!confirmed) return;
+
+  if (!currentUser) {
+    saveTx([]);
+    txData = [];
+    refresh();
+    setClearMyDataStatus("Datos locales eliminados.");
+    setStatus("Datos locales eliminados.");
+    showToast("Datos eliminados");
+    return;
+  }
+
+  const encodedUserId = encodeURIComponent(currentUser.id);
+  const resp = await sbAuthFetch(`/rest/v1/movimientos?user_id=eq.${encodedUserId}`, {
+    method: "DELETE"
+  });
+
+  if (!resp.ok) {
+    const msg = await getResponseErrorMessage(resp);
+    setClearMyDataStatus(`No se pudieron borrar datos: ${msg}`);
+    setStatus(`No se pudieron borrar datos: ${msg}`);
+    return;
+  }
+
+  await loadCloudData();
+  setClearMyDataStatus("Todos tus movimientos fueron eliminados.");
+  setStatus("Todos tus movimientos fueron eliminados.");
+  showToast("Datos eliminados");
+}
+
 async function duplicateTransaction(id) {
   const base = txData.find((x) => String(x.id) === String(id));
   if (!base) {
@@ -3300,6 +3338,12 @@ if (btnDownloadTemplate) {
 if (btnImportFile) {
   btnImportFile.addEventListener("click", () => {
     handleImportFileClick();
+  });
+}
+
+if (btnClearMyData) {
+  btnClearMyData.addEventListener("click", async () => {
+    await clearMyData();
   });
 }
 

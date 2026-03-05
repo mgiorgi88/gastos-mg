@@ -60,7 +60,7 @@
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesi&oacute;n</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar Contrase&ntilde;a".</p>
-      <p class="muted">Version: v128</p>
+      <p class="muted">Version: v129</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -168,6 +168,15 @@
         <button id="btn-import-file" type="button" class="btn-primary">Importar archivo</button>
       </div>
       <p id="import-status" class="muted">Formato esperado: fecha, tipo, categoria, monto, detalle, moneda.</p>
+    </section>
+
+    <section class="card" data-panel="opciones">
+      <h2>Zona segura</h2>
+      <p class="muted">Borra todos tus movimientos actuales. Esta accion no se puede deshacer.</p>
+      <div class="auth-actions">
+        <button id="btn-clear-my-data" type="button" class="danger btn-tertiary">Borrar mis datos</button>
+      </div>
+      <p id="clear-my-data-status" class="muted"></p>
     </section>
 
     <section class="card" data-panel="cargar">
