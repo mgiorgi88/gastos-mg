@@ -220,12 +220,17 @@ function money(value) {
 }
 
 function loadActiveTab() {
-  const stored = localStorage.getItem(ACTIVE_TAB_KEY) || "cargar";
-  return ["cargar", "resumen", "mas"].includes(stored) ? stored : "cargar";
+  return "cargar";
 }
 
 function saveActiveTab(tab) {
-  localStorage.setItem(ACTIVE_TAB_KEY, tab);
+  void tab;
+}
+
+function getCurrentTab() {
+  const activeBtn = Array.from(tabBtns).find((btn) => btn.classList.contains("active"));
+  const tab = activeBtn?.getAttribute("data-tab") || "cargar";
+  return ["cargar", "resumen", "mas"].includes(tab) ? tab : "cargar";
 }
 
 function setActiveTab(tab) {
@@ -2390,8 +2395,9 @@ function exportFilteredToExcel() {
 
 function setAuthButtons() {
   const logged = Boolean(currentUser);
-  if (authCardEl) authCardEl.hidden = logged || loadActiveTab() !== "mas";
-  if (accountMiniEl) accountMiniEl.hidden = !logged || loadActiveTab() !== "mas";
+  const activeTab = getCurrentTab();
+  if (authCardEl) authCardEl.hidden = logged || activeTab !== "mas";
+  if (accountMiniEl) accountMiniEl.hidden = !logged || activeTab !== "mas";
   if (accountMiniEmailEl) accountMiniEmailEl.textContent = logged ? currentUser.email : "";
   if (cloudIndicatorEl) {
     cloudIndicatorEl.textContent = logged ? "Nube: Conectado" : "Nube: Local";
@@ -3417,6 +3423,7 @@ btnBudgetSave.addEventListener("click", () => {
 (async () => {
   try {
     setStatus("Inicializando app...");
+    localStorage.removeItem(ACTIVE_TAB_KEY);
     await disableServiceWorkerCache();
     setupBudgetCategoryOptions();
     setupYoyCategoryOptions();
