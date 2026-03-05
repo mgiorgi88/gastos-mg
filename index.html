@@ -59,7 +59,7 @@
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesi&oacute;n</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar Contrase&ntilde;a".</p>
-      <p class="muted">Version: v122</p>
+      <p class="muted">Version: v123</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -78,6 +78,29 @@
           <option value="USD">USD - Dolar USA</option>
         </select>
       </label>
+    </section>
+
+    <section class="card" data-panel="mas">
+      <h2>Personalizar carga rapida</h2>
+      <p class="muted">Elige las 4 categorias que quieres tener en los botones rapidos.</p>
+      <div class="grid">
+        <label>Boton rapido 1
+          <select id="quick-cat-1"></select>
+        </label>
+        <label>Boton rapido 2
+          <select id="quick-cat-2"></select>
+        </label>
+        <label>Boton rapido 3
+          <select id="quick-cat-3"></select>
+        </label>
+        <label>Boton rapido 4
+          <select id="quick-cat-4"></select>
+        </label>
+      </div>
+      <div class="auth-actions">
+        <button id="btn-quick-config-save" type="button" class="btn-secondary">Guardar botones</button>
+        <button id="btn-quick-config-reset" type="button" class="btn-tertiary">Restablecer</button>
+      </div>
     </section>
 
     <section id="account-mini" class="card" data-panel="mas" hidden>

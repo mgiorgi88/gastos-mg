@@ -9,6 +9,7 @@ const SPREAD_PCT_KEY = "mis_gastos_spread_pct_v1";
 const THEME_KEY = "mis_gastos_theme_v1";
 const ACTIVE_TAB_KEY = "mis_gastos_active_tab_v1";
 const REMEMBER_ME_KEY = "mis_gastos_remember_me_v1";
+const QUICK_CATS_KEY = "mis_gastos_quick_cats_v1";
 const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
 
 const SUPABASE_URL = "https://gwtioxerklmzjssweqgm.supabase.co";
@@ -24,6 +25,12 @@ const btnQuickSuper = document.getElementById("btn-quick-super");
 const btnQuickComp = document.getElementById("btn-quick-comp");
 const btnQuickSal = document.getElementById("btn-quick-sal");
 const btnQuickGas = document.getElementById("btn-quick-gas");
+const quickCat1El = document.getElementById("quick-cat-1");
+const quickCat2El = document.getElementById("quick-cat-2");
+const quickCat3El = document.getElementById("quick-cat-3");
+const quickCat4El = document.getElementById("quick-cat-4");
+const btnQuickConfigSave = document.getElementById("btn-quick-config-save");
+const btnQuickConfigReset = document.getElementById("btn-quick-config-reset");
 const detailTypeEl = document.getElementById("detail-type");
 const detailCategoryEl = document.getElementById("detail-category");
 const detailFromEl = document.getElementById("detail-from");
@@ -164,6 +171,10 @@ const CATEGORY_ICONS = {
   "Alquiler Depto Argentina": "\u{1F3D8}\uFE0F"
 };
 
+const QUICK_CATEGORY_DEFAULTS = ["Supermercado", "Compras", "Salidas", "Gasolina"];
+const quickButtons = [btnQuickSuper, btnQuickComp, btnQuickSal, btnQuickGas];
+const quickCategorySelects = [quickCat1El, quickCat2El, quickCat3El, quickCat4El];
+
 let currentUser = null;
 let txData = [];
 let hasUserChosenMonth = false;
@@ -186,6 +197,7 @@ let monthlyTooltipPoints = [];
 let donutTooltipSlices = [];
 let syncOpsInFlight = 0;
 let hadRecentSyncError = false;
+let quickCategories = loadQuickCategories();
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -383,6 +395,20 @@ function saveCurrency(currency) {
   localStorage.setItem(CURRENCY_KEY, currency);
 }
 
+function loadQuickCategories() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(QUICK_CATS_KEY) || "null");
+    return sanitizeQuickCategories(parsed);
+  } catch {
+    return [...QUICK_CATEGORY_DEFAULTS];
+  }
+}
+
+function saveQuickCategories(categories) {
+  quickCategories = sanitizeQuickCategories(categories);
+  localStorage.setItem(QUICK_CATS_KEY, JSON.stringify(quickCategories));
+}
+
 function loadSession() {
   try {
     const local = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
@@ -556,6 +582,69 @@ function setupYoyCategoryOptions() {
   } else {
     yoyCategoryEl.value = "__ALL__";
   }
+}
+
+function sanitizeQuickCategories(value) {
+  const valid = CATEGORIAS.Gasto;
+  if (!Array.isArray(value)) return [...QUICK_CATEGORY_DEFAULTS];
+  const filtered = value.filter((x) => valid.includes(x));
+  const unique = [];
+  filtered.forEach((x) => {
+    if (!unique.includes(x)) unique.push(x);
+  });
+  QUICK_CATEGORY_DEFAULTS.forEach((x) => {
+    if (!unique.includes(x) && valid.includes(x)) unique.push(x);
+  });
+  valid.forEach((x) => {
+    if (!unique.includes(x)) unique.push(x);
+  });
+  return unique.slice(0, 4);
+}
+
+function renderQuickButtons() {
+  quickButtons.forEach((btn, idx) => {
+    if (!btn) return;
+    const cat = quickCategories[idx] || QUICK_CATEGORY_DEFAULTS[idx] || "Supermercado";
+    const icon = CATEGORY_ICONS[cat] || "\u2022";
+    btn.dataset.category = cat;
+    btn.innerHTML = `${icon} ${cat}`;
+    btn.title = `Carga rapida: ${cat}`;
+  });
+}
+
+function setupQuickCategoryOptions() {
+  quickCategorySelects.forEach((selectEl, idx) => {
+    if (!selectEl) return;
+    selectEl.innerHTML = CATEGORIAS.Gasto.map((cat) => `<option value="${cat}">${cat}</option>`).join("");
+    selectEl.value = quickCategories[idx] || QUICK_CATEGORY_DEFAULTS[idx] || CATEGORIAS.Gasto[0];
+  });
+}
+
+function saveQuickCategoriesFromUi() {
+  const picked = quickCategorySelects
+    .map((x) => (x ? String(x.value || "") : ""))
+    .filter(Boolean);
+  if (picked.length !== 4) {
+    setStatus("Debes elegir 4 categorias para botones rapidos.");
+    return;
+  }
+  if (new Set(picked).size !== 4) {
+    setStatus("No repitas categorias en botones rapidos.");
+    return;
+  }
+  saveQuickCategories(picked);
+  setupQuickCategoryOptions();
+  renderQuickButtons();
+  showToast("Botones rapidos actualizados");
+  setStatus("Botones de carga rapida actualizados.");
+}
+
+function resetQuickCategories() {
+  saveQuickCategories([...QUICK_CATEGORY_DEFAULTS]);
+  setupQuickCategoryOptions();
+  renderQuickButtons();
+  showToast("Botones rapidos restablecidos");
+  setStatus("Botones de carga rapida restablecidos.");
 }
 
 function scrollToMovimientosSection() {
@@ -3106,10 +3195,21 @@ btnLogoutMini.addEventListener("click", async () => {
   }
 });
 
-btnQuickSuper.addEventListener("click", async () => quickAddExpense("Supermercado"));
-btnQuickComp.addEventListener("click", async () => quickAddExpense("Compras"));
-btnQuickSal.addEventListener("click", async () => quickAddExpense("Salidas"));
-btnQuickGas.addEventListener("click", async () => quickAddExpense("Gasolina"));
+quickButtons.forEach((btn) => {
+  if (!btn) return;
+  btn.addEventListener("click", async () => {
+    const category = btn.dataset.category || "Supermercado";
+    await quickAddExpense(category);
+  });
+});
+
+if (btnQuickConfigSave) {
+  btnQuickConfigSave.addEventListener("click", saveQuickCategoriesFromUi);
+}
+
+if (btnQuickConfigReset) {
+  btnQuickConfigReset.addEventListener("click", resetQuickCategories);
+}
 
 if (btnConvertArs) {
   btnConvertArs.addEventListener("click", async () => {
@@ -3156,6 +3256,8 @@ btnBudgetSave.addEventListener("click", () => {
     await disableServiceWorkerCache();
     setupBudgetCategoryOptions();
     setupYoyCategoryOptions();
+    setupQuickCategoryOptions();
+    renderQuickButtons();
     updateCategoryOptions(tipoEl.value);
     updateArsConvertVisibility();
     if (arsRateEl) arsRateEl.value = Number(arsRate).toFixed(4);
