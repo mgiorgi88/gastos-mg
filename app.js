@@ -90,6 +90,7 @@ const yoyTitleEl = document.getElementById("yoy-title");
 const yoyIngresosEl = document.getElementById("yoy-ingresos");
 const yoyGastosEl = document.getElementById("yoy-gastos");
 const yoyBalanceEl = document.getElementById("yoy-balance");
+const topExpensesListEl = document.getElementById("top-expenses-list");
 const budgetSummaryListEl = document.getElementById("budget-summary-list");
 
 const emailEl = document.getElementById("auth-email");
@@ -1513,6 +1514,43 @@ function updateMonthlySummaryUI(summary) {
   );
 }
 
+function renderTopExpensesCurrentMonth(all) {
+  if (!topExpensesListEl) return;
+
+  const byCategory = {};
+  let total = 0;
+  all.forEach((x) => {
+    if (x.tipo !== "Gasto") return;
+    if (getMonth(x.fecha) !== CURRENT_MONTH) return;
+    const amount = Number(x.monto || 0);
+    if (!(amount > 0)) return;
+    byCategory[x.categoria] = (byCategory[x.categoria] || 0) + amount;
+    total += amount;
+  });
+
+  const top = Object.entries(byCategory)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3);
+
+  if (top.length === 0) {
+    topExpensesListEl.innerHTML = '<li class="muted">Sin gastos cargados este mes.</li>';
+    return;
+  }
+
+  topExpensesListEl.innerHTML = top
+    .map(([cat, val], idx) => {
+      const pct = total > 0 ? ((val / total) * 100).toFixed(1) : "0.0";
+      return `
+        <li>
+          <span class="top-expenses-rank">${idx + 1}.</span>
+          <span class="top-expenses-cat">${cat}</span>
+          <strong>${money(val)} (${pct}%)</strong>
+        </li>
+      `;
+    })
+    .join("");
+}
+
 function drawBalanceSparkline(all) {
   if (!balanceSparklineEl) return;
   const width = balanceSparklineEl.clientWidth || 220;
@@ -1638,6 +1676,7 @@ function refresh() {
 
   const summary = computeMonthlySummary(all, CURRENT_MONTH);
   updateMonthlySummaryUI(summary);
+  renderTopExpensesCurrentMonth(all);
   if (currentMonthLabelEl) currentMonthLabelEl.textContent = `Mes actual: ${monthLabel(CURRENT_MONTH)}`;
   drawBalanceSparkline(all);
 
@@ -2320,7 +2359,7 @@ async function signup() {
     await seedCloudIfEmpty();
     await loadCloudData();
   } else {
-    setStatus("Cuenta creada. Revisa tu email para confirmar y luego inicia sesion.");
+    setStatus("Cuenta creada. Revisa tu email para confirmar y luego inicia sesi\u00f3n.");
   }
 }
 
@@ -2342,7 +2381,7 @@ async function login() {
   const data = await resp.json().catch(() => null);
   if (!resp.ok || !data?.access_token) {
     const msg = getPayloadErrorMessage(data, resp);
-    setStatus(`Error de inicio de sesion: ${msg}`);
+    setStatus(`Error de inicio de sesi\u00f3n: ${msg}`);
     return;
   }
 
@@ -2371,11 +2410,11 @@ async function recoverPassword() {
   if (!resp.ok) {
     const data = await resp.json().catch(() => null);
     const msg = getPayloadErrorMessage(data, resp);
-    setStatus(`Error al enviar recuperacion: ${msg}`);
+    setStatus(`Error al enviar recuperaci\u00f3n: ${msg}`);
     return;
   }
 
-  setStatus("Si el email existe, Supabase envio un correo de recuperacion.");
+  setStatus("Si el email existe, Supabase envi\u00f3 un correo de recuperaci\u00f3n.");
 }
 
 async function logout() {
@@ -2388,13 +2427,13 @@ async function logout() {
   setAuthButtons();
   updateEntryGate();
   refresh();
-  setStatus("Sesion cerrada. Modo local activo.");
+  setStatus("Sesi\u00f3n cerrada. Modo local activo.");
 }
 
 async function initAuth() {
   if (!authSession?.access_token) {
     currentUser = null;
-    setStatus("Sin sesion. Puedes iniciar sesion para guardar en la nube.");
+    setStatus("Sin sesi\u00f3n. Puedes iniciar sesi\u00f3n para guardar en la nube.");
     setAuthButtons();
     txData = loadTx();
     refresh();
@@ -2405,7 +2444,7 @@ async function initAuth() {
   if (!user) {
     clearSession();
     currentUser = null;
-    setStatus("Sesion expirada. Inicia sesion nuevamente.");
+    setStatus("Sesi\u00f3n expirada. Inicia sesi\u00f3n nuevamente.");
     setAuthButtons();
     txData = loadTx();
     refresh();
@@ -2940,16 +2979,16 @@ btnSignup.addEventListener("click", async () => {
 
 btnLogin.addEventListener("click", async () => {
   try {
-    setStatus("Iniciando sesion...");
+    setStatus("Iniciando sesi\u00f3n...");
     await login();
   } catch (err) {
-    setStatus(`Fallo en Iniciar sesion: ${err?.message || String(err)}`);
+    setStatus(`Fallo en Iniciar sesi\u00f3n: ${err?.message || String(err)}`);
   }
 });
 
 btnRecover.addEventListener("click", async () => {
   try {
-    setStatus("Enviando recuperacion...");
+    setStatus("Enviando recuperaci\u00f3n...");
     await recoverPassword();
   } catch (err) {
     setStatus(`Fallo en Recuperar contrase\u00f1a: ${err?.message || String(err)}`);
@@ -2960,7 +2999,7 @@ btnLogout.addEventListener("click", async () => {
   try {
     await logout();
   } catch (err) {
-    setStatus(`Fallo en Cerrar sesion: ${err?.message || String(err)}`);
+    setStatus(`Fallo en Cerrar sesi\u00f3n: ${err?.message || String(err)}`);
   }
 });
 
@@ -2968,7 +3007,7 @@ btnLogoutMini.addEventListener("click", async () => {
   try {
     await logout();
   } catch (err) {
-    setStatus(`Fallo en Cerrar sesion: ${err?.message || String(err)}`);
+    setStatus(`Fallo en Cerrar sesi\u00f3n: ${err?.message || String(err)}`);
   }
 });
 
