@@ -107,7 +107,8 @@ const accountMiniEmailEl = document.getElementById("account-mini-email");
 const btnLogoutMini = document.getElementById("btn-logout-mini");
 const entryGateEl = document.getElementById("entry-gate");
 const btnGateLocal = document.getElementById("btn-gate-local");
-const btnGateLogin = document.getElementById("btn-gate-login");
+const btnGateSignin = document.getElementById("btn-gate-signin");
+const btnGateSignup = document.getElementById("btn-gate-signup");
 const toastEl = document.getElementById("toast");
 const tabBtns = document.querySelectorAll(".tab-btn");
 const tabPanels = document.querySelectorAll("[data-panel]");
@@ -2843,10 +2844,20 @@ if (btnGateLocal) {
   });
 }
 
-if (btnGateLogin) {
-  btnGateLogin.addEventListener("click", () => {
+if (btnGateSignin) {
+  btnGateSignin.addEventListener("click", () => {
     if (entryGateEl) entryGateEl.hidden = true;
     setActiveTab("mas");
+    setStatus("Ingresa tu email y contraseña para iniciar sesión.");
+    if (emailEl) emailEl.focus();
+  });
+}
+
+if (btnGateSignup) {
+  btnGateSignup.addEventListener("click", () => {
+    if (entryGateEl) entryGateEl.hidden = true;
+    setActiveTab("mas");
+    setStatus("Completa email y contraseña, luego pulsa Crear cuenta.");
     if (emailEl) emailEl.focus();
   });
 }
