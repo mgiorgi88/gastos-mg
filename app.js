@@ -1542,9 +1542,11 @@ function renderTopExpensesCurrentMonth(all) {
       const pct = total > 0 ? ((val / total) * 100).toFixed(1) : "0.0";
       return `
         <li>
-          <span class="top-expenses-rank">${idx + 1}.</span>
-          <span class="top-expenses-cat">${cat}</span>
-          <strong>${money(val)} (${pct}%)</strong>
+          <button type="button" class="top-expenses-item" data-top-expense-cat="${cat}">
+            <span class="top-expenses-rank">${idx + 1}.</span>
+            <span class="top-expenses-cat">${cat}</span>
+            <strong>${money(val)} (${pct}%)</strong>
+          </button>
         </li>
       `;
     })
@@ -2922,6 +2924,20 @@ if (btnDetailClear) {
     if (detailToEl) detailToEl.value = "";
     if (detailSearchEl) detailSearchEl.value = "";
     refresh();
+  });
+}
+
+if (topExpensesListEl) {
+  topExpensesListEl.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-top-expense-cat]");
+    if (!btn) return;
+    const cat = btn.getAttribute("data-top-expense-cat");
+    if (!cat) return;
+    if (detailTypeEl) detailTypeEl.value = "Gasto";
+    if (detailCategoryEl) detailCategoryEl.value = cat;
+    setActiveTab("mas");
+    refresh();
+    setStatus(`Filtro aplicado: ${cat}.`);
   });
 }
 
