@@ -31,6 +31,7 @@ const quickCat3El = document.getElementById("quick-cat-3");
 const quickCat4El = document.getElementById("quick-cat-4");
 const btnQuickConfigSave = document.getElementById("btn-quick-config-save");
 const btnQuickConfigReset = document.getElementById("btn-quick-config-reset");
+const quickConfigStatusEl = document.getElementById("quick-config-status");
 const detailTypeEl = document.getElementById("detail-type");
 const detailCategoryEl = document.getElementById("detail-category");
 const detailFromEl = document.getElementById("detail-from");
@@ -618,23 +619,27 @@ function setupQuickCategoryOptions() {
     selectEl.innerHTML = CATEGORIAS.Gasto.map((cat) => `<option value="${cat}">${cat}</option>`).join("");
     selectEl.value = quickCategories[idx] || QUICK_CATEGORY_DEFAULTS[idx] || CATEGORIAS.Gasto[0];
   });
+  refreshQuickConfigValidation();
 }
 
 function saveQuickCategoriesFromUi() {
-  const picked = quickCategorySelects
-    .map((x) => (x ? String(x.value || "") : ""))
-    .filter(Boolean);
+  const picked = getQuickCategoriesFromUi();
   if (picked.length !== 4) {
+    setQuickConfigStatus("Debes elegir 4 categorias para botones rapidos.", "error");
+    showToast("Faltan categorias");
     setStatus("Debes elegir 4 categorias para botones rapidos.");
     return;
   }
   if (new Set(picked).size !== 4) {
+    setQuickConfigStatus("No repitas categorias en botones rapidos.", "error");
+    showToast("No repitas categorias");
     setStatus("No repitas categorias en botones rapidos.");
     return;
   }
   saveQuickCategories(picked);
   setupQuickCategoryOptions();
   renderQuickButtons();
+  setQuickConfigStatus("Botones rapidos guardados.", "ok");
   showToast("Botones rapidos actualizados");
   setStatus("Botones de carga rapida actualizados.");
 }
@@ -643,8 +648,34 @@ function resetQuickCategories() {
   saveQuickCategories([...QUICK_CATEGORY_DEFAULTS]);
   setupQuickCategoryOptions();
   renderQuickButtons();
+  setQuickConfigStatus("Botones rapidos restablecidos.", "ok");
   showToast("Botones rapidos restablecidos");
   setStatus("Botones de carga rapida restablecidos.");
+}
+
+function setQuickConfigStatus(message, tone = "neutral") {
+  if (!quickConfigStatusEl) return;
+  quickConfigStatusEl.textContent = message;
+  quickConfigStatusEl.classList.remove("quick-config-status-error", "quick-config-status-ok");
+  if (tone === "error") quickConfigStatusEl.classList.add("quick-config-status-error");
+  if (tone === "ok") quickConfigStatusEl.classList.add("quick-config-status-ok");
+}
+
+function getQuickCategoriesFromUi() {
+  return quickCategorySelects
+    .map((x) => (x ? String(x.value || "") : ""))
+    .filter(Boolean);
+}
+
+function refreshQuickConfigValidation() {
+  const picked = getQuickCategoriesFromUi();
+  const duplicated = new Set(picked).size !== picked.length;
+  if (btnQuickConfigSave) btnQuickConfigSave.disabled = duplicated || picked.length !== 4;
+  if (duplicated) {
+    setQuickConfigStatus("No repitas categorias en botones rapidos.", "error");
+    return;
+  }
+  setQuickConfigStatus("Configura 4 categorias distintas para los botones rapidos.", "neutral");
 }
 
 function scrollToMovimientosSection() {
@@ -3201,6 +3232,11 @@ quickButtons.forEach((btn) => {
     const category = btn.dataset.category || "Supermercado";
     await quickAddExpense(category);
   });
+});
+
+quickCategorySelects.forEach((selectEl) => {
+  if (!selectEl) return;
+  selectEl.addEventListener("change", refreshQuickConfigValidation);
 });
 
 if (btnQuickConfigSave) {

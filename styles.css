@@ -523,6 +523,22 @@ button:focus {
   background: #94a3b8;
 }
 
+.quick-config-status-error {
+  color: #b91c1c;
+}
+
+.quick-config-status-ok {
+  color: #15803d;
+}
+
+:root[data-theme="dark"] .quick-config-status-error {
+  color: #fda4af;
+}
+
+:root[data-theme="dark"] .quick-config-status-ok {
+  color: #86efac;
+}
+
 :root[data-theme="dark"] .summary-alert-good {
   color: #86efac;
 }
