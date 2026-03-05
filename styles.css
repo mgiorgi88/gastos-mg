@@ -231,6 +231,41 @@ body {
   font-weight: 700;
 }
 
+/* Normalize vertical rhythm specifically for "Mas" panel blocks */
+[data-panel="mas"] h2 {
+  margin-bottom: var(--space-md);
+}
+
+[data-panel="mas"] .muted {
+  display: block;
+  margin: var(--space-sm) 0 0;
+  line-height: 1.4;
+}
+
+[data-panel="mas"] .grid {
+  margin-top: var(--space-sm);
+}
+
+[data-panel="mas"] .auth-actions {
+  margin-top: var(--space-sm);
+}
+
+[data-panel="mas"] details > .grid,
+[data-panel="mas"] details > .auth-actions,
+[data-panel="mas"] details > .budget-list,
+[data-panel="mas"] details > .muted {
+  margin-top: var(--space-sm);
+}
+
+[data-panel="mas"] .calendar-panel {
+  margin-top: var(--space-sm);
+}
+
+[data-panel="mas"] .detail-filters,
+[data-panel="mas"] .detail-kpis {
+  margin-top: var(--space-sm);
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
