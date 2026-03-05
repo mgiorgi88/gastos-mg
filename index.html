@@ -35,7 +35,7 @@
     <nav class="tab-nav" aria-label="Secciones">
       <button type="button" class="tab-btn active" data-tab="cargar">Cargar</button>
       <button type="button" class="tab-btn" data-tab="resumen">Resumen</button>
-      <button type="button" class="tab-btn" data-tab="mas">Mas</button>
+      <button type="button" class="tab-btn" data-tab="mas">Movimientos</button>
       <button type="button" class="tab-btn" data-tab="opciones">Opciones</button>
     </nav>
 
@@ -60,12 +60,26 @@
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesi&oacute;n</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar Contrase&ntilde;a".</p>
-      <p class="muted">Version: v126</p>
+      <p class="muted">Version: v127</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
     <section class="card" data-panel="opciones">
-      <h2>Apariencia</h2>
+      <h2>Cuenta y nube</h2>
+      <p id="cloud-indicator" class="cloud-indicator">Nube: Local</p>
+      <p id="sync-indicator" class="sync-indicator sync-local">Sincronizacion: Local</p>
+    </section>
+
+    <section id="account-mini" class="card" data-panel="opciones" hidden>
+      <h2>Cuenta</h2>
+      <p class="muted">Conectado como <strong id="account-mini-email"></strong></p>
+      <div class="auth-actions">
+        <button id="btn-logout-mini" type="button" class="danger btn-tertiary">Cerrar sesi&oacute;n</button>
+      </div>
+    </section>
+
+    <section class="card" data-panel="opciones">
+      <h2>Preferencias</h2>
       <label class="theme-picker">Tema
         <select id="theme-select">
           <option value="light">Claro</option>
@@ -82,21 +96,7 @@
     </section>
 
     <section class="card" data-panel="opciones">
-      <h2>Meta de ahorro mensual</h2>
-      <div class="grid">
-        <label>Meta mensual
-          <input type="text" id="savings-goal-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00">
-        </label>
-      </div>
-      <div class="auth-actions">
-        <button id="btn-savings-goal-save" type="button" class="btn-secondary">Guardar meta</button>
-        <button id="btn-savings-goal-clear" type="button" class="btn-tertiary">Quitar meta</button>
-      </div>
-      <p id="savings-goal-status" class="muted">Define una meta y la veras en el resumen del mes actual.</p>
-    </section>
-
-    <section class="card" data-panel="opciones">
-      <h2>Personalizar carga rapida</h2>
+      <h2>Carga rapida</h2>
       <p class="muted">Elige las 4 categorias que quieres tener en los botones rapidos.</p>
       <div class="grid">
         <label>Boton rapido 1
@@ -119,18 +119,55 @@
       <p id="quick-config-status" class="muted">Configura 4 categorias distintas para los botones rapidos.</p>
     </section>
 
-    <section id="account-mini" class="card" data-panel="opciones" hidden>
-      <h2>Cuenta</h2>
-      <p class="muted">Conectado como <strong id="account-mini-email"></strong></p>
-      <div class="auth-actions">
-        <button id="btn-logout-mini" type="button" class="danger btn-tertiary">Cerrar sesi&oacute;n</button>
+    <section class="card" data-panel="opciones">
+      <h2>Planificacion</h2>
+      <div class="grid">
+        <label>Meta mensual
+          <input type="text" id="savings-goal-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00">
+        </label>
       </div>
+      <div class="auth-actions">
+        <button id="btn-savings-goal-save" type="button" class="btn-secondary">Guardar meta</button>
+        <button id="btn-savings-goal-clear" type="button" class="btn-tertiary">Quitar meta</button>
+      </div>
+      <p id="savings-goal-status" class="muted">Define una meta y la veras en el resumen del mes actual.</p>
     </section>
 
     <section class="card" data-panel="opciones">
-      <h2>Estado de nube</h2>
-      <p id="cloud-indicator" class="cloud-indicator">Nube: Local</p>
-      <p id="sync-indicator" class="sync-indicator sync-local">Sincronizacion: Local</p>
+      <h2>Presupuesto mensual</h2>
+      <details id="budget-panel">
+        <summary>Ver y editar presupuesto</summary>
+        <div class="grid">
+          <label>Categoria
+            <select id="budget-category"></select>
+          </label>
+          <label>Presupuesto mes actual
+            <input type="text" id="budget-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00">
+          </label>
+        </div>
+        <div class="auth-actions">
+          <button id="btn-budget-save" type="button" class="btn-secondary">Guardar presupuesto</button>
+        </div>
+        <ul id="budget-list" class="budget-list"></ul>
+        <p class="muted">Si pones 0, se elimina el presupuesto de esa categoria.</p>
+      </details>
+    </section>
+
+    <section class="card" data-panel="opciones">
+      <h2>Importar historico</h2>
+      <p class="muted">Descarga una plantilla y carga tu historial en lote. Se valida antes de guardar.</p>
+      <div class="auth-actions">
+        <button id="btn-download-template" type="button" class="btn-secondary">Descargar plantilla Excel</button>
+      </div>
+      <div class="grid">
+        <label>Archivo
+          <input id="import-file" type="file" accept=".xlsx,.xls,.csv,.json">
+        </label>
+      </div>
+      <div class="auth-actions">
+        <button id="btn-import-file" type="button" class="btn-primary">Importar archivo</button>
+      </div>
+      <p id="import-status" class="muted">Formato esperado: fecha, tipo, categoria, monto, detalle, moneda.</p>
     </section>
 
     <section class="card" data-panel="cargar">
@@ -293,43 +330,6 @@
         <canvas id="yoy-mini-chart" class="yoy-mini-chart" aria-label="Comparativa anual por categor&iacute;a"></canvas>
         <div id="yoy-mini-legend" class="chart-legend"></div>
       </div>
-    </section>
-
-    <section class="card" data-panel="opciones">
-      <h2>Presupuesto mensual</h2>
-      <details id="budget-panel">
-        <summary>Ver y editar presupuesto</summary>
-        <div class="grid">
-          <label>Categoria
-            <select id="budget-category"></select>
-          </label>
-          <label>Presupuesto mes actual
-            <input type="text" id="budget-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00">
-          </label>
-        </div>
-        <div class="auth-actions">
-          <button id="btn-budget-save" type="button" class="btn-secondary">Guardar presupuesto</button>
-        </div>
-        <ul id="budget-list" class="budget-list"></ul>
-        <p class="muted">Si pones 0, se elimina el presupuesto de esa categoria.</p>
-      </details>
-    </section>
-
-    <section class="card" data-panel="opciones">
-      <h2>Importar historico</h2>
-      <p class="muted">Descarga una plantilla y carga tu historial en lote. Se valida antes de guardar.</p>
-      <div class="auth-actions">
-        <button id="btn-download-template" type="button" class="btn-secondary">Descargar plantilla Excel</button>
-      </div>
-      <div class="grid">
-        <label>Archivo
-          <input id="import-file" type="file" accept=".xlsx,.xls,.csv,.json">
-        </label>
-      </div>
-      <div class="auth-actions">
-        <button id="btn-import-file" type="button" class="btn-primary">Importar archivo</button>
-      </div>
-      <p id="import-status" class="muted">Formato esperado: fecha, tipo, categoria, monto, detalle, moneda.</p>
     </section>
 
     <section id="movimientos-section" class="card" data-panel="mas">
