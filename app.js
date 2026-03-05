@@ -205,6 +205,11 @@ function saveActiveTab(tab) {
 
 function setActiveTab(tab) {
   saveActiveTab(tab);
+  if (tab === "mas" && !selectedDayKey) {
+    const now = new Date();
+    selectedDayKey = toDateKeyLocal(now);
+    calendarMonthDate = new Date(now.getFullYear(), now.getMonth(), 1);
+  }
   tabBtns.forEach((btn) => {
     const active = btn.getAttribute("data-tab") === tab;
     btn.classList.toggle("active", active);
