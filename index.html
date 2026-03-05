@@ -59,7 +59,7 @@
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesi&oacute;n</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar Contrase&ntilde;a".</p>
-      <p class="muted">Version: v124</p>
+      <p class="muted">Version: v125</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -78,6 +78,20 @@
           <option value="USD">USD - Dolar USA</option>
         </select>
       </label>
+    </section>
+
+    <section class="card" data-panel="mas">
+      <h2>Meta de ahorro mensual</h2>
+      <div class="grid">
+        <label>Meta mensual
+          <input type="text" id="savings-goal-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00">
+        </label>
+      </div>
+      <div class="auth-actions">
+        <button id="btn-savings-goal-save" type="button" class="btn-secondary">Guardar meta</button>
+        <button id="btn-savings-goal-clear" type="button" class="btn-tertiary">Quitar meta</button>
+      </div>
+      <p id="savings-goal-status" class="muted">Define una meta y la veras en el resumen del mes actual.</p>
     </section>
 
     <section class="card" data-panel="mas">
@@ -202,6 +216,7 @@
           <strong id="balance">$0.00</strong>
         </article>
       </div>
+      <div id="savings-goal-summary" class="savings-goal-summary"></div>
       <div class="top-expenses">
         <h3 class="muted top-expenses-title">Top 3 gastos del mes</h3>
         <ul id="top-expenses-list" class="top-expenses-list"></ul>

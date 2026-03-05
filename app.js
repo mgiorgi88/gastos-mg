@@ -10,6 +10,7 @@ const THEME_KEY = "mis_gastos_theme_v1";
 const ACTIVE_TAB_KEY = "mis_gastos_active_tab_v1";
 const REMEMBER_ME_KEY = "mis_gastos_remember_me_v1";
 const QUICK_CATS_KEY = "mis_gastos_quick_cats_v1";
+const SAVINGS_GOAL_KEY = "mis_gastos_savings_goal_v1";
 const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
 
 const SUPABASE_URL = "https://gwtioxerklmzjssweqgm.supabase.co";
@@ -32,6 +33,10 @@ const quickCat4El = document.getElementById("quick-cat-4");
 const btnQuickConfigSave = document.getElementById("btn-quick-config-save");
 const btnQuickConfigReset = document.getElementById("btn-quick-config-reset");
 const quickConfigStatusEl = document.getElementById("quick-config-status");
+const savingsGoalAmountEl = document.getElementById("savings-goal-amount");
+const btnSavingsGoalSave = document.getElementById("btn-savings-goal-save");
+const btnSavingsGoalClear = document.getElementById("btn-savings-goal-clear");
+const savingsGoalStatusEl = document.getElementById("savings-goal-status");
 const detailTypeEl = document.getElementById("detail-type");
 const detailCategoryEl = document.getElementById("detail-category");
 const detailFromEl = document.getElementById("detail-from");
@@ -101,6 +106,7 @@ const yoyGastosEl = document.getElementById("yoy-gastos");
 const yoyBalanceEl = document.getElementById("yoy-balance");
 const topExpensesListEl = document.getElementById("top-expenses-list");
 const budgetSummaryListEl = document.getElementById("budget-summary-list");
+const savingsGoalSummaryEl = document.getElementById("savings-goal-summary");
 
 const emailEl = document.getElementById("auth-email");
 const passwordEl = document.getElementById("auth-password");
@@ -199,6 +205,7 @@ let donutTooltipSlices = [];
 let syncOpsInFlight = 0;
 let hadRecentSyncError = false;
 let quickCategories = loadQuickCategories();
+let savingsGoal = loadSavingsGoal();
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -394,6 +401,17 @@ function loadCurrency() {
 function saveCurrency(currency) {
   selectedCurrency = currency;
   localStorage.setItem(CURRENCY_KEY, currency);
+}
+
+function loadSavingsGoal() {
+  const v = Number(localStorage.getItem(SAVINGS_GOAL_KEY) || 0);
+  return v > 0 ? v : 0;
+}
+
+function saveSavingsGoal(value) {
+  savingsGoal = value > 0 ? value : 0;
+  if (savingsGoal > 0) localStorage.setItem(SAVINGS_GOAL_KEY, String(savingsGoal));
+  else localStorage.removeItem(SAVINGS_GOAL_KEY);
 }
 
 function loadQuickCategories() {
@@ -1611,6 +1629,80 @@ function renderBudgetSummary(all, selectedMonth) {
   `;
 }
 
+function setSavingsGoalStatus(message, tone = "neutral") {
+  if (!savingsGoalStatusEl) return;
+  savingsGoalStatusEl.textContent = message;
+  savingsGoalStatusEl.classList.remove("saldo-pos", "saldo-neg", "saldo-neu");
+  if (tone === "ok") savingsGoalStatusEl.classList.add("saldo-pos");
+  else if (tone === "error") savingsGoalStatusEl.classList.add("saldo-neg");
+  else savingsGoalStatusEl.classList.add("saldo-neu");
+}
+
+function refreshSavingsGoalEditor() {
+  if (savingsGoalAmountEl) savingsGoalAmountEl.value = savingsGoal > 0 ? Number(savingsGoal).toFixed(2) : "";
+  if (savingsGoal > 0) setSavingsGoalStatus(`Meta actual: ${money(savingsGoal)}.`, "ok");
+  else setSavingsGoalStatus("Define una meta y la veras en el resumen del mes actual.", "neutral");
+}
+
+function renderSavingsGoalSummary(balanceValue) {
+  if (!savingsGoalSummaryEl) return;
+  if (!(savingsGoal > 0)) {
+    savingsGoalSummaryEl.innerHTML = '<p class="muted">Sin meta de ahorro configurada.</p>';
+    savingsGoalSummaryEl.classList.remove("goal-ok", "goal-low", "goal-deficit");
+    return;
+  }
+
+  const goal = Number(savingsGoal);
+  const pct = goal > 0 ? (balanceValue / goal) * 100 : 0;
+  const progress = Math.max(0, Math.min(100, pct));
+  const delta = balanceValue - goal;
+  const remaining = goal - balanceValue;
+  const cls = balanceValue < 0 ? "goal-deficit" : delta >= 0 ? "goal-ok" : "goal-low";
+
+  savingsGoalSummaryEl.classList.remove("goal-ok", "goal-low", "goal-deficit");
+  savingsGoalSummaryEl.classList.add(cls);
+
+  let statusLine = "";
+  if (balanceValue < 0) {
+    statusLine = `Deficit actual: ${money(Math.abs(balanceValue))}.`;
+  } else if (delta >= 0) {
+    statusLine = `Meta cumplida. Excedente: ${money(delta)}.`;
+  } else {
+    statusLine = `Faltan ${money(remaining)} para cumplir la meta.`;
+  }
+
+  savingsGoalSummaryEl.innerHTML = `
+    <h3>Meta de ahorro mensual</h3>
+    <p>Meta: ${money(goal)} · Actual: ${money(balanceValue)} (${pct.toFixed(1)}%)</p>
+    <div class="savings-goal-progress">
+      <div class="savings-goal-progress-bar" style="width:${progress}%;"></div>
+    </div>
+    <p class="${balanceValue < 0 ? "saldo-neg" : delta >= 0 ? "saldo-pos" : "saldo-neu"}">${statusLine}</p>
+  `;
+}
+
+function saveSavingsGoalFromUi() {
+  const amount = parseDecimalInputValue(savingsGoalAmountEl ? savingsGoalAmountEl.value : "");
+  if (!(amount > 0)) {
+    setSavingsGoalStatus("Ingresa una meta valida mayor a 0.", "error");
+    showToast("Meta invalida");
+    return;
+  }
+  saveSavingsGoal(amount);
+  refreshSavingsGoalEditor();
+  refresh();
+  showToast("Meta guardada");
+  setStatus(`Meta de ahorro actualizada: ${money(amount)}.`);
+}
+
+function clearSavingsGoalFromUi() {
+  saveSavingsGoal(0);
+  refreshSavingsGoalEditor();
+  refresh();
+  showToast("Meta quitada");
+  setStatus("Meta de ahorro eliminada.");
+}
+
 function refreshDetailCategoryOptions(rows) {
   if (!detailCategoryEl) return;
   const prev = detailCategoryEl.value || "Todos";
@@ -1880,6 +1972,7 @@ function refresh() {
 
   const summary = computeMonthlySummary(all, CURRENT_MONTH);
   updateMonthlySummaryUI(summary);
+  renderSavingsGoalSummary(summary.balanceValue);
   renderTopExpensesCurrentMonth(all);
   if (currentMonthLabelEl) currentMonthLabelEl.textContent = `Mes actual: ${monthLabel(CURRENT_MONTH)}`;
   drawBalanceSparkline(all);
@@ -3272,6 +3365,14 @@ if (btnQuickConfigReset) {
   btnQuickConfigReset.addEventListener("click", resetQuickCategories);
 }
 
+if (btnSavingsGoalSave) {
+  btnSavingsGoalSave.addEventListener("click", saveSavingsGoalFromUi);
+}
+
+if (btnSavingsGoalClear) {
+  btnSavingsGoalClear.addEventListener("click", clearSavingsGoalFromUi);
+}
+
 if (btnConvertArs) {
   btnConvertArs.addEventListener("click", async () => {
     await fetchArsRateForSelectedCurrency();
@@ -3319,6 +3420,7 @@ btnBudgetSave.addEventListener("click", () => {
     setupYoyCategoryOptions();
     setupQuickCategoryOptions();
     renderQuickButtons();
+    refreshSavingsGoalEditor();
     updateCategoryOptions(tipoEl.value);
     updateArsConvertVisibility();
     if (arsRateEl) arsRateEl.value = Number(arsRate).toFixed(4);
