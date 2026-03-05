@@ -521,10 +521,14 @@ function runCategoryMigration() {
 }
 
 async function bootstrapHistorico() {
+  const host = window.location.hostname;
+  const isLocalHost = host === "localhost" || host === "127.0.0.1";
+  if (!isLocalHost) return;
+
   if (localStorage.getItem(BOOTSTRAP_KEY) === "done") return;
 
   try {
-    const sources = ["./historico.private.json", "./historico.json"];
+    const sources = ["./historico.private.json"];
     let historico = null;
     for (const src of sources) {
       try {
@@ -2570,8 +2574,9 @@ async function loadCloudData() {
     return;
   }
 
+  const encodedUserId = encodeURIComponent(currentUser.id);
   const resp = await sbAuthFetch(
-    "/rest/v1/movimientos?select=id,fecha,tipo,categoria,monto,detalle&order=fecha.desc,created_at.desc",
+    `/rest/v1/movimientos?select=id,fecha,tipo,categoria,monto,detalle&user_id=eq.${encodedUserId}&order=fecha.desc,created_at.desc`,
     { method: "GET" }
   );
 
@@ -2599,8 +2604,9 @@ async function loadCloudData() {
 async function seedCloudIfEmpty() {
   if (!currentUser) return;
 
+  const encodedUserId = encodeURIComponent(currentUser.id);
   const checkResp = await sbAuthFetch(
-    "/rest/v1/movimientos?select=id&limit=1",
+    `/rest/v1/movimientos?select=id&user_id=eq.${encodedUserId}&limit=1`,
     { method: "GET" }
   );
   if (!checkResp.ok) return;
