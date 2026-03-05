@@ -2933,8 +2933,28 @@ if (topExpensesListEl) {
     if (!btn) return;
     const cat = btn.getAttribute("data-top-expense-cat");
     if (!cat) return;
+
+    // Reset detail filters to guarantee visible results for the chosen top category.
     if (detailTypeEl) detailTypeEl.value = "Gasto";
+    if (detailFromEl) detailFromEl.value = "";
+    if (detailToEl) detailToEl.value = "";
+    if (detailSearchEl) detailSearchEl.value = "";
     if (detailCategoryEl) detailCategoryEl.value = cat;
+
+    // Pick a day that actually has data for this category so "Movimientos del dia"
+    // does not look empty after navigating from Resumen.
+    const candidate = getAllSortedTransactions().find(
+      (x) => x.tipo === "Gasto" && x.categoria === cat
+    );
+    if (candidate?.fecha) {
+      selectedDayKey = String(candidate.fecha).slice(0, 10);
+      const [yy, mm] = selectedDayKey.split("-").map(Number);
+      if (yy && mm) calendarMonthDate = new Date(yy, mm - 1, 1);
+    } else {
+      selectedDayKey = toDateKeyLocal(new Date());
+      calendarMonthDate = new Date();
+    }
+
     setActiveTab("mas");
     refresh();
     setStatus(`Filtro aplicado: ${cat}.`);
