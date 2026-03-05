@@ -672,7 +672,19 @@ function getRecentMonthKeys(count = 6) {
   return keys;
 }
 
-function drawMonthlyIncomeExpenseChart(all) {
+function getRecentMonthKeysFrom(anchorMonthKey, count = 6) {
+  const [y, m] = String(anchorMonthKey || "").split("-").map(Number);
+  if (!y || !m) return getRecentMonthKeys(count);
+
+  const keys = [];
+  for (let i = count - 1; i >= 0; i -= 1) {
+    const d = new Date(y, m - 1 - i, 1);
+    keys.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
+  }
+  return keys;
+}
+
+function drawMonthlyIncomeExpenseChart(all, selectedMonth = CURRENT_MONTH) {
   if (!chartMonthlyEl) return;
   if (analysisPanelEl && !analysisPanelEl.open) return;
   monthlyTooltipPoints = [];
@@ -682,7 +694,8 @@ function drawMonthlyIncomeExpenseChart(all) {
   const ctx = setupCanvas(chartMonthlyEl, width, height);
   ctx.clearRect(0, 0, width, height);
 
-  const keys = getRecentMonthKeys(6);
+  const anchorMonth = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
+  const keys = getRecentMonthKeysFrom(anchorMonth, 6);
   const statsByMonth = StatsUtils.buildMonthlyStats(all);
   const rows = keys.map((k) => {
     const s = StatsUtils.getMonthStats(statsByMonth, k);
@@ -1142,10 +1155,11 @@ function animatePrimarySave() {
   setTimeout(() => btnSubmitTx.classList.remove("saving"), 260);
 }
 
-function renderLast3Months(all) {
+function renderLast3Months(all, selectedMonth = CURRENT_MONTH) {
   if (!trend3mEl) return;
 
-  const monthKeys = getRecentMonthKeys(6);
+  const anchorMonth = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
+  const monthKeys = getRecentMonthKeysFrom(anchorMonth, 6);
   const statsByMonth = StatsUtils.buildMonthlyStats(all);
   const cards = monthKeys.map((key) => {
     const stats = StatsUtils.getMonthStats(statsByMonth, key);
@@ -1572,10 +1586,10 @@ function updateDetailSummaryUI(detailRows) {
 function updateCalendarAndAnalytics(all, detailRows, monthKey) {
   renderCalendar(detailRows);
   renderSelectedDayRows(detailRows);
-  drawMonthlyIncomeExpenseChart(all);
+  drawMonthlyIncomeExpenseChart(all, monthKey);
   drawCategoryDonutChart(all, monthKey);
   renderMonthlyComparison(all, monthKey);
-  renderLast3Months(all);
+  renderLast3Months(all, monthKey);
   renderSpendingAlert(all);
   renderYearOverYearTotals(all, monthKey);
   renderYearOverYearCategory(all, monthKey);
