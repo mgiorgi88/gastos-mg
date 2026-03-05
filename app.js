@@ -85,6 +85,10 @@ const spendingAlertEl = document.getElementById("spending-alert");
 const yoyCategoryEl = document.getElementById("yoy-category");
 const yoySummaryEl = document.getElementById("yoy-summary");
 const yoyMiniChartEl = document.getElementById("yoy-mini-chart");
+const yoyTitleEl = document.getElementById("yoy-title");
+const yoyIngresosEl = document.getElementById("yoy-ingresos");
+const yoyGastosEl = document.getElementById("yoy-gastos");
+const yoyBalanceEl = document.getElementById("yoy-balance");
 const budgetSummaryListEl = document.getElementById("budget-summary-list");
 
 const emailEl = document.getElementById("auth-email");
@@ -536,10 +540,16 @@ function setupBudgetCategoryOptions() {
 function setupYoyCategoryOptions() {
   if (!yoyCategoryEl) return;
   const previous = yoyCategoryEl.value;
-  yoyCategoryEl.innerHTML = CATEGORIAS.Gasto
+  yoyCategoryEl.innerHTML = [
+    '<option value="__ALL__">Todas las categorias</option>',
+    ...CATEGORIAS.Gasto
     .map((c) => `<option value="${c}">${CATEGORY_ICONS[c] || "\u2022"} ${c}</option>`)
-    .join("");
-  if (previous && CATEGORIAS.Gasto.includes(previous)) yoyCategoryEl.value = previous;
+  ].join("");
+  if (previous === "__ALL__" || (previous && CATEGORIAS.Gasto.includes(previous))) {
+    yoyCategoryEl.value = previous;
+  } else {
+    yoyCategoryEl.value = "__ALL__";
+  }
 }
 
 function buildMonthOptions(all) {
@@ -1213,12 +1223,14 @@ function renderYearOverYearCategory(all, selectedMonth) {
   if (!yoySummaryEl || !yoyCategoryEl) return;
   const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
   const prevKey = previousYearMonthKey(monthKey);
-  const cat = yoyCategoryEl.value || CATEGORIAS.Gasto[0];
+  const cat = yoyCategoryEl.value || "__ALL__";
+  const isAll = cat === "__ALL__";
 
   let current = 0;
   let previous = 0;
   all.forEach((x) => {
-    if (x.tipo !== "Gasto" || x.categoria !== cat) return;
+    if (x.tipo !== "Gasto") return;
+    if (!isAll && x.categoria !== cat) return;
     const mk = getMonth(x.fecha);
     if (mk === monthKey) current += Number(x.monto);
     else if (mk === prevKey) previous += Number(x.monto);
@@ -1227,16 +1239,17 @@ function renderYearOverYearCategory(all, selectedMonth) {
   drawYoyMiniChart(current, previous, monthKey, prevKey);
 
   yoySummaryEl.classList.remove("saldo-pos", "saldo-neg", "saldo-neu");
+  const scopeLabel = isAll ? "Total gastos" : cat;
 
   if (current === 0 && previous === 0) {
     yoySummaryEl.classList.add("saldo-neu");
-    yoySummaryEl.textContent = `${cat}: sin movimientos en ${monthLabel(monthKey)} ni en ${monthLabel(prevKey)}.`;
+    yoySummaryEl.textContent = `${scopeLabel}: sin movimientos en ${monthLabel(monthKey)} ni en ${monthLabel(prevKey)}.`;
     return;
   }
 
   if (previous === 0) {
     yoySummaryEl.classList.add("saldo-neu");
-    yoySummaryEl.textContent = `${cat}: ${money(current)} en ${monthLabel(monthKey)}. Sin dato para ${monthLabel(prevKey)}.`;
+    yoySummaryEl.textContent = `${scopeLabel}: ${money(current)} en ${monthLabel(monthKey)}. Sin dato para ${monthLabel(prevKey)}.`;
     return;
   }
 
@@ -1244,7 +1257,31 @@ function renderYearOverYearCategory(all, selectedMonth) {
   const pct = ((delta / previous) * 100).toFixed(1);
   const improving = delta < 0;
   yoySummaryEl.classList.add(improving ? "saldo-pos" : delta > 0 ? "saldo-neg" : "saldo-neu");
-  yoySummaryEl.textContent = `${cat}: ${money(current)} vs ${money(previous)} (${pct >= 0 ? "+" : ""}${pct}%) respecto a ${monthLabel(prevKey)}.`;
+  yoySummaryEl.textContent = `${scopeLabel}: ${money(current)} vs ${money(previous)} (${pct >= 0 ? "+" : ""}${pct}%) respecto a ${monthLabel(prevKey)}.`;
+}
+
+function renderYearOverYearTotals(all, selectedMonth) {
+  if (!yoyTitleEl || !yoyIngresosEl || !yoyGastosEl || !yoyBalanceEl) return;
+
+  const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
+  const prevKey = previousYearMonthKey(monthKey);
+  const statsByMonth = StatsUtils.buildMonthlyStats(all);
+  const curr = StatsUtils.monthTotals(all, monthKey, statsByMonth);
+  const prev = StatsUtils.monthTotals(all, prevKey, statsByMonth);
+
+  yoyTitleEl.textContent = `${monthKey} vs ${prevKey}`;
+
+  const i = fmtDelta(curr.ingresos, prev.ingresos);
+  yoyIngresosEl.className = i.cls;
+  yoyIngresosEl.textContent = i.text;
+
+  const g = fmtDeltaExpense(curr.gastos, prev.gastos);
+  yoyGastosEl.className = g.cls;
+  yoyGastosEl.textContent = g.text;
+
+  const b = fmtDelta(curr.balance, prev.balance);
+  yoyBalanceEl.className = b.cls;
+  yoyBalanceEl.textContent = b.text;
 }
 
 function drawYoyMiniChart(current, previous, monthKey, prevKey) {
@@ -1540,6 +1577,7 @@ function updateCalendarAndAnalytics(all, detailRows, monthKey) {
   renderMonthlyComparison(all, monthKey);
   renderLast3Months(all);
   renderSpendingAlert(all);
+  renderYearOverYearTotals(all, monthKey);
   renderYearOverYearCategory(all, monthKey);
   renderBudgetSummary(all, monthKey);
   renderBudgetStatus(all);
