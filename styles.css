@@ -11,6 +11,10 @@
   --soft: #f8fafc;
   --income: #15803d;
   --expense: #b91c1c;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 20px;
 }
 
 :root[data-theme="dark"] {
@@ -81,7 +85,7 @@ body {
 .app {
   max-width: 980px;
   margin: 0 auto;
-  padding: 20px 24px 92px;
+  padding: var(--space-lg) 24px 92px;
 }
 
 .hero h1 {
@@ -174,10 +178,10 @@ body {
 }
 
 .tab-nav {
-  margin-top: 10px;
+  margin-top: var(--space-sm);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
 .tab-btn {
@@ -206,7 +210,7 @@ body {
   border: 0;
   border-top: 1px solid var(--line);
   border-radius: 0;
-  padding: 16px 0;
+  padding: var(--space-md) 0;
   margin-top: 0;
   box-shadow: none;
   transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
@@ -214,13 +218,13 @@ body {
 
 .card h2 {
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: var(--space-sm);
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px;
+  gap: var(--space-sm);
 }
 
 .full {
@@ -230,12 +234,12 @@ body {
 label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-xs);
   font-size: 0.9rem;
 }
 
 .remember-me {
-  margin-top: 10px;
+  margin-top: var(--space-sm);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -321,8 +325,8 @@ button:focus {
 .stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-top: 10px;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
 }
 
 .stats article {
@@ -358,7 +362,7 @@ button:focus {
 }
 
 .summary-alert {
-  margin: 12px 0 0;
+  margin: var(--space-sm) 0 0;
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 10px 12px;
@@ -422,8 +426,8 @@ button:focus {
 }
 
 .yoy-compare {
-  margin-top: 10px;
-  padding: 10px;
+  margin-top: var(--space-sm);
+  padding: var(--space-sm);
   border: 1px solid var(--line);
   border-radius: 10px;
   background: var(--soft);
@@ -441,9 +445,9 @@ button:focus {
 }
 
 .budget-summary-list {
-  margin-top: 10px;
+  margin-top: var(--space-sm);
   display: grid;
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
 .budget-summary-item {
@@ -496,7 +500,7 @@ button:focus {
 .trend-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: var(--space-sm);
 }
 
 .chart-wrap {
@@ -552,9 +556,9 @@ button:focus {
 }
 
 .analysis-body {
-  margin-top: 10px;
+  margin-top: var(--space-sm);
   display: grid;
-  gap: 18px;
+  gap: var(--space-md);
 }
 
 .analysis-chart-block h2 {
@@ -566,7 +570,7 @@ button:focus {
 }
 
 .chart-legend {
-  margin-top: 10px;
+  margin-top: var(--space-sm);
   display: flex;
   flex-wrap: wrap;
   gap: 8px 14px;
@@ -655,14 +659,14 @@ button:focus {
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--soft);
-  padding: 10px;
-  margin-bottom: 12px;
+  padding: var(--space-sm);
+  margin-bottom: var(--space-sm);
 }
 
 .calendar-head {
   display: grid;
   grid-template-columns: 42px 1fr 42px;
-  gap: 8px;
+  gap: var(--space-xs);
   align-items: center;
 }
 
@@ -680,7 +684,7 @@ button:focus {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
-  margin-top: 8px;
+  margin-top: var(--space-xs);
 }
 
 .calendar-grid.month-enter {
@@ -800,7 +804,7 @@ button:focus {
 }
 
 .calendar-legend {
-  margin-top: 8px;
+  margin-top: var(--space-xs);
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
@@ -917,9 +921,9 @@ button:focus {
 
 .auth-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--space-xs);
   flex-wrap: wrap;
-  margin-top: 10px;
+  margin-top: var(--space-sm);
 }
 
 .auth-actions button {
@@ -935,8 +939,8 @@ button:focus {
 .quick-actions {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-top: 10px;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
 }
 
 .quick-actions button {
@@ -969,10 +973,10 @@ button:focus {
 
 .budget-list {
   list-style: none;
-  margin: 12px 0 0 0;
+  margin: var(--space-sm) 0 0 0;
   padding: 0;
   display: grid;
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
 .budget-item {
@@ -1000,21 +1004,21 @@ button:disabled {
 details summary {
   cursor: pointer;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: var(--space-sm);
 }
 
 .detail-filters {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: var(--space-xs);
+  margin: var(--space-sm) 0;
 }
 
 .detail-kpis {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin: 8px 0 12px;
+  gap: var(--space-xs);
+  margin: var(--space-sm) 0;
 }
 
 .detail-kpis article {
