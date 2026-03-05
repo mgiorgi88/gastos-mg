@@ -20,7 +20,7 @@
       <p class="muted">Elige como quieres usar la app.</p>
       <div class="auth-actions">
         <button id="btn-gate-local" type="button" class="btn-primary">Entrar en modo local</button>
-        <button id="btn-gate-login" type="button" class="btn-secondary">Iniciar sesion / Crear cuenta</button>
+        <button id="btn-gate-login" type="button" class="btn-secondary">Iniciar sesi&oacute;n / Crear cuenta</button>
       </div>
     </div>
   </section>
@@ -46,7 +46,7 @@
         <label>Email
           <input type="email" id="auth-email" placeholder="tu@email.com">
         </label>
-        <label>ContraseÃ±a
+        <label>Contrase&ntilde;a
           <input type="password" id="auth-password" placeholder="Minimo 6 caracteres">
         </label>
       </div>
@@ -56,12 +56,12 @@
       </label>
       <div class="auth-actions">
         <button id="btn-signup" type="button" class="btn-secondary">Crear cuenta</button>
-        <button id="btn-login" type="button" class="btn-primary">Iniciar sesion</button>
-        <button id="btn-recover" type="button" class="btn-tertiary">Recuperar contraseÃ±a</button>
-        <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesion</button>
+        <button id="btn-login" type="button" class="btn-primary">Iniciar sesi&oacute;n</button>
+        <button id="btn-recover" type="button" class="btn-tertiary">Recuperar Contrase&ntilde;a</button>
+        <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesi&oacute;n</button>
       </div>
-      <p class="muted">Si olvidaste tu clave, usa "Recuperar contraseÃ±a".</p>
-      <p class="muted">Version: v101</p>
+      <p class="muted">Si olvidaste tu clave, usa "Recuperar Contrase&ntilde;a".</p>
+      <p class="muted">Version: v102</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -86,7 +86,7 @@
       <h2>Cuenta</h2>
       <p class="muted">Conectado como <strong id="account-mini-email"></strong></p>
       <div class="auth-actions">
-        <button id="btn-logout-mini" type="button" class="danger btn-tertiary">Cerrar sesion</button>
+        <button id="btn-logout-mini" type="button" class="danger btn-tertiary">Cerrar sesi&oacute;n</button>
       </div>
     </section>
 
@@ -179,8 +179,11 @@
           <strong id="balance">$0.00</strong>
         </article>
       </div>
-      <p id="spending-alert" class="summary-alert summary-alert-neutral">Sin datos suficientes para comparar gasto mensual.</p>      <div id="budget-summary-list" class="budget-summary-list"></div>
-    </section>    <section class="card" data-panel="resumen">
+      <p id="spending-alert" class="summary-alert summary-alert-neutral">Sin datos suficientes para comparar gasto mensual.</p>
+      <div id="budget-summary-list" class="budget-summary-list"></div>
+    </section>
+
+    <section class="card" data-panel="resumen">
       <h2>Evolucion y resumen ultimos 6 meses</h2>
       <p id="chart-monthly-insight" class="muted">Sin datos suficientes.</p>
       <div class="chart-wrap">
@@ -207,14 +210,16 @@
           <strong id="cmp-balance">-</strong>
         </article>
       </div>
-    </section>    <section class="card" data-panel="resumen">
-      <h2>Comparativa vs mismo periodo del año anterior</h2>
+    </section>
+
+    <section class="card" data-panel="resumen">
+      <h2>Comparativa vs mismo periodo del a&ntilde;o anterior</h2>
       <div class="yoy-compare">
-        <label>Comparar categoría (vs mismo mes año anterior)
+        <label>Comparar categor&iacute;a (vs mismo mes a&ntilde;o anterior)
           <select id="yoy-category"></select>
         </label>
-        <p id="yoy-summary" class="muted">Selecciona una categoría para ver comparativa anual.</p>
-        <canvas id="yoy-mini-chart" class="yoy-mini-chart" aria-label="Comparativa anual por categoria"></canvas>
+        <p id="yoy-summary" class="muted">Selecciona una categor&iacute;a para ver comparativa anual.</p>
+        <canvas id="yoy-mini-chart" class="yoy-mini-chart" aria-label="Comparativa anual por categor&iacute;a"></canvas>
       </div>
     </section>
 
