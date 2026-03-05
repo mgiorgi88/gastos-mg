@@ -2969,8 +2969,11 @@ if (topExpensesListEl) {
 
     // Reset detail filters to guarantee visible results for the chosen top category.
     if (detailTypeEl) detailTypeEl.value = "Gasto";
-    if (detailFromEl) detailFromEl.value = "";
-    if (detailToEl) detailToEl.value = "";
+    const [yy, mm] = CURRENT_MONTH.split("-").map(Number);
+    const monthFrom = `${yy}-${String(mm).padStart(2, "0")}-01`;
+    const monthTo = toDateKeyLocal(new Date(yy, mm, 0));
+    if (detailFromEl) detailFromEl.value = monthFrom;
+    if (detailToEl) detailToEl.value = monthTo;
     if (detailSearchEl) detailSearchEl.value = "";
     if (detailCategoryEl) detailCategoryEl.value = cat;
 
@@ -2980,7 +2983,7 @@ if (topExpensesListEl) {
 
     setActiveTab("mas");
     refresh();
-    setStatus(`Filtro aplicado: ${cat} (todos los dias).`);
+    setStatus(`Filtro aplicado: ${cat} (${monthLabel(CURRENT_MONTH)}).`);
   });
 }
 
