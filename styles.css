@@ -104,7 +104,7 @@ body {
 
 .theme-picker {
   min-width: 140px;
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
@@ -226,6 +226,9 @@ body {
 .card h2 {
   margin-top: 0;
   margin-bottom: var(--space-sm);
+  font-size: 2.15rem;
+  line-height: 1.15;
+  font-weight: 700;
 }
 
 .grid {
@@ -242,7 +245,17 @@ label {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.section-subtitle {
+  margin: 0 0 var(--space-sm);
+  font-size: 1rem;
+  line-height: 1.35;
+  font-weight: 500;
+  color: var(--muted);
 }
 
 .remember-me {
