@@ -177,6 +177,7 @@ let editingTxId = null;
 let calendarMonthDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 let selectedDayKey = null;
 let showAllFilteredRows = false;
+let topExpenseTempFilterActive = false;
 let currentDetailRows = [];
 let toastTimer = null;
 let chartTooltipEl = null;
@@ -207,6 +208,16 @@ function saveActiveTab(tab) {
 }
 
 function setActiveTab(tab) {
+  if (tab !== "mas" && topExpenseTempFilterActive) {
+    topExpenseTempFilterActive = false;
+    showAllFilteredRows = false;
+    selectedDayKey = null;
+    if (detailTypeEl) detailTypeEl.value = "Todos";
+    if (detailCategoryEl) detailCategoryEl.value = "Todos";
+    if (detailFromEl) detailFromEl.value = "";
+    if (detailToEl) detailToEl.value = "";
+    if (detailSearchEl) detailSearchEl.value = "";
+  }
   saveActiveTab(tab);
   if (tab === "mas" && !selectedDayKey) {
     const now = new Date();
@@ -2964,6 +2975,7 @@ if (btnDetailClear) {
     if (detailToEl) detailToEl.value = "";
     if (detailSearchEl) detailSearchEl.value = "";
     showAllFilteredRows = false;
+    topExpenseTempFilterActive = false;
     refresh();
   });
 }
@@ -2985,6 +2997,7 @@ if (topExpensesListEl) {
     if (detailSearchEl) detailSearchEl.value = "";
     if (detailCategoryEl) detailCategoryEl.value = cat;
 
+    topExpenseTempFilterActive = true;
     showAllFilteredRows = true;
     selectedDayKey = null;
     calendarMonthDate = new Date();
