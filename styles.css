@@ -78,23 +78,6 @@ body {
   margin-top: 0;
 }
 
-.btn-link {
-  margin-top: 12px;
-  width: 100%;
-  background: transparent;
-  border: 0;
-  color: var(--muted);
-  box-shadow: none;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  font-weight: 500;
-}
-
-.btn-link:hover {
-  color: var(--ink);
-  transform: none;
-}
-
 .app {
   max-width: 980px;
   margin: 0 auto;

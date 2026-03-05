@@ -106,7 +106,6 @@ const accountMiniEl = document.getElementById("account-mini");
 const accountMiniEmailEl = document.getElementById("account-mini-email");
 const btnLogoutMini = document.getElementById("btn-logout-mini");
 const entryGateEl = document.getElementById("entry-gate");
-const btnGateLocal = document.getElementById("btn-gate-local");
 const btnGateSignin = document.getElementById("btn-gate-signin");
 const btnGateSignup = document.getElementById("btn-gate-signup");
 const toastEl = document.getElementById("toast");
@@ -2833,14 +2832,6 @@ if (btnCancelEdit) {
   btnCancelEdit.addEventListener("click", () => {
     resetTransactionForm();
     setStatus("Edicion cancelada.");
-  });
-}
-
-if (btnGateLocal) {
-  btnGateLocal.addEventListener("click", () => {
-    if (entryGateEl) entryGateEl.hidden = true;
-    setActiveTab("cargar");
-    setStatus("Modo local activo.");
   });
 }
 
