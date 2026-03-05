@@ -1647,10 +1647,12 @@ function refreshSavingsGoalEditor() {
 function renderSavingsGoalSummary(balanceValue) {
   if (!savingsGoalSummaryEl) return;
   if (!(savingsGoal > 0)) {
-    savingsGoalSummaryEl.innerHTML = '<p class="muted">Sin meta de ahorro configurada.</p>';
+    savingsGoalSummaryEl.hidden = true;
+    savingsGoalSummaryEl.innerHTML = "";
     savingsGoalSummaryEl.classList.remove("goal-ok", "goal-low", "goal-deficit");
     return;
   }
+  savingsGoalSummaryEl.hidden = false;
 
   const goal = Number(savingsGoal);
   const pct = goal > 0 ? (balanceValue / goal) * 100 : 0;
