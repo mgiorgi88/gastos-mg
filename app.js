@@ -86,6 +86,7 @@ const yoyPeriodAEl = document.getElementById("yoy-period-a");
 const yoyPeriodBEl = document.getElementById("yoy-period-b");
 const yoySummaryEl = document.getElementById("yoy-summary");
 const yoyMiniChartEl = document.getElementById("yoy-mini-chart");
+const yoyMiniLegendEl = document.getElementById("yoy-mini-legend");
 const yoyTitleEl = document.getElementById("yoy-title");
 const yoyIngresosEl = document.getElementById("yoy-ingresos");
 const yoyGastosEl = document.getElementById("yoy-gastos");
@@ -1382,6 +1383,15 @@ function drawYoyMiniChart(current, previous, monthKey, prevKey) {
   ctx.textAlign = "center";
   ctx.fillText(monthLabel(prevKey).split(" ")[0], prevX, height - 4);
   ctx.fillText(monthLabel(monthKey).split(" ")[0], currX, height - 4);
+
+  if (yoyMiniLegendEl) {
+    const prevLabel = `Periodo B (${monthLabel(prevKey)})`;
+    const currLabel = `Periodo A (${monthLabel(monthKey)})`;
+    yoyMiniLegendEl.innerHTML = `
+      <span class="chart-legend-item"><i class="chart-swatch" style="background:${prevColor}"></i>${prevLabel}</span>
+      <span class="chart-legend-item"><i class="chart-swatch" style="background:${currColor}"></i>${currLabel}</span>
+    `;
+  }
 }
 
 function renderBudgetStatus(all) {

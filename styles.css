@@ -927,6 +927,27 @@ button:focus {
   gap: 6px;
 }
 
+#movimientos-section .calendar-panel {
+  margin-bottom: var(--space-md);
+}
+
+#movimientos-section .calendar-legend {
+  margin-top: var(--space-sm);
+  padding-top: 2px;
+}
+
+#movimientos-section #day-title {
+  margin: var(--space-md) 0 var(--space-sm);
+}
+
+#movimientos-section #vacio {
+  margin-top: var(--space-sm);
+}
+
+#movimientos-section #lista {
+  margin-top: var(--space-sm);
+}
+
 .item {
   border: 1px solid var(--line);
   border-radius: 12px;

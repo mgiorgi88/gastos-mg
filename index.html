@@ -29,8 +29,6 @@
       <div class="hero-head">
         <h1>Mis Gastos</h1>
       </div>
-      <p id="cloud-indicator" class="cloud-indicator">Nube: Local</p>
-      <p id="sync-indicator" class="sync-indicator sync-local">Sincronizacion: Local</p>
       <p>Registra ingresos y gastos en segundos.</p>
     </header>
 
@@ -61,7 +59,7 @@
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesi&oacute;n</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar Contrase&ntilde;a".</p>
-      <p class="muted">Version: v121</p>
+      <p class="muted">Version: v122</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -88,6 +86,12 @@
       <div class="auth-actions">
         <button id="btn-logout-mini" type="button" class="danger btn-tertiary">Cerrar sesi&oacute;n</button>
       </div>
+    </section>
+
+    <section class="card" data-panel="mas">
+      <h2>Estado de nube</h2>
+      <p id="cloud-indicator" class="cloud-indicator">Nube: Local</p>
+      <p id="sync-indicator" class="sync-indicator sync-local">Sincronizacion: Local</p>
     </section>
 
     <section class="card" data-panel="cargar">
@@ -247,6 +251,7 @@
         </label>
         <p id="yoy-summary" class="muted section-subtitle">Vista general de gastos del periodo. Puedes elegir una categor&iacute;a para el detalle.</p>
         <canvas id="yoy-mini-chart" class="yoy-mini-chart" aria-label="Comparativa anual por categor&iacute;a"></canvas>
+        <div id="yoy-mini-legend" class="chart-legend"></div>
       </div>
     </section>
 
