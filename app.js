@@ -127,6 +127,7 @@ const btnLogoutMini = document.getElementById("btn-logout-mini");
 const entryGateEl = document.getElementById("entry-gate");
 const btnGateSignin = document.getElementById("btn-gate-signin");
 const btnGateSignup = document.getElementById("btn-gate-signup");
+const btnGateLocal = document.getElementById("btn-gate-local");
 const movimientosSectionEl = document.getElementById("movimientos-section");
 const toastEl = document.getElementById("toast");
 const tabBtns = document.querySelectorAll(".tab-btn");
@@ -3253,6 +3254,14 @@ if (btnGateSignup) {
     setActiveTab("opciones");
     setStatus("Completa email y contraseña, luego pulsa Crear cuenta.");
     if (emailEl) emailEl.focus();
+  });
+}
+
+if (btnGateLocal) {
+  btnGateLocal.addEventListener("click", () => {
+    if (entryGateEl) entryGateEl.hidden = true;
+    setActiveTab("cargar");
+    setStatus("Modo local activo. Puedes usar la app sin iniciar sesion.");
   });
 }
 
