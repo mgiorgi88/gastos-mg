@@ -78,6 +78,7 @@ const categoriaEl = document.getElementById("categoria");
 const ingresosEl = document.getElementById("ingresos");
 const gastosEl = document.getElementById("gastos");
 const balanceEl = document.getElementById("balance");
+const currentMonthLabelEl = document.getElementById("current-month-label");
 const balanceSparklineEl = document.getElementById("balance-sparkline");
 const balanceTrendEl = document.getElementById("balance-trend");
 const spendingAlertEl = document.getElementById("spending-alert");
@@ -520,7 +521,7 @@ function getMonth(dateStr) {
 function updateCategoryOptions(tipo, selected = "") {
   const categorias = CATEGORIAS[tipo] || [];
   categoriaEl.innerHTML = categorias
-    .map((categoria) => `<option value="${categoria}">${CATEGORY_ICONS[categoria] || "•"} ${categoria}</option>`)
+    .map((categoria) => `<option value="${categoria}">${CATEGORY_ICONS[categoria] || "\u2022"} ${categoria}</option>`)
     .join("");
   categoriaEl.value = categorias.includes(selected) ? selected : (categorias[0] || "");
 }
@@ -528,7 +529,7 @@ function updateCategoryOptions(tipo, selected = "") {
 function setupBudgetCategoryOptions() {
   if (!budgetCategoryEl) return;
   budgetCategoryEl.innerHTML = CATEGORIAS.Gasto
-    .map((c) => `<option value="${c}">${CATEGORY_ICONS[c] || "•"} ${c}</option>`)
+    .map((c) => `<option value="${c}">${CATEGORY_ICONS[c] || "\u2022"} ${c}</option>`)
     .join("");
 }
 
@@ -536,7 +537,7 @@ function setupYoyCategoryOptions() {
   if (!yoyCategoryEl) return;
   const previous = yoyCategoryEl.value;
   yoyCategoryEl.innerHTML = CATEGORIAS.Gasto
-    .map((c) => `<option value="${c}">${CATEGORY_ICONS[c] || "•"} ${c}</option>`)
+    .map((c) => `<option value="${c}">${CATEGORY_ICONS[c] || "\u2022"} ${c}</option>`)
     .join("");
   if (previous && CATEGORIAS.Gasto.includes(previous)) yoyCategoryEl.value = previous;
 }
@@ -1070,7 +1071,7 @@ function renderSelectedDayRows(rows) {
       li.className = "item";
       li.innerHTML = `
         <div class="meta">
-          <strong>${CATEGORY_ICONS[item.categoria] || "•"} ${item.categoria}</strong>
+          <strong>${CATEGORY_ICONS[item.categoria] || "\u2022"} ${item.categoria}</strong>
           <small>
             <span class="tx-type ${item.tipo === "Ingreso" ? "ingreso" : "gasto"}">${item.tipo === "Ingreso" ? "Ingreso" : "Gasto"}</span>
             ${item.detalle ? " - " + item.detalle : ""}
@@ -1078,9 +1079,9 @@ function renderSelectedDayRows(rows) {
         </div>
         <div class="item-actions">
           <strong class="monto ${String(item.tipo).toLowerCase()}">${item.tipo === "Gasto" ? "-" : "+"}${money(Number(item.monto))}</strong>
-          <button class="danger action-btn" data-action="duplicate" data-id="${item.id}" type="button"><span class="action-icon">⧉</span><span class="action-label">Duplicar</span></button>
-          <button class="danger action-btn" data-action="edit" data-id="${item.id}" type="button"><span class="action-icon">✎</span><span class="action-label">Editar</span></button>
-          <button class="danger action-btn" data-action="delete" data-id="${item.id}" type="button"><span class="action-icon">🗑</span><span class="action-label">Eliminar</span></button>
+          <button class="danger action-btn" data-action="duplicate" data-id="${item.id}" type="button"><span class="action-icon">\u29C9</span><span class="action-label">Duplicar</span></button>
+          <button class="danger action-btn" data-action="edit" data-id="${item.id}" type="button"><span class="action-icon">\u270E</span><span class="action-label">Editar</span></button>
+          <button class="danger action-btn" data-action="delete" data-id="${item.id}" type="button"><span class="action-icon">\u{1F5D1}</span><span class="action-label">Eliminar</span></button>
         </div>
       `;
       lista.appendChild(li);
@@ -1314,7 +1315,7 @@ function renderBudgetStatus(all) {
     return `
       <li class="budget-item">
         <span>${cat}</span>
-        <small>Presupuesto: ${money(budget)} · Gastado: ${money(spent)}</small>
+        <small>Presupuesto: ${money(budget)} \u00B7 Gastado: ${money(spent)}</small>
         <strong class="${statusClass}">${diff >= 0 ? "Restante" : "Exceso"}: ${money(Math.abs(diff))}</strong>
       </li>
     `;
@@ -1354,7 +1355,7 @@ function renderBudgetSummary(all, selectedMonth) {
     ${items.map((x) => `
       <button type="button" class="budget-summary-item ${x.status}" data-budget-cat="${x.cat}">
         <div class="budget-summary-item-head">
-          <strong>${CATEGORY_ICONS[x.cat] || "•"} ${x.cat}</strong>
+          <strong>${CATEGORY_ICONS[x.cat] || "\u2022"} ${x.cat}</strong>
           <small>${money(x.spent)} / ${money(x.budget)} (${x.pct.toFixed(0)}%)</small>
         </div>
         <div class="budget-progress">
@@ -1381,7 +1382,7 @@ function refreshDetailCategoryOptions(rows) {
     .filter(Boolean);
   const categories = ["Todos", ...new Set([...baseCategories, ...dataCategories])];
   detailCategoryEl.innerHTML = categories
-    .map((c) => `<option value="${c}">${c === "Todos" ? "↕ Todos" : `${CATEGORY_ICONS[c] || "•"} ${c}`}</option>`)
+    .map((c) => `<option value="${c}">${c === "Todos" ? "\u2195 Todos" : `${CATEGORY_ICONS[c] || "\u2022"} ${c}`}</option>`)
     .join("");
   detailCategoryEl.value = categories.includes(prev) ? prev : "Todos";
 }
@@ -1548,8 +1549,9 @@ function refresh() {
   const all = getAllSortedTransactions();
   const selectedMonth = updateMonthFilterOptions(all);
 
-  const summary = computeMonthlySummary(all, selectedMonth);
+  const summary = computeMonthlySummary(all, CURRENT_MONTH);
   updateMonthlySummaryUI(summary);
+  if (currentMonthLabelEl) currentMonthLabelEl.textContent = `Mes actual: ${monthLabel(CURRENT_MONTH)}`;
   drawBalanceSparkline(all);
 
   refreshDetailCategoryOptions(all);
@@ -2205,7 +2207,7 @@ async function signup() {
   const password = passwordEl.value;
 
   if (!email || password.length < 6) {
-    setStatus("Completa email y contraseña (mínimo 6 caracteres).");
+    setStatus("Completa email y contrase\u00f1a (m\u00ednimo 6 caracteres).");
     return;
   }
 
@@ -2240,7 +2242,7 @@ async function login() {
   const password = passwordEl.value;
 
   if (!email || !password) {
-    setStatus("Ingresa email y contraseña.");
+    setStatus("Ingresa email y contrase\u00f1a.");
     return;
   }
 
@@ -2269,7 +2271,7 @@ async function login() {
 async function recoverPassword() {
   const email = emailEl.value.trim();
   if (!email) {
-    setStatus("Escribe tu email para recuperar contraseña.");
+    setStatus("Escribe tu email para recuperar contrase\u00f1a.");
     return;
   }
 
@@ -2880,7 +2882,7 @@ btnRecover.addEventListener("click", async () => {
     setStatus("Enviando recuperacion...");
     await recoverPassword();
   } catch (err) {
-    setStatus(`Fallo en Recuperar contraseña: ${err?.message || String(err)}`);
+    setStatus(`Fallo en Recuperar contrase\u00f1a: ${err?.message || String(err)}`);
   }
 });
 

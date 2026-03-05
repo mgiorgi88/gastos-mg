@@ -61,7 +61,7 @@
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesi&oacute;n</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar Contrase&ntilde;a".</p>
-      <p class="muted">Version: v102</p>
+      <p class="muted">Version: v103</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
@@ -160,11 +160,7 @@
 
     <section class="card" data-panel="resumen">
       <h2>Resumen mes actual</h2>
-      <div class="grid">
-        <label>Filtrar por mes
-          <select id="filtro-mes"></select>
-        </label>
-      </div>
+      <p id="current-month-label" class="muted"></p>
       <div class="stats">
         <article>
           <span>Ingresos</span>
@@ -185,6 +181,11 @@
 
     <section class="card" data-panel="resumen">
       <h2>Evolucion y resumen ultimos 6 meses</h2>
+      <div class="grid">
+        <label>Mes para comparativas
+          <select id="filtro-mes"></select>
+        </label>
+      </div>
       <p id="chart-monthly-insight" class="muted">Sin datos suficientes.</p>
       <div class="chart-wrap">
         <canvas id="chart-monthly" aria-label="Ingresos y gastos por mes"></canvas>
