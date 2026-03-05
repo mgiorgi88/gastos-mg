@@ -187,7 +187,7 @@ body {
 .tab-nav {
   margin-top: var(--space-sm);
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-xs);
 }
 
@@ -231,38 +231,49 @@ body {
   font-weight: 700;
 }
 
-/* Normalize vertical rhythm specifically for "Mas" panel blocks */
-[data-panel="mas"] h2 {
+/* Normalize vertical rhythm for settings/more panels */
+[data-panel="mas"] h2,
+[data-panel="opciones"] h2 {
   margin-bottom: var(--space-md);
 }
 
-[data-panel="mas"] .muted {
+[data-panel="mas"] .muted,
+[data-panel="opciones"] .muted {
   display: block;
   margin: var(--space-sm) 0 0;
   line-height: 1.4;
 }
 
-[data-panel="mas"] .grid {
+[data-panel="mas"] .grid,
+[data-panel="opciones"] .grid {
   margin-top: var(--space-sm);
 }
 
-[data-panel="mas"] .auth-actions {
+[data-panel="mas"] .auth-actions,
+[data-panel="opciones"] .auth-actions {
   margin-top: var(--space-sm);
 }
 
 [data-panel="mas"] details > .grid,
 [data-panel="mas"] details > .auth-actions,
 [data-panel="mas"] details > .budget-list,
-[data-panel="mas"] details > .muted {
+[data-panel="mas"] details > .muted,
+[data-panel="opciones"] details > .grid,
+[data-panel="opciones"] details > .auth-actions,
+[data-panel="opciones"] details > .budget-list,
+[data-panel="opciones"] details > .muted {
   margin-top: var(--space-sm);
 }
 
-[data-panel="mas"] .calendar-panel {
+[data-panel="mas"] .calendar-panel,
+[data-panel="opciones"] .calendar-panel {
   margin-top: var(--space-sm);
 }
 
 [data-panel="mas"] .detail-filters,
-[data-panel="mas"] .detail-kpis {
+[data-panel="mas"] .detail-kpis,
+[data-panel="opciones"] .detail-filters,
+[data-panel="opciones"] .detail-kpis {
   margin-top: var(--space-sm);
 }
 
@@ -1336,6 +1347,10 @@ details summary {
 @media (max-width: 600px) {
   .app {
     padding-bottom: 120px;
+  }
+
+  .tab-nav {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .stats {

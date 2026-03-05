@@ -230,7 +230,7 @@ function saveActiveTab(tab) {
 function getCurrentTab() {
   const activeBtn = Array.from(tabBtns).find((btn) => btn.classList.contains("active"));
   const tab = activeBtn?.getAttribute("data-tab") || "cargar";
-  return ["cargar", "resumen", "mas"].includes(tab) ? tab : "cargar";
+  return ["cargar", "resumen", "mas", "opciones"].includes(tab) ? tab : "cargar";
 }
 
 function setActiveTab(tab) {
@@ -266,11 +266,11 @@ function setActiveTab(tab) {
   });
   if (authCardEl) {
     const logged = Boolean(currentUser);
-    authCardEl.hidden = logged || tab !== "mas";
+    authCardEl.hidden = logged || tab !== "opciones";
   }
   if (accountMiniEl) {
     const logged = Boolean(currentUser);
-    accountMiniEl.hidden = !logged || tab !== "mas";
+    accountMiniEl.hidden = !logged || tab !== "opciones";
   }
 }
 
@@ -2396,8 +2396,8 @@ function exportFilteredToExcel() {
 function setAuthButtons() {
   const logged = Boolean(currentUser);
   const activeTab = getCurrentTab();
-  if (authCardEl) authCardEl.hidden = logged || activeTab !== "mas";
-  if (accountMiniEl) accountMiniEl.hidden = !logged || activeTab !== "mas";
+  if (authCardEl) authCardEl.hidden = logged || activeTab !== "opciones";
+  if (accountMiniEl) accountMiniEl.hidden = !logged || activeTab !== "opciones";
   if (accountMiniEmailEl) accountMiniEmailEl.textContent = logged ? currentUser.email : "";
   if (cloudIndicatorEl) {
     cloudIndicatorEl.textContent = logged ? "Nube: Conectado" : "Nube: Local";
@@ -3197,7 +3197,7 @@ if (btnCancelEdit) {
 if (btnGateSignin) {
   btnGateSignin.addEventListener("click", () => {
     if (entryGateEl) entryGateEl.hidden = true;
-    setActiveTab("mas");
+    setActiveTab("opciones");
     setStatus("Ingresa tu email y contraseña para iniciar sesión.");
     if (emailEl) emailEl.focus();
   });
@@ -3206,7 +3206,7 @@ if (btnGateSignin) {
 if (btnGateSignup) {
   btnGateSignup.addEventListener("click", () => {
     if (entryGateEl) entryGateEl.hidden = true;
-    setActiveTab("mas");
+    setActiveTab("opciones");
     setStatus("Completa email y contraseña, luego pulsa Crear cuenta.");
     if (emailEl) emailEl.focus();
   });
