@@ -2416,7 +2416,10 @@ function setAuthButtons() {
   if (btnSignup) btnSignup.disabled = logged;
   if (btnLogin) btnLogin.disabled = logged;
   if (btnRecover) btnRecover.disabled = logged;
-  if (btnLogout) btnLogout.disabled = !logged;
+  if (btnLogout) {
+    btnLogout.disabled = !logged;
+    btnLogout.hidden = !logged;
+  }
   if (emailEl) emailEl.disabled = logged;
   if (passwordEl) passwordEl.disabled = logged;
   if (btnLogoutMini) btnLogoutMini.disabled = !logged;
