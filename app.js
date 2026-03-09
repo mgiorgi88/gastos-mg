@@ -2573,6 +2573,20 @@ async function fetchCurrentUser() {
   return resp.json();
 }
 
+async function fetchCurrentUserState() {
+  if (!authSession?.access_token) {
+    return { ok: false, status: 401, user: null };
+  }
+
+  const resp = await sbAuthFetch("/auth/v1/user", { method: "GET" });
+  if (!resp.ok) {
+    return { ok: false, status: resp.status, user: null };
+  }
+
+  const user = await resp.json().catch(() => null);
+  return { ok: Boolean(user), status: resp.status, user };
+}
+
 async function loadCloudData() {
   if (!currentUser) {
     txData = loadTx();
@@ -2757,8 +2771,18 @@ async function initAuth() {
     return;
   }
 
-  const user = await fetchCurrentUser();
-  if (!user) {
+  const authState = await fetchCurrentUserState();
+  if (!authState.ok) {
+    // Keep the stored session if the network is temporarily unavailable.
+    if (authState.status >= 500 || authState.status === 504 || authState.status === 599) {
+      currentUser = authSession?.user || currentUser;
+      setAuthButtons();
+      setStatus("Sesion restaurada. La nube se reintentara al reconectar.");
+      txData = loadTx();
+      refresh();
+      return;
+    }
+
     clearSession();
     currentUser = null;
     setStatus("Sesi\u00f3n expirada. Inicia sesi\u00f3n nuevamente.");
@@ -2768,7 +2792,7 @@ async function initAuth() {
     return;
   }
 
-  currentUser = user;
+  currentUser = authState.user;
   setAuthButtons();
   setStatus(`Conectado como ${currentUser.email}`);
   await seedCloudIfEmpty();
@@ -3496,6 +3520,8 @@ btnBudgetSave.addEventListener("click", () => {
     refresh();
     await initAuth();
     updateEntryGate();
+    setActiveTab("cargar");
+    refresh();
   } catch (err) {
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }

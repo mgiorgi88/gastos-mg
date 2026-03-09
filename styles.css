@@ -376,6 +376,30 @@ label {
   font-size: 0.94rem;
 }
 
+#account-mini {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+#account-mini h2 {
+  margin-bottom: 8px;
+  font-size: 1.35rem;
+}
+
+#account-mini .muted {
+  margin-top: 0;
+}
+
+#account-mini .auth-actions {
+  margin-top: 10px;
+}
+
+#account-mini .auth-actions button {
+  margin-top: 0;
+  width: auto;
+  min-width: 180px;
+}
+
 input, select, button {
   border: 1px solid var(--line);
   border-radius: 6px;
