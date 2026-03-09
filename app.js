@@ -26,6 +26,10 @@ const btnQuickSuper = document.getElementById("btn-quick-super");
 const btnQuickComp = document.getElementById("btn-quick-comp");
 const btnQuickSal = document.getElementById("btn-quick-sal");
 const btnQuickGas = document.getElementById("btn-quick-gas");
+const cargarEmptyStateEl = document.getElementById("cargar-empty-state");
+const btnEmptyStartEl = document.getElementById("btn-empty-start");
+const resumenEmptyCardEl = document.getElementById("resumen-empty-card");
+const btnEmptyGoCargarEl = document.getElementById("btn-empty-go-cargar");
 const quickCat1El = document.getElementById("quick-cat-1");
 const quickCat2El = document.getElementById("quick-cat-2");
 const quickCat3El = document.getElementById("quick-cat-3");
@@ -109,6 +113,7 @@ const yoyBalanceEl = document.getElementById("yoy-balance");
 const topExpensesListEl = document.getElementById("top-expenses-list");
 const budgetSummaryListEl = document.getElementById("budget-summary-list");
 const savingsGoalSummaryEl = document.getElementById("savings-goal-summary");
+const resumenContentCards = Array.from(document.querySelectorAll('[data-panel="resumen"]')).filter((el) => el.id !== "resumen-empty-card");
 
 const emailEl = document.getElementById("auth-email");
 const passwordEl = document.getElementById("auth-password");
@@ -1999,6 +2004,14 @@ function updateCalendarAndAnalytics(
 
 function refresh() {
   const all = getAllSortedTransactions();
+  const hasTransactions = all.length > 0;
+
+  if (cargarEmptyStateEl) cargarEmptyStateEl.hidden = hasTransactions;
+  if (resumenEmptyCardEl) resumenEmptyCardEl.hidden = hasTransactions;
+  resumenContentCards.forEach((card) => {
+    card.hidden = !hasTransactions || card.getAttribute("data-panel") !== "resumen" || getCurrentTab() !== "resumen";
+  });
+
   const selectedMonth = updateMonthFilterOptions(all);
   const yoyPeriods = updateYoyPeriodOptions(all);
 
@@ -2014,7 +2027,9 @@ function refresh() {
   currentDetailRows = detailRows;
 
   updateDetailSummaryUI(detailRows);
-  updateCalendarAndAnalytics(all, detailRows, selectedMonth, yoyPeriods.periodA, yoyPeriods.periodB);
+  if (hasTransactions) {
+    updateCalendarAndAnalytics(all, detailRows, selectedMonth, yoyPeriods.periodA, yoyPeriods.periodB);
+  }
 }
 
 function escapeHtml(value) {
@@ -3286,6 +3301,22 @@ if (btnCancelEdit) {
   btnCancelEdit.addEventListener("click", () => {
     resetTransactionForm();
     setStatus("Edicion cancelada.");
+  });
+}
+
+if (btnEmptyStartEl) {
+  btnEmptyStartEl.addEventListener("click", () => {
+    setActiveTab("cargar");
+    const montoEl = document.getElementById("monto");
+    if (montoEl) montoEl.focus();
+  });
+}
+
+if (btnEmptyGoCargarEl) {
+  btnEmptyGoCargarEl.addEventListener("click", () => {
+    setActiveTab("cargar");
+    const montoEl = document.getElementById("monto");
+    if (montoEl) montoEl.focus();
   });
 }
 
