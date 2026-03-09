@@ -496,6 +496,23 @@ function txSignature(tx) {
   return [tx.fecha, tx.tipo, tx.categoria, Number(tx.monto).toFixed(2), tx.detalle || ""].join("|");
 }
 
+function isLocalDevelopment() {
+  const host = window.location.hostname;
+  return host === "localhost" || host === "127.0.0.1";
+}
+
+function getLocalTransactionStore() {
+  return isLocalDevelopment() ? loadTx() : [];
+}
+
+function requireCloudSession(actionLabel = "usar la app") {
+  if (currentUser || isLocalDevelopment()) return true;
+  setActiveTab("opciones");
+  updateEntryGate();
+  setStatus(`Inicia sesión para ${actionLabel}.`);
+  return false;
+}
+
 function runCategoryMigration() {
   if (localStorage.getItem(MIGRATION_KEY) === "done") return;
 
@@ -527,9 +544,7 @@ function runCategoryMigration() {
 }
 
 async function bootstrapHistorico() {
-  const host = window.location.hostname;
-  const isLocalHost = host === "localhost" || host === "127.0.0.1";
-  if (!isLocalHost) return;
+  if (!isLocalDevelopment()) return;
 
   if (localStorage.getItem(BOOTSTRAP_KEY) === "done") return;
 
@@ -2243,6 +2258,7 @@ async function importTransactions(rows) {
   if (deduped.length === 0) return 0;
 
   if (!currentUser) {
+    if (!requireCloudSession("importar movimientos")) return 0;
     const all = loadTx();
     all.push(...deduped);
     saveTx(all);
@@ -2592,7 +2608,7 @@ async function fetchCurrentUserState() {
 
 async function loadCloudData() {
   if (!currentUser) {
-    txData = loadTx();
+    txData = getLocalTransactionStore();
     refresh();
     return;
   }
@@ -2637,7 +2653,7 @@ async function seedCloudIfEmpty() {
   const existing = await checkResp.json().catch(() => []);
   if (Array.isArray(existing) && existing.length > 0) return;
 
-  const localData = loadTx();
+  const localData = getLocalTransactionStore();
   const payload = localData
     .filter((x) => x.fecha && x.tipo && x.categoria && Number(x.monto) > 0)
     .map((x) => ({
@@ -2761,19 +2777,19 @@ async function logout() {
   }
   clearSession();
   currentUser = null;
-  txData = loadTx();
+  txData = getLocalTransactionStore();
   setAuthButtons();
   updateEntryGate();
   refresh();
-  setStatus("Sesi\u00f3n cerrada. Modo local activo.");
+  setStatus(isLocalDevelopment() ? "Sesi\u00f3n cerrada. Modo local activo." : "Sesi\u00f3n cerrada.");
 }
 
 async function initAuth() {
   if (!authSession?.access_token) {
     currentUser = null;
-    setStatus("Sin sesi\u00f3n. Puedes iniciar sesi\u00f3n para guardar en la nube.");
+    setStatus(isLocalDevelopment() ? "Sin sesi\u00f3n. Puedes iniciar sesi\u00f3n para guardar en la nube." : "Inicia sesi\u00f3n para usar la app.");
     setAuthButtons();
-    txData = loadTx();
+    txData = getLocalTransactionStore();
     refresh();
     return;
   }
@@ -2785,7 +2801,7 @@ async function initAuth() {
       currentUser = authSession?.user || currentUser;
       setAuthButtons();
       setStatus("Sesion restaurada. La nube se reintentara al reconectar.");
-      txData = loadTx();
+      txData = getLocalTransactionStore();
       refresh();
       return;
     }
@@ -2794,7 +2810,7 @@ async function initAuth() {
     currentUser = null;
     setStatus("Sesi\u00f3n expirada. Inicia sesi\u00f3n nuevamente.");
     setAuthButtons();
-    txData = loadTx();
+    txData = getLocalTransactionStore();
     refresh();
     return;
   }
@@ -2808,6 +2824,7 @@ async function initAuth() {
 
 async function addTransaction(tx) {
   if (!currentUser) {
+    if (!requireCloudSession("guardar movimientos")) return;
     const all = loadTx();
     all.push(tx);
     saveTx(all);
@@ -2839,6 +2856,7 @@ async function addTransaction(tx) {
 
 async function updateTransaction(id, tx) {
   if (!currentUser) {
+    if (!requireCloudSession("editar movimientos")) return false;
     const next = loadTx().map((x) => (String(x.id) === String(id) ? { ...x, ...tx, id: x.id } : x));
     saveTx(next);
     txData = next;
@@ -2972,6 +2990,7 @@ function updateArsResultPreview() {
 
 async function deleteTransaction(id) {
   if (!currentUser) {
+    if (!requireCloudSession("eliminar movimientos")) return;
     const next = loadTx().filter((x) => String(x.id) !== String(id));
     saveTx(next);
     txData = next;
@@ -2998,6 +3017,7 @@ async function clearMyData() {
   if (!confirmed) return;
 
   if (!currentUser) {
+    if (!requireCloudSession("borrar tus datos")) return;
     saveTx([]);
     txData = [];
     refresh();
@@ -3517,7 +3537,7 @@ btnBudgetSave.addEventListener("click", () => {
     if (spreadPctEl) spreadPctEl.value = Number(spreadPct).toFixed(1);
     await bootstrapHistorico();
     runCategoryMigration();
-    txData = loadTx();
+    txData = getLocalTransactionStore();
     if (currencyEl) currencyEl.value = selectedCurrency;
     if (themeEl) themeEl.value = selectedTheme;
     if (rememberEl) rememberEl.checked = loadRememberMe();
