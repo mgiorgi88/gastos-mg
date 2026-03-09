@@ -134,6 +134,7 @@ const btnGateSignin = document.getElementById("btn-gate-signin");
 const btnGateSignup = document.getElementById("btn-gate-signup");
 const movimientosSectionEl = document.getElementById("movimientos-section");
 const toastEl = document.getElementById("toast");
+const syncBadgeEl = document.getElementById("sync-badge");
 const tabBtns = document.querySelectorAll(".tab-btn");
 const tabPanels = document.querySelectorAll("[data-panel]");
 
@@ -213,6 +214,7 @@ let syncOpsInFlight = 0;
 let hadRecentSyncError = false;
 let quickCategories = loadQuickCategories();
 let savingsGoal = loadSavingsGoal();
+let syncBadgeTimer = null;
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -290,6 +292,29 @@ function setStatus(msg) {
   }
 }
 
+function showSyncBadge(message, tone = "ok", autoHideMs = 0) {
+  if (!syncBadgeEl) return;
+
+  syncBadgeEl.textContent = message;
+  syncBadgeEl.hidden = false;
+  syncBadgeEl.classList.remove("syncing", "ok", "error", "show");
+  syncBadgeEl.classList.add(tone, "show");
+  if (syncBadgeTimer) clearTimeout(syncBadgeTimer);
+  if (autoHideMs > 0) {
+    syncBadgeTimer = setTimeout(() => {
+      syncBadgeEl.classList.remove("show", "syncing", "ok", "error");
+      syncBadgeEl.hidden = true;
+    }, autoHideMs);
+  }
+}
+
+function hideSyncBadge() {
+  if (!syncBadgeEl) return;
+  if (syncBadgeTimer) clearTimeout(syncBadgeTimer);
+  syncBadgeEl.classList.remove("show", "syncing", "ok", "error");
+  syncBadgeEl.hidden = true;
+}
+
 function refreshSyncIndicator() {
   if (!syncIndicatorEl) return;
 
@@ -297,20 +322,24 @@ function refreshSyncIndicator() {
   if (!currentUser) {
     syncIndicatorEl.classList.add("sync-local");
     syncIndicatorEl.textContent = "Sincronizacion: Local";
+    hideSyncBadge();
     return;
   }
   if (syncOpsInFlight > 0) {
     syncIndicatorEl.classList.add("sync-syncing");
     syncIndicatorEl.textContent = "Sincronizacion: Sincronizando...";
+    showSyncBadge("Sincronizando...", "syncing");
     return;
   }
   if (hadRecentSyncError) {
     syncIndicatorEl.classList.add("sync-error");
     syncIndicatorEl.textContent = "Sincronizacion: Error";
+    showSyncBadge("Error de sync", "error");
     return;
   }
   syncIndicatorEl.classList.add("sync-online");
   syncIndicatorEl.textContent = "Sincronizacion: OK";
+  hideSyncBadge();
 }
 
 function beginSyncOperation() {
@@ -1385,12 +1414,16 @@ function resetTransactionForm() {
   setEditingState(null);
 }
 
-function animatePrimarySave() {
-  if (!btnSubmitTx) return;
-  btnSubmitTx.classList.remove("saving");
-  void btnSubmitTx.offsetWidth;
-  btnSubmitTx.classList.add("saving");
-  setTimeout(() => btnSubmitTx.classList.remove("saving"), 260);
+function animatePrimarySave(target = btnSubmitTx) {
+  if (!target) return;
+  target.classList.remove("saving");
+  void target.offsetWidth;
+  target.classList.add("saving");
+  setTimeout(() => target.classList.remove("saving"), 260);
+}
+
+function flashSavedFeedback(label = "Guardado") {
+  showSyncBadge(label, "ok", 1400);
 }
 
 function renderLast3Months(all, selectedMonth = CURRENT_MONTH) {
@@ -2901,7 +2934,7 @@ async function updateTransaction(id, tx) {
   return true;
 }
 
-async function quickAddExpense(category) {
+async function quickAddExpense(category, sourceBtn = null) {
   const amount = parseDecimalInputValue(quickAmountEl.value);
   if (!(amount > 0)) {
     setStatus("Debes ingresar un importe valido para carga rapida.");
@@ -2922,6 +2955,8 @@ async function quickAddExpense(category) {
   });
   quickAmountEl.value = "";
   quickDetailEl.value = "";
+  animatePrimarySave(sourceBtn);
+  flashSavedFeedback("Guardado");
   setStatus(`Carga rapida guardada: ${category} ${money(amount)}.`);
   showToast(`Guardado: ${category}`);
 }
@@ -3038,6 +3073,7 @@ async function clearMyData() {
     refresh();
     setClearMyDataStatus("Datos locales eliminados.");
     setStatus("Datos locales eliminados.");
+    flashSavedFeedback("Datos borrados");
     showToast("Datos eliminados");
     return;
   }
@@ -3057,6 +3093,7 @@ async function clearMyData() {
   await loadCloudData();
   setClearMyDataStatus("Todos tus movimientos fueron eliminados.");
   setStatus("Todos tus movimientos fueron eliminados.");
+  flashSavedFeedback("Datos borrados");
   showToast("Datos eliminados");
 }
 
@@ -3076,6 +3113,7 @@ async function duplicateTransaction(id) {
     categoria: base.categoria,
     detalle: base.detalle || ""
   });
+  flashSavedFeedback("Duplicado");
   setStatus(`Movimiento duplicado en fecha ${today}.`);
   showToast("Movimiento duplicado");
 }
@@ -3114,6 +3152,8 @@ async function handleImportFileClick() {
     const imported = await importTransactions(normalized);
     setImportStatus(`Importacion finalizada. Nuevos movimientos: ${imported}.`);
     if (importFileEl) importFileEl.value = "";
+    animatePrimarySave(btnImportFile);
+    flashSavedFeedback("Importado");
     showToast(`Importados: ${imported}`);
   } catch (err) {
     setImportStatus(`Error al importar: ${err?.message || String(err)}`);
@@ -3141,6 +3181,7 @@ async function handleFormSubmit(e) {
     });
     if (ok) {
       animatePrimarySave();
+      flashSavedFeedback("Guardado");
       setStatus("Movimiento editado correctamente.");
       showToast("Cambios guardados");
       resetTransactionForm();
@@ -3158,6 +3199,7 @@ async function handleFormSubmit(e) {
   });
 
   animatePrimarySave();
+  flashSavedFeedback("Guardado");
   showToast("Movimiento guardado");
   resetTransactionForm();
 }
@@ -3485,7 +3527,7 @@ quickButtons.forEach((btn) => {
   if (!btn) return;
   btn.addEventListener("click", async () => {
     const category = btn.dataset.category || "Supermercado";
-    await quickAddExpense(category);
+    await quickAddExpense(category, btn);
   });
 });
 
