@@ -2692,6 +2692,8 @@ async function signup() {
     setStatus(`Conectado como ${currentUser?.email || email}`);
     await seedCloudIfEmpty();
     await loadCloudData();
+    setActiveTab("cargar");
+    refresh();
   } else {
     setStatus("Cuenta creada. Revisa tu email para confirmar y luego inicia sesi\u00f3n.");
   }
@@ -2726,6 +2728,8 @@ async function login() {
   setStatus(`Conectado como ${currentUser?.email || email}`);
   await seedCloudIfEmpty();
   await loadCloudData();
+  setActiveTab("cargar");
+  refresh();
 }
 
 async function recoverPassword() {
