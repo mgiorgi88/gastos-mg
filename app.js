@@ -181,6 +181,15 @@ import { createQuickActionsUi } from "./js/ui/quick-actions.js";
 import { createCalendarUi } from "./js/ui/calendar.js";
 import { createChartsUi } from "./js/ui/charts.js";
 import { createSummaryUi } from "./js/ui/summary.js";
+import {
+  buildMonthOptions,
+  formatDateLabel,
+  formatMonthTitle,
+  getMonth,
+  monthLabel,
+  toDateKeyLocal
+} from "./js/utils/date.js";
+import { escapeHtml, formatMoney } from "./js/utils/formatters.js";
 
 /**
  * @typedef {Object} Transaction
@@ -236,13 +245,7 @@ const fechaEl = document.getElementById("fecha");
 if (fechaEl) fechaEl.valueAsDate = new Date();
 
 function money(value) {
-  const localeMap = {
-    EUR: "es-ES",
-    ARS: "es-AR",
-    USD: "en-US"
-  };
-  const locale = localeMap[selectedCurrency] || "es-ES";
-  return new Intl.NumberFormat(locale, { style: "currency", currency: selectedCurrency }).format(value);
+  return formatMoney(value, selectedCurrency);
 }
 
 function loadActiveTab() {
@@ -595,45 +598,6 @@ async function bootstrapHistorico() {
   }
 }
 
-function getMonth(dateStr) {
-  return String(dateStr).slice(0, 7);
-}
-
-function buildMonthOptions(all) {
-  const months = [...new Set(all.map((x) => getMonth(x.fecha)))];
-  const ordered = [CURRENT_MONTH, ...months.filter((m) => m !== CURRENT_MONTH)];
-  return [
-    { value: CURRENT_MONTH, label: `Mes actual (${CURRENT_MONTH})` },
-    ...ordered.filter((m, i) => i > 0).map((m) => ({ value: m, label: m })),
-    { value: "Todos", label: "Todos" }
-  ];
-}
-
-function getLast3MonthKeys() {
-  const keys = [];
-  const now = new Date();
-  for (let i = 1; i <= 3; i += 1) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    keys.push(key);
-  }
-  return keys;
-}
-
-function monthLabel(key) {
-  const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
-  const [y, m] = key.split("-");
-  const idx = Math.max(0, Math.min(11, Number(m) - 1));
-  return `${monthNames[idx]} ${y}`;
-}
-
-function previousMonthKey(monthKey) {
-  const [y, m] = String(monthKey).split("-").map(Number);
-  if (!y || !m) return CURRENT_MONTH;
-  const d = new Date(y, m - 2, 1);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-}
-
 function fmtDelta(curr, prev) {
   const delta = curr - prev;
   const cls = delta > 0 ? "saldo-pos" : delta < 0 ? "saldo-neg" : "saldo-neu";
@@ -655,7 +619,7 @@ function getAllSortedTransactions() {
 }
 
 function updateMonthFilterOptions(all) {
-  const options = buildMonthOptions(all);
+  const options = buildMonthOptions(all, CURRENT_MONTH);
   const previous = filtroMes.value || CURRENT_MONTH;
 
   filtroMes.innerHTML = options
@@ -673,7 +637,7 @@ function updateYoyPeriodOptions(all) {
     return { periodA: CURRENT_MONTH, periodB: previousYearMonthKey(CURRENT_MONTH) };
   }
 
-  const months = buildMonthOptions(all)
+  const months = buildMonthOptions(all, CURRENT_MONTH)
     .map((opt) => opt.value)
     .filter((v) => v && v !== "Todos");
   const defaultA = CURRENT_MONTH;
@@ -753,14 +717,6 @@ function refresh() {
   if (hasTransactions) {
     updateCalendarAndAnalytics(all, detailRows, selectedMonth, yoyPeriods.periodA, yoyPeriods.periodB);
   }
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
 }
 
 function normalizeHeaderName(name) {
