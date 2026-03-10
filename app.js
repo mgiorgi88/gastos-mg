@@ -191,6 +191,7 @@ import {
   toDateKeyLocal
 } from "./js/utils/date.js";
 import { escapeHtml, formatMoney } from "./js/utils/formatters.js";
+import { buildInitialQuickCategories, createAppState } from "./js/core/state.js";
 
 /**
  * @typedef {Object} Transaction
@@ -202,51 +203,42 @@ import { escapeHtml, formatMoney } from "./js/utils/formatters.js";
  * @property {string} [detalle]
  */
 
-let currentUser = null;
-let txData = [];
-let hasUserChosenMonth = false;
 const sessionData = loadSessionData();
-let sessionPersistMode = sessionData.persistMode;
-let authSession = sessionData.session;
-let selectedCurrency = loadCurrency();
-let budgets = loadBudgets();
-let arsRate = loadArsRate();
-let spreadPct = loadSpreadPct();
-let selectedTheme = loadTheme();
-let editingTxId = null;
-let calendarMonthDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-let selectedDayKey = null;
-let showAllFilteredRows = false;
-let topExpenseTempFilterActive = false;
-let currentDetailRows = [];
-let toastTimer = null;
-let syncOpsInFlight = 0;
-let hadRecentSyncError = false;
-let quickCategories = (() => {
-  const valid = CATEGORIAS.Gasto;
-  const source = Array.isArray(loadQuickCategoriesRaw()) ? loadQuickCategoriesRaw() : [];
-  const filtered = source.filter((x) => valid.includes(x));
-  const unique = [];
-  filtered.forEach((x) => {
-    if (!unique.includes(x)) unique.push(x);
-  });
-  QUICK_CATEGORY_DEFAULTS.forEach((x) => {
-    if (!unique.includes(x) && valid.includes(x)) unique.push(x);
-  });
-  valid.forEach((x) => {
-    if (!unique.includes(x)) unique.push(x);
-  });
-  return unique.slice(0, 4);
-})();
-let savingsGoal = loadSavingsGoal();
-let syncBadgeTimer = null;
-let authActionInFlight = false;
+const state = createAppState({
+  currentUser: null,
+  txData: [],
+  hasUserChosenMonth: false,
+  sessionPersistMode: sessionData.persistMode,
+  authSession: sessionData.session,
+  selectedCurrency: loadCurrency(),
+  budgets: loadBudgets(),
+  arsRate: loadArsRate(),
+  spreadPct: loadSpreadPct(),
+  selectedTheme: loadTheme(),
+  editingTxId: null,
+  calendarMonthDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  selectedDayKey: null,
+  showAllFilteredRows: false,
+  topExpenseTempFilterActive: false,
+  currentDetailRows: [],
+  toastTimer: null,
+  syncOpsInFlight: 0,
+  hadRecentSyncError: false,
+  quickCategories: buildInitialQuickCategories(
+    CATEGORIAS.Gasto,
+    QUICK_CATEGORY_DEFAULTS,
+    loadQuickCategoriesRaw()
+  ),
+  savingsGoal: loadSavingsGoal(),
+  syncBadgeTimer: null,
+  authActionInFlight: false
+});
 
 const fechaEl = document.getElementById("fecha");
 if (fechaEl) fechaEl.valueAsDate = new Date();
 
 function money(value) {
-  return formatMoney(value, selectedCurrency);
+  return formatMoney(value, state.selectedCurrency);
 }
 
 function loadActiveTab() {
@@ -264,17 +256,17 @@ function getCurrentTab() {
 }
 
 function setActiveTab(tab) {
-  if (tab !== "mas" && topExpenseTempFilterActive) {
-    topExpenseTempFilterActive = false;
-    showAllFilteredRows = false;
-    selectedDayKey = null;
+  if (tab !== "mas" && state.topExpenseTempFilterActive) {
+    state.topExpenseTempFilterActive = false;
+    state.showAllFilteredRows = false;
+    state.selectedDayKey = null;
     resetDetailFilters();
   }
   saveActiveTab(tab);
-  if (tab === "mas" && !selectedDayKey) {
+  if (tab === "mas" && !state.selectedDayKey) {
     const now = new Date();
-    selectedDayKey = toDateKeyLocal(now);
-    calendarMonthDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    state.selectedDayKey = toDateKeyLocal(now);
+    state.calendarMonthDate = new Date(now.getFullYear(), now.getMonth(), 1);
   }
   tabBtns.forEach((btn) => {
     const active = btn.getAttribute("data-tab") === tab;
@@ -291,11 +283,11 @@ function setActiveTab(tab) {
     }
   });
   if (authCardEl) {
-    const logged = Boolean(currentUser);
+    const logged = Boolean(state.currentUser);
     authCardEl.hidden = logged || tab !== "opciones";
   }
   if (accountMiniEl) {
-    const logged = Boolean(currentUser);
+    const logged = Boolean(state.currentUser);
     accountMiniEl.hidden = !logged || tab !== "opciones";
   }
 }
@@ -305,30 +297,30 @@ function setStatus(msg, tone = "info") {
 }
 
 function showSyncBadge(message, tone = "ok", autoHideMs = 0) {
-  syncBadgeTimer = showSyncBadgeState(syncBadgeEl, message, tone, autoHideMs, syncBadgeTimer);
+  state.syncBadgeTimer = showSyncBadgeState(syncBadgeEl, message, tone, autoHideMs, state.syncBadgeTimer);
 }
 
 function hideSyncBadge() {
-  syncBadgeTimer = hideSyncBadgeState(syncBadgeEl, syncBadgeTimer);
+  state.syncBadgeTimer = hideSyncBadgeState(syncBadgeEl, state.syncBadgeTimer);
 }
 
 function refreshSyncIndicator() {
   if (!syncIndicatorEl) return;
 
   syncIndicatorEl.classList.remove("sync-local", "sync-online", "sync-syncing", "sync-error");
-  if (!currentUser) {
+  if (!state.currentUser) {
     syncIndicatorEl.classList.add("sync-local");
     syncIndicatorEl.textContent = "Sincronizacion: Local";
     hideSyncBadge();
     return;
   }
-  if (syncOpsInFlight > 0) {
+  if (state.syncOpsInFlight > 0) {
     syncIndicatorEl.classList.add("sync-syncing");
     syncIndicatorEl.textContent = "Sincronizacion: Sincronizando...";
     showSyncBadge("Sincronizando...", "syncing");
     return;
   }
-  if (hadRecentSyncError) {
+  if (state.hadRecentSyncError) {
     syncIndicatorEl.classList.add("sync-error");
     syncIndicatorEl.textContent = "Sincronizacion: Error";
     showSyncBadge("Error de sync", "error");
@@ -340,14 +332,14 @@ function refreshSyncIndicator() {
 }
 
 function beginSyncOperation() {
-  syncOpsInFlight += 1;
+  state.syncOpsInFlight += 1;
   refreshSyncIndicator();
 }
 
 function endSyncOperation(success) {
-  syncOpsInFlight = Math.max(0, syncOpsInFlight - 1);
-  if (success && syncOpsInFlight === 0) hadRecentSyncError = false;
-  if (!success) hadRecentSyncError = true;
+  state.syncOpsInFlight = Math.max(0, state.syncOpsInFlight - 1);
+  if (success && state.syncOpsInFlight === 0) state.hadRecentSyncError = false;
+  if (!success) state.hadRecentSyncError = true;
   refreshSyncIndicator();
 }
 
@@ -361,26 +353,26 @@ function setClearMyDataStatus(msg) {
 }
 
 function showToast(message) {
-  toastTimer = showToastMessage(toastEl, message, toastTimer);
+  state.toastTimer = showToastMessage(toastEl, message, state.toastTimer);
 }
 
 function saveBudgets(data) {
-  budgets = data;
+  state.budgets = data;
   saveBudgetsValue(data);
 }
 
 function saveArsRate(v) {
-  arsRate = v;
+  state.arsRate = v;
   saveArsRateValue(v);
 }
 
 function saveSpreadPct(v) {
-  spreadPct = v;
+  state.spreadPct = v;
   saveSpreadPctValue(v);
 }
 
 function saveTheme(theme) {
-  selectedTheme = theme;
+  state.selectedTheme = theme;
   saveThemeValue(theme);
 }
 
@@ -389,34 +381,34 @@ function applyTheme(theme) {
 }
 
 function saveCurrency(currency) {
-  selectedCurrency = currency;
+  state.selectedCurrency = currency;
   saveCurrencyValue(currency);
 }
 
 function saveSavingsGoal(value) {
-  savingsGoal = value > 0 ? value : 0;
-  saveSavingsGoalValue(savingsGoal);
+  state.savingsGoal = value > 0 ? value : 0;
+  saveSavingsGoalValue(state.savingsGoal);
 }
 
 function saveQuickCategories(categories) {
-  quickCategories = sanitizeQuickCategories(categories);
-  saveQuickCategoriesValue(quickCategories);
+  state.quickCategories = sanitizeQuickCategories(categories);
+  saveQuickCategoriesValue(state.quickCategories);
 }
 
 function saveSession(session) {
-  authSession = session;
-  saveSessionWithMode(session, sessionPersistMode);
+  state.authSession = session;
+  saveSessionWithMode(session, state.sessionPersistMode);
 }
 
 function clearSession() {
-  authSession = null;
+  state.authSession = null;
   clearSessionStorage();
 }
 
 function applyRememberPreference() {
   const remember = rememberEl ? Boolean(rememberEl.checked) : true;
   saveRememberMe(remember);
-  sessionPersistMode = remember ? "local" : "session";
+  state.sessionPersistMode = remember ? "local" : "session";
 }
 
 function txSignature(tx) {
@@ -433,7 +425,7 @@ function getLocalTransactionStore() {
 }
 
 function requireCloudSession(actionLabel = "usar la app") {
-  if (currentUser || isLocalDevelopment()) return true;
+  if (state.currentUser || isLocalDevelopment()) return true;
   setActiveTab("opciones");
   updateEntryGate();
   setStatus(`Inicia sesión para ${actionLabel}.`);
@@ -543,7 +535,7 @@ function fmtDeltaExpense(curr, prev) {
 }
 
 function getAllSortedTransactions() {
-  return [...txData].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
+  return [...state.txData].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
 }
 
 const {
@@ -554,8 +546,8 @@ const {
   fetchCurrentUser,
   fetchCurrentUserState
 } = createSupabaseService({
-  getAuthSession: () => authSession,
-  getCurrentUser: () => currentUser,
+  getAuthSession: () => state.authSession,
+  getCurrentUser: () => state.currentUser,
   saveSession,
   clearSession,
   beginSyncOperation,
@@ -571,10 +563,10 @@ const {
   loadCloudData,
   seedCloudIfEmpty
 } = createTransactionsService({
-  getCurrentUser: () => currentUser,
-  getTxData: () => txData,
+  getCurrentUser: () => state.currentUser,
+  getTxData: () => state.txData,
   setTxData: (rows) => {
-    txData = rows;
+    state.txData = rows;
   },
   loadTx,
   saveTx,
@@ -594,10 +586,10 @@ const {
 } = createImportExportService({
   CATEGORIAS,
   currentMonthKey: CURRENT_MONTH,
-  getSelectedCurrency: () => selectedCurrency,
-  getCurrentUser: () => currentUser,
-  getTxData: () => txData,
-  getCurrentDetailRows: () => currentDetailRows,
+  getSelectedCurrency: () => state.selectedCurrency,
+  getCurrentUser: () => state.currentUser,
+  getTxData: () => state.txData,
+  getCurrentDetailRows: () => state.currentDetailRows,
   getImportFile: () => importFileEl,
   loadTx,
   saveTx,
@@ -646,16 +638,16 @@ const {
   btnSubmitTx,
   btnCancelEdit,
   txFormModeEl,
-  getTxData: () => txData,
-  getSelectedCurrency: () => selectedCurrency,
-  getArsRate: () => arsRate,
+  getTxData: () => state.txData,
+  getSelectedCurrency: () => state.selectedCurrency,
+  getArsRate: () => state.arsRate,
   saveArsRate,
   saveSpreadPct,
   parseDecimalInputValue,
   setStatus,
   money,
   onEditingChange: (id) => {
-    editingTxId = id;
+    state.editingTxId = id;
   }
 });
 
@@ -681,7 +673,7 @@ const {
   quickDetailEl,
   loadQuickCategoriesRaw,
   saveQuickCategories,
-  getQuickCategories: () => quickCategories,
+  getQuickCategories: () => state.quickCategories,
   setStatus,
   showToast,
   addTransaction,
@@ -715,15 +707,15 @@ const {
   detailCountEl,
   detailAvgEl,
   movimientosSectionEl,
-  getCalendarMonthDate: () => calendarMonthDate,
+  getCalendarMonthDate: () => state.calendarMonthDate,
   setCalendarMonthDate: (date) => {
-    calendarMonthDate = date;
+    state.calendarMonthDate = date;
   },
-  getSelectedDayKey: () => selectedDayKey,
+  getSelectedDayKey: () => state.selectedDayKey,
   setSelectedDayKey: (key) => {
-    selectedDayKey = key;
+    state.selectedDayKey = key;
   },
-  getShowAllFilteredRows: () => showAllFilteredRows,
+  getShowAllFilteredRows: () => state.showAllFilteredRows,
   formatDateLabel,
   formatMonthTitle,
   toDateKeyLocal,
@@ -753,7 +745,7 @@ const {
   balanceSparklineEl,
   balanceTrendEl,
   CURRENT_MONTH,
-  getSelectedTheme: () => selectedTheme,
+  getSelectedTheme: () => state.selectedTheme,
   money,
   monthLabel,
   StatsUtils
@@ -797,8 +789,8 @@ const {
   savingsGoalStatusEl,
   savingsGoalSummaryEl,
   trend3mEl,
-  getBudgets: () => budgets,
-  getSavingsGoal: () => savingsGoal,
+  getBudgets: () => state.budgets,
+  getSavingsGoal: () => state.savingsGoal,
   saveSavingsGoal,
   money,
   monthLabel,
@@ -824,7 +816,7 @@ const { refresh } = createRefreshController({
   buildMonthOptions,
   monthLabel,
   previousYearMonthKey,
-  getHasUserChosenMonth: () => hasUserChosenMonth,
+  getHasUserChosenMonth: () => state.hasUserChosenMonth,
   getCurrentTab,
   getAllSortedTransactions,
   computeMonthlySummary,
@@ -835,7 +827,7 @@ const { refresh } = createRefreshController({
   refreshDetailCategoryOptions,
   getFilteredDetailRows,
   setCurrentDetailRows: (rows) => {
-    currentDetailRows = rows;
+    state.currentDetailRows = rows;
   },
   updateDetailSummaryUI,
   renderCalendar,
@@ -876,14 +868,14 @@ const {
   passwordEl,
   passwordHintEl,
   entryGateEl,
-  getCurrentUser: () => currentUser,
+  getCurrentUser: () => state.currentUser,
   getCurrentTab,
-  getAuthActionInFlight: () => authActionInFlight,
+  getAuthActionInFlight: () => state.authActionInFlight,
   setAuthActionInFlight: (value) => {
-    authActionInFlight = value;
+    state.authActionInFlight = value;
   },
   resetSyncError: () => {
-    hadRecentSyncError = false;
+    state.hadRecentSyncError = false;
   },
   refreshSyncIndicator,
   setStatus
@@ -898,7 +890,7 @@ const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
   applyRememberPreference,
   saveSession,
   setCurrentUser: (user) => {
-    currentUser = user;
+    state.currentUser = user;
   },
   setAuthButtons,
   seedCloudIfEmpty,
@@ -911,12 +903,12 @@ const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
   clearSession,
   getLocalTransactionStore,
   setTxData: (rows) => {
-    txData = rows;
+    state.txData = rows;
   },
   updateEntryGate,
   isLocalDevelopment,
   fetchCurrentUserState,
-  getAuthSession: () => authSession
+  getAuthSession: () => state.authSession
 });
 
 async function clearMyData() {
@@ -965,8 +957,8 @@ async function handleFormSubmit(e) {
 
   if (!fecha || !categoria || monto <= 0) return;
 
-  if (editingTxId) {
-    const ok = await updateTransaction(editingTxId, {
+  if (state.editingTxId) {
+    const ok = await updateTransaction(state.editingTxId, {
       fecha,
       tipo,
       monto,
@@ -1003,13 +995,13 @@ bindAppEvents({
   handleFormSubmit,
   filtroMes,
   setHasUserChosenMonth: (value) => {
-    hasUserChosenMonth = value;
+    state.hasUserChosenMonth = value;
   },
   setCalendarMonthDate: (date) => {
-    calendarMonthDate = date;
+    state.calendarMonthDate = date;
   },
   setSelectedDayKey: (value) => {
-    selectedDayKey = value;
+    state.selectedDayKey = value;
   },
   refresh,
   currencyEl,
@@ -1026,7 +1018,7 @@ bindAppEvents({
   bindChartInteractions,
   rememberEl,
   applyRememberPreference,
-  getAuthSession: () => authSession,
+  getAuthSession: () => state.authSession,
   saveSession,
   emailEl,
   validateEmailField,
@@ -1046,7 +1038,7 @@ bindAppEvents({
   moveCalendarMonth,
   calGridEl,
   setShowAllFilteredRows: (value) => {
-    showAllFilteredRows = value;
+    state.showAllFilteredRows = value;
   },
   btnCancelEdit,
   resetTransactionForm,
@@ -1068,7 +1060,7 @@ bindAppEvents({
   btnDetailClear,
   resetDetailFilters,
   setTopExpenseTempFilterActive: (value) => {
-    topExpenseTempFilterActive = value;
+    state.topExpenseTempFilterActive = value;
   },
   topExpensesListEl,
   CURRENT_MONTH,
@@ -1114,7 +1106,7 @@ bindAppEvents({
   convertArsToSelectedCurrency,
   arsResultEl,
   money,
-  getSelectedCurrency: () => selectedCurrency,
+  getSelectedCurrency: () => state.selectedCurrency,
   btnRefreshRate,
   arsAmountEl,
   spreadPctEl,
@@ -1123,7 +1115,7 @@ bindAppEvents({
   btnBudgetSave,
   budgetCategoryEl,
   budgetAmountEl,
-  getBudgets: () => budgets,
+  getBudgets: () => state.budgets,
   saveBudgets
 });
 
@@ -1139,15 +1131,15 @@ bindAppEvents({
     refreshSavingsGoalEditor();
     updateCategoryOptions(tipoEl.value);
     updateArsConvertVisibility();
-    if (arsRateEl) arsRateEl.value = Number(arsRate).toFixed(4);
-    if (spreadPctEl) spreadPctEl.value = Number(spreadPct).toFixed(1);
+    if (arsRateEl) arsRateEl.value = Number(state.arsRate).toFixed(4);
+    if (spreadPctEl) spreadPctEl.value = Number(state.spreadPct).toFixed(1);
     await bootstrapHistorico();
     runCategoryMigration();
-    txData = getLocalTransactionStore();
-    if (currencyEl) currencyEl.value = selectedCurrency;
-    if (themeEl) themeEl.value = selectedTheme;
+    state.txData = getLocalTransactionStore();
+    if (currencyEl) currencyEl.value = state.selectedCurrency;
+    if (themeEl) themeEl.value = state.selectedTheme;
     if (rememberEl) rememberEl.checked = loadRememberMe();
-    applyTheme(selectedTheme);
+    applyTheme(state.selectedTheme);
     setActiveTab("cargar");
     updateArsConvertVisibility();
     refresh();
@@ -1159,6 +1151,9 @@ bindAppEvents({
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
 })();
+
+
+
 
 
 
