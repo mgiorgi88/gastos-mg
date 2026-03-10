@@ -352,6 +352,41 @@ body {
 }
 
 /* Normalize vertical rhythm for settings/more panels */
+[data-panel="opciones"].panel-group-intro {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  display: grid;
+  gap: 6px;
+  margin: 6px 2px -2px;
+}
+
+.panel-group-kicker {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.panel-group-title {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.15;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.panel-group-copy {
+  margin: 0;
+  max-width: 54ch;
+  font-size: 0.96rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
 [data-panel="mas"] h2,
 [data-panel="opciones"] h2 {
   margin-bottom: var(--space-md);
@@ -395,6 +430,18 @@ body {
 [data-panel="opciones"] .detail-filters,
 [data-panel="opciones"] .detail-kpis {
   margin-top: var(--space-sm);
+}
+
+[data-panel="opciones"].card {
+  margin-top: 0;
+}
+
+[data-panel="opciones"].card + [data-panel="opciones"].card {
+  margin-top: 0;
+}
+
+[data-panel="opciones"].panel-group-intro + [data-panel="opciones"].card {
+  margin-top: 0;
 }
 
 .grid {
