@@ -178,6 +178,7 @@ import { createAuthService } from "./js/services/auth.js";
 import { createTransactionsService } from "./js/services/transactions.js";
 import { createFormUi } from "./js/ui/form-ui.js";
 import { createQuickActionsUi } from "./js/ui/quick-actions.js";
+import { createCalendarUi } from "./js/ui/calendar.js";
 
 /**
  * @typedef {Object} Transaction
@@ -257,14 +258,6 @@ function getCurrentTab() {
   const activeBtn = Array.from(tabBtns).find((btn) => btn.classList.contains("active"));
   const tab = activeBtn?.getAttribute("data-tab") || "cargar";
   return ["cargar", "resumen", "mas", "opciones"].includes(tab) ? tab : "cargar";
-}
-
-function resetDetailFilters() {
-  if (detailTypeEl) detailTypeEl.value = "Todos";
-  if (detailCategoryEl) detailCategoryEl.value = "Todos";
-  if (detailFromEl) detailFromEl.value = "";
-  if (detailToEl) detailToEl.value = "";
-  if (detailSearchEl) detailSearchEl.value = "";
 }
 
 function setActiveTab(tab) {
@@ -605,13 +598,6 @@ async function bootstrapHistorico() {
 
 function getMonth(dateStr) {
   return String(dateStr).slice(0, 7);
-}
-
-function scrollToMovimientosSection() {
-  if (!movimientosSectionEl) return;
-  requestAnimationFrame(() => {
-    movimientosSectionEl.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
 }
 
 function buildMonthOptions(all) {
@@ -1089,126 +1075,6 @@ function toDateKeyLocal(date) {
   return `${y}-${m}-${d}`;
 }
 
-function moveCalendarMonth(offset) {
-  calendarMonthDate = new Date(calendarMonthDate.getFullYear(), calendarMonthDate.getMonth() + offset, 1);
-  selectedDayKey = null;
-}
-
-function renderCalendar(rows) {
-  if (!calGridEl || !calTitleEl) return;
-
-  const y = calendarMonthDate.getFullYear();
-  const m = calendarMonthDate.getMonth();
-  const first = new Date(y, m, 1);
-  const firstWeekDay = (first.getDay() + 6) % 7;
-  const gridStart = new Date(y, m, 1 - firstWeekDay);
-  const monthKey = `${y}-${String(m + 1).padStart(2, "0")}`;
-  const todayKey = toDateKeyLocal(new Date());
-
-  calTitleEl.textContent = formatMonthTitle(calendarMonthDate);
-  calGridEl.classList.remove("month-enter");
-  void calGridEl.offsetWidth;
-  calGridEl.classList.add("month-enter");
-  calGridEl.innerHTML = "";
-
-  for (let i = 0; i < 42; i += 1) {
-    const date = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
-    const dateKey = toDateKeyLocal(date);
-    const rowsForDay = rows.filter((x) => String(x.fecha).slice(0, 10) === dateKey);
-    const hasIncome = rowsForDay.some((x) => x.tipo === "Ingreso");
-    const hasExpense = rowsForDay.some((x) => x.tipo === "Gasto");
-    const hasData = hasIncome || hasExpense;
-    const isOutMonth = !dateKey.startsWith(monthKey);
-    const isToday = dateKey === todayKey;
-    const isSelected = dateKey === selectedDayKey;
-
-    const cell = document.createElement("button");
-    cell.type = "button";
-    cell.className = `calendar-cell${isOutMonth ? " out-month" : ""}${isToday ? " today" : ""}${isSelected ? " selected" : ""}${hasData ? " has-data" : " no-data"}`;
-    cell.setAttribute("data-date", dateKey);
-    cell.innerHTML = `
-      <small>${date.getDate()}</small>
-      <span class="calendar-marks">
-        ${hasIncome ? '<i class="dot income"></i>' : ""}
-        ${hasExpense ? '<i class="dot expense"></i>' : ""}
-      </span>
-    `;
-    calGridEl.appendChild(cell);
-  }
-}
-
-function renderSelectedDayRows(rows) {
-  if (showAllFilteredRows) {
-    const allRows = [...rows].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
-    const uniqueDays = new Set(allRows.map((x) => String(x.fecha).slice(0, 10))).size;
-    if (dayTitleEl) dayTitleEl.textContent = `Movimientos filtrados: ${allRows.length} (${uniqueDays} dias)`;
-    lista.innerHTML = "";
-    allRows.forEach((item) => {
-      const li = document.createElement("li");
-      li.className = "item";
-      li.innerHTML = `
-        <div class="meta">
-          <strong>${CATEGORY_ICONS[item.categoria] || "\u2022"} ${item.categoria}</strong>
-          <small>
-            ${formatDateLabel(String(item.fecha).slice(0, 10))} - 
-            <span class="tx-type ${item.tipo === "Ingreso" ? "ingreso" : "gasto"}">${item.tipo === "Ingreso" ? "Ingreso" : "Gasto"}</span>
-            ${item.detalle ? " - " + item.detalle : ""}
-          </small>
-        </div>
-        <div class="item-actions">
-          <strong class="monto ${String(item.tipo).toLowerCase()}">${item.tipo === "Gasto" ? "-" : "+"}${money(Number(item.monto))}</strong>
-          <button class="danger action-btn" data-action="duplicate" data-id="${item.id}" type="button"><span class="action-icon">\u29C9</span><span class="action-label">Duplicar</span></button>
-          <button class="danger action-btn" data-action="edit" data-id="${item.id}" type="button"><span class="action-icon">\u270E</span><span class="action-label">Editar</span></button>
-          <button class="danger action-btn" data-action="delete" data-id="${item.id}" type="button"><span class="action-icon">\u{1F5D1}</span><span class="action-label">Eliminar</span></button>
-        </div>
-      `;
-      lista.appendChild(li);
-    });
-    vacio.hidden = allRows.length > 0;
-    return;
-  }
-
-  if (!selectedDayKey) {
-    if (dayTitleEl) dayTitleEl.textContent = "Selecciona un dia para ver movimientos.";
-    lista.innerHTML = "";
-    vacio.hidden = true;
-    return;
-  }
-
-  const dayRows = rows.filter((x) => String(x.fecha).slice(0, 10) === selectedDayKey);
-  if (dayTitleEl) dayTitleEl.textContent = `Movimientos del ${formatDateLabel(selectedDayKey)}`;
-
-  lista.innerHTML = "";
-  dayRows
-    .sort((a, b) => String(b.id).localeCompare(String(a.id)))
-    .forEach((item) => {
-      const li = document.createElement("li");
-      li.className = "item";
-      li.innerHTML = `
-        <div class="meta">
-          <strong>${CATEGORY_ICONS[item.categoria] || "\u2022"} ${item.categoria}</strong>
-          <small>
-            <span class="tx-type ${item.tipo === "Ingreso" ? "ingreso" : "gasto"}">${item.tipo === "Ingreso" ? "Ingreso" : "Gasto"}</span>
-            ${item.detalle ? " - " + item.detalle : ""}
-          </small>
-        </div>
-        <div class="item-actions">
-          <strong class="monto ${String(item.tipo).toLowerCase()}">${item.tipo === "Gasto" ? "-" : "+"}${money(Number(item.monto))}</strong>
-          <button class="danger action-btn" data-action="duplicate" data-id="${item.id}" type="button"><span class="action-icon">\u29C9</span><span class="action-label">Duplicar</span></button>
-          <button class="danger action-btn" data-action="edit" data-id="${item.id}" type="button"><span class="action-icon">\u270E</span><span class="action-label">Editar</span></button>
-          <button class="danger action-btn" data-action="delete" data-id="${item.id}" type="button"><span class="action-icon">\u{1F5D1}</span><span class="action-label">Eliminar</span></button>
-        </div>
-      `;
-      lista.appendChild(li);
-    });
-
-  vacio.hidden = dayRows.length > 0;
-}
-
-function flashSavedFeedback(label = "Guardado") {
-  showSyncBadge(label, "ok", 1400);
-}
-
 function renderLast3Months(all, selectedMonth = CURRENT_MONTH) {
   if (!trend3mEl) return;
 
@@ -1556,27 +1422,6 @@ function clearSavingsGoalFromUi() {
   setStatus("Meta de ahorro eliminada.");
 }
 
-function refreshDetailCategoryOptions(rows) {
-  if (!detailCategoryEl) return;
-  const prev = detailCategoryEl.value || "Todos";
-  const selectedType = detailTypeEl ? detailTypeEl.value : "Todos";
-  const baseCategories =
-    selectedType === "Gasto"
-      ? CATEGORIAS.Gasto
-      : selectedType === "Ingreso"
-        ? CATEGORIAS.Ingreso
-        : [...CATEGORIAS.Gasto, ...CATEGORIAS.Ingreso];
-  const dataCategories = rows
-    .filter((x) => selectedType === "Todos" || x.tipo === selectedType)
-    .map((x) => x.categoria)
-    .filter(Boolean);
-  const categories = ["Todos", ...new Set([...baseCategories, ...dataCategories])];
-  detailCategoryEl.innerHTML = categories
-    .map((c) => `<option value="${c}">${c === "Todos" ? "\u2195 Todos" : `${CATEGORY_ICONS[c] || "\u2022"} ${c}`}</option>`)
-    .join("");
-  detailCategoryEl.value = categories.includes(prev) ? prev : "Todos";
-}
-
 function getAllSortedTransactions() {
   return [...txData].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
 }
@@ -1755,47 +1600,6 @@ function drawBalanceSparkline(all) {
     const trendIcon = delta > 0 ? "\u{1F4C8}" : delta < 0 ? "\u{1F4C9}" : "\u{27A1}";
     balanceTrendEl.textContent = `${trendIcon} Verde = ahorro, rojo = deficit. Ultimo balance: ${money(endVal)}`;
   }
-}
-
-function getFilteredDetailRows(all) {
-  let detailRows = [...all];
-
-  const filterType = detailTypeEl ? detailTypeEl.value : "Todos";
-  const filterCategory = detailCategoryEl ? detailCategoryEl.value : "Todos";
-  const filterFrom = detailFromEl ? detailFromEl.value : "";
-  const filterTo = detailToEl ? detailToEl.value : "";
-  const filterSearch = (detailSearchEl ? detailSearchEl.value : "").trim().toLowerCase();
-
-  if (filterType !== "Todos") {
-    detailRows = detailRows.filter((x) => x.tipo === filterType);
-  }
-  if (filterCategory !== "Todos") {
-    detailRows = detailRows.filter((x) => x.categoria === filterCategory);
-  }
-  if (filterFrom) {
-    detailRows = detailRows.filter((x) => String(x.fecha) >= filterFrom);
-  }
-  if (filterTo) {
-    detailRows = detailRows.filter((x) => String(x.fecha) <= filterTo);
-  }
-  if (filterSearch) {
-    detailRows = detailRows.filter((x) => {
-      const hay = `${x.categoria} ${x.detalle || ""} ${x.tipo} ${x.fecha}`.toLowerCase();
-      return hay.includes(filterSearch);
-    });
-  }
-
-  return detailRows;
-}
-
-function updateDetailSummaryUI(detailRows) {
-  const detailTotal = detailRows.reduce((acc, x) => acc + Number(x.monto || 0), 0);
-  const detailCount = detailRows.length;
-  const detailAvg = detailCount > 0 ? detailTotal / detailCount : 0;
-
-  if (detailTotalEl) detailTotalEl.textContent = money(detailTotal);
-  if (detailCountEl) detailCountEl.textContent = String(detailCount);
-  if (detailAvgEl) detailAvgEl.textContent = money(detailAvg);
 }
 
 function updateCalendarAndAnalytics(
@@ -2396,6 +2200,48 @@ const {
   parseDecimalInputValue
 });
 
+const {
+  getFilteredDetailRows,
+  moveCalendarMonth,
+  refreshDetailCategoryOptions,
+  renderCalendar,
+  renderSelectedDayRows,
+  resetDetailFilters,
+  scrollToMovimientosSection,
+  updateDetailSummaryUI
+} = createCalendarUi({
+  calTitleEl,
+  calGridEl,
+  dayTitleEl,
+  lista,
+  vacio,
+  detailTypeEl,
+  detailCategoryEl,
+  detailFromEl,
+  detailToEl,
+  detailSearchEl,
+  detailTotalEl,
+  detailCountEl,
+  detailAvgEl,
+  movimientosSectionEl,
+  getCalendarMonthDate: () => calendarMonthDate,
+  setCalendarMonthDate: (date) => {
+    calendarMonthDate = date;
+  },
+  getSelectedDayKey: () => selectedDayKey,
+  setSelectedDayKey: (key) => {
+    selectedDayKey = key;
+  },
+  getShowAllFilteredRows: () => showAllFilteredRows,
+  formatDateLabel,
+  formatMonthTitle,
+  toDateKeyLocal,
+  money,
+  escapeHtml,
+  getMonth,
+  currentMonthKey: CURRENT_MONTH
+});
+
 const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
   emailEl,
   passwordEl,
@@ -2963,6 +2809,7 @@ btnBudgetSave.addEventListener("click", () => {
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
 })();
+
 
 
 
