@@ -181,6 +181,8 @@ import { createQuickActionsUi } from "./js/ui/quick-actions.js";
 import { createCalendarUi } from "./js/ui/calendar.js";
 import { createChartsUi } from "./js/ui/charts.js";
 import { createSummaryUi } from "./js/ui/summary.js";
+import { createRefreshController } from "./js/app/refresh.js";
+import { bindAppEvents } from "./js/app/events.js";
 import {
   buildMonthOptions,
   formatDateLabel,
@@ -616,107 +618,6 @@ function fmtDeltaExpense(curr, prev) {
 
 function getAllSortedTransactions() {
   return [...txData].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
-}
-
-function updateMonthFilterOptions(all) {
-  const options = buildMonthOptions(all, CURRENT_MONTH);
-  const previous = filtroMes.value || CURRENT_MONTH;
-
-  filtroMes.innerHTML = options
-    .map((opt) => `<option value="${opt.value}">${opt.label}</option>`)
-    .join("");
-
-  const validValues = new Set(options.map((x) => x.value));
-  const nextValue = hasUserChosenMonth && validValues.has(previous) ? previous : CURRENT_MONTH;
-  filtroMes.value = nextValue;
-  return nextValue;
-}
-
-function updateYoyPeriodOptions(all) {
-  if (!yoyPeriodAEl || !yoyPeriodBEl) {
-    return { periodA: CURRENT_MONTH, periodB: previousYearMonthKey(CURRENT_MONTH) };
-  }
-
-  const months = buildMonthOptions(all, CURRENT_MONTH)
-    .map((opt) => opt.value)
-    .filter((v) => v && v !== "Todos");
-  const defaultA = CURRENT_MONTH;
-  const defaultB = previousYearMonthKey(defaultA);
-  const uniqueMonths = [...new Set([defaultA, defaultB, ...months])];
-  const prevA = yoyPeriodAEl.value;
-  const prevB = yoyPeriodBEl.value;
-
-  const html = uniqueMonths
-    .map((m) => `<option value="${m}">${monthLabel(m)}</option>`)
-    .join("");
-
-  yoyPeriodAEl.innerHTML = html;
-  yoyPeriodBEl.innerHTML = html;
-
-  const selectedA = uniqueMonths.includes(prevA)
-    ? prevA
-    : (uniqueMonths.includes(defaultA) ? defaultA : (uniqueMonths[0] || defaultA));
-  yoyPeriodAEl.value = selectedA;
-
-  let selectedB = uniqueMonths.includes(prevB)
-    ? prevB
-    : (uniqueMonths.includes(defaultB) ? defaultB : "");
-  if (!selectedB) {
-    selectedB = uniqueMonths.find((m) => m !== selectedA) || selectedA;
-  }
-  yoyPeriodBEl.value = selectedB;
-
-  return { periodA: selectedA, periodB: selectedB };
-}
-
-function updateCalendarAndAnalytics(
-  all,
-  detailRows,
-  monthKey,
-  yoyPeriodA = CURRENT_MONTH,
-  yoyPeriodB = previousYearMonthKey(CURRENT_MONTH)
-) {
-  renderCalendar(detailRows);
-  renderSelectedDayRows(detailRows);
-  drawMonthlyIncomeExpenseChart(all, monthKey);
-  drawCategoryDonutChart(all, monthKey);
-  renderMonthlyComparison(all, monthKey);
-  renderLast3Months(all, monthKey);
-  renderSpendingAlert(all);
-  renderYearOverYearTotals(all, yoyPeriodA, yoyPeriodB);
-  renderYearOverYearCategory(all, yoyPeriodA, yoyPeriodB);
-  renderBudgetSummary(all, monthKey);
-  renderBudgetStatus(all);
-}
-
-function refresh() {
-  const all = getAllSortedTransactions();
-  const hasTransactions = all.length > 0;
-
-  if (cargarEmptyStateEl) cargarEmptyStateEl.hidden = hasTransactions;
-  if (resumenEmptyCardEl) resumenEmptyCardEl.hidden = hasTransactions;
-  resumenContentCards.forEach((card) => {
-    card.hidden = !hasTransactions || card.getAttribute("data-panel") !== "resumen" || getCurrentTab() !== "resumen";
-  });
-
-  const selectedMonth = updateMonthFilterOptions(all);
-  const yoyPeriods = updateYoyPeriodOptions(all);
-
-  const summary = computeMonthlySummary(all, CURRENT_MONTH);
-  updateMonthlySummaryUI(summary);
-  renderSavingsGoalSummary(summary.balanceValue);
-  renderTopExpensesCurrentMonth(all);
-  if (currentMonthLabelEl) currentMonthLabelEl.textContent = `Mes actual: ${monthLabel(CURRENT_MONTH)}`;
-  drawBalanceSparkline(all);
-
-  refreshDetailCategoryOptions(all);
-  const detailRows = getFilteredDetailRows(all);
-  currentDetailRows = detailRows;
-
-  updateDetailSummaryUI(detailRows);
-  if (hasTransactions) {
-    updateCalendarAndAnalytics(all, detailRows, selectedMonth, yoyPeriods.periodA, yoyPeriods.periodB);
-  }
 }
 
 function normalizeHeaderName(name) {
@@ -1380,6 +1281,45 @@ const {
   StatsUtils
 });
 
+const { refresh } = createRefreshController({
+  filtroMes,
+  yoyPeriodAEl,
+  yoyPeriodBEl,
+  cargarEmptyStateEl,
+  resumenEmptyCardEl,
+  resumenContentCards,
+  currentMonthLabelEl,
+  CURRENT_MONTH,
+  buildMonthOptions,
+  monthLabel,
+  previousYearMonthKey,
+  getHasUserChosenMonth: () => hasUserChosenMonth,
+  getCurrentTab,
+  getAllSortedTransactions,
+  computeMonthlySummary,
+  updateMonthlySummaryUI,
+  renderSavingsGoalSummary,
+  renderTopExpensesCurrentMonth,
+  drawBalanceSparkline,
+  refreshDetailCategoryOptions,
+  getFilteredDetailRows,
+  setCurrentDetailRows: (rows) => {
+    currentDetailRows = rows;
+  },
+  updateDetailSummaryUI,
+  renderCalendar,
+  renderSelectedDayRows,
+  drawMonthlyIncomeExpenseChart,
+  drawCategoryDonutChart,
+  renderMonthlyComparison,
+  renderLast3Months,
+  renderSpendingAlert,
+  renderYearOverYearTotals,
+  renderYearOverYearCategory,
+  renderBudgetSummary,
+  renderBudgetStatus
+});
+
 const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
   emailEl,
   passwordEl,
@@ -1519,370 +1459,133 @@ async function handleFormSubmit(e) {
   resetTransactionForm();
 }
 
-form.addEventListener("submit", handleFormSubmit);
-
-filtroMes.addEventListener("change", () => {
-  hasUserChosenMonth = true;
-  if (filtroMes.value && filtroMes.value !== "Todos") {
-    const [yy, mm] = filtroMes.value.split("-").map(Number);
-    if (yy && mm) {
-      calendarMonthDate = new Date(yy, mm - 1, 1);
-      selectedDayKey = null;
-    }
-  }
-  refresh();
-});
-
-if (currencyEl) {
-  currencyEl.addEventListener("change", async () => {
-    saveCurrency(currencyEl.value);
-    updateArsConvertVisibility();
-    if (!arsConvertBoxEl?.hidden) {
-      await fetchArsRateForSelectedCurrency();
-      updateArsResultPreview();
-    }
-    refresh();
-  });
-}
-
-if (themeEl) {
-  themeEl.addEventListener("change", () => {
-    saveTheme(themeEl.value);
-    applyTheme(selectedTheme);
-    refresh();
-  });
-}
-
-if (analysisPanelEl) {
-  analysisPanelEl.open = window.innerWidth > 600;
-  analysisPanelEl.addEventListener("toggle", () => {
-    hideChartTooltip();
-    if (analysisPanelEl.open) requestAnimationFrame(() => refresh());
-  });
-}
-
-bindChartInteractions();
-
-if (rememberEl) {
-  rememberEl.addEventListener("change", () => {
-    applyRememberPreference();
-    if (authSession?.access_token) saveSession(authSession);
-  });
-}
-
-if (emailEl) {
-  emailEl.addEventListener("input", () => validateEmailField());
-  emailEl.addEventListener("blur", () => validateEmailField({ required: Boolean(emailEl.value.trim()) }));
-}
-
-if (passwordEl) {
-  passwordEl.addEventListener("input", () => validatePasswordField());
-  passwordEl.addEventListener("blur", () => {
-    validatePasswordField({ required: Boolean(passwordEl.value), minLength: passwordEl.value ? 6 : 0 });
-  });
-}
-
-tipoEl.addEventListener("change", () => updateCategoryOptions(tipoEl.value));
-tipoEl.addEventListener("change", updateArsConvertVisibility);
-categoriaEl.addEventListener("change", updateArsConvertVisibility);
-tabBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const tab = btn.getAttribute("data-tab") || "cargar";
-    setActiveTab(tab);
-    requestAnimationFrame(() => refresh());
-  });
-});
-
-lista.addEventListener("click", async (e) => {
-  const btn = e.target.closest("button[data-id][data-action]");
-  if (!btn) return;
-  const id = btn.getAttribute("data-id");
-  const action = btn.getAttribute("data-action");
-
-  if (action === "edit") {
-    startEditTransaction(id);
-    return;
-  }
-  if (action === "duplicate") {
-    await duplicateTransaction(id);
-    return;
-  }
-  if (action === "delete") {
-    await deleteTransaction(id);
-  }
-});
-
-if (calPrevEl) {
-  calPrevEl.addEventListener("click", () => {
-    moveCalendarMonth(-1);
-    refresh();
-  });
-}
-
-if (calNextEl) {
-  calNextEl.addEventListener("click", () => {
-    moveCalendarMonth(1);
-    refresh();
-  });
-}
-
-if (calGridEl) {
-  calGridEl.addEventListener("click", (e) => {
-    const cell = e.target.closest(".calendar-cell[data-date]");
-    if (!cell) return;
-    showAllFilteredRows = false;
-    selectedDayKey = cell.getAttribute("data-date");
-    refresh();
-  });
-}
-
-if (btnCancelEdit) {
-  btnCancelEdit.addEventListener("click", () => {
-    resetTransactionForm();
-    setStatus("Edicion cancelada.");
-  });
-}
-
-if (btnEmptyStartEl) {
-  btnEmptyStartEl.addEventListener("click", () => {
-    setActiveTab("cargar");
-    const montoEl = document.getElementById("monto");
-    if (montoEl) montoEl.focus();
-  });
-}
-
-if (btnEmptyGoCargarEl) {
-  btnEmptyGoCargarEl.addEventListener("click", () => {
-    setActiveTab("cargar");
-    const montoEl = document.getElementById("monto");
-    if (montoEl) montoEl.focus();
-  });
-}
-
-if (btnGateSignin) {
-  btnGateSignin.addEventListener("click", () => {
-    if (entryGateEl) entryGateEl.hidden = true;
-    setActiveTab("opciones");
-    setStatus("Ingresa tu email y contraseña para iniciar sesión.");
-    if (emailEl) emailEl.focus();
-  });
-}
-
-if (btnGateSignup) {
-  btnGateSignup.addEventListener("click", () => {
-    if (entryGateEl) entryGateEl.hidden = true;
-    setActiveTab("opciones");
-    setStatus("Completa email y contraseña, luego pulsa Crear cuenta.");
-    if (emailEl) emailEl.focus();
-  });
-}
-
-if (detailTypeEl) detailTypeEl.addEventListener("change", refresh);
-if (detailCategoryEl) detailCategoryEl.addEventListener("change", refresh);
-if (detailFromEl) detailFromEl.addEventListener("change", refresh);
-if (detailToEl) detailToEl.addEventListener("change", refresh);
-if (detailSearchEl) detailSearchEl.addEventListener("input", refresh);
-if (yoyPeriodAEl) yoyPeriodAEl.addEventListener("change", refresh);
-if (yoyPeriodBEl) yoyPeriodBEl.addEventListener("change", refresh);
-if (yoyCategoryEl) yoyCategoryEl.addEventListener("change", refresh);
-if (btnDetailClear) {
-  btnDetailClear.addEventListener("click", () => {
-    resetDetailFilters();
-    showAllFilteredRows = false;
-    topExpenseTempFilterActive = false;
-    refresh();
-  });
-}
-
-if (topExpensesListEl) {
-  topExpensesListEl.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-top-expense-cat]");
-    if (!btn) return;
-    const cat = btn.getAttribute("data-top-expense-cat");
-    if (!cat) return;
-
-    // Reset detail filters to guarantee visible results for the chosen top category.
-    if (detailTypeEl) detailTypeEl.value = "Gasto";
-    const [yy, mm] = CURRENT_MONTH.split("-").map(Number);
-    const monthFrom = `${yy}-${String(mm).padStart(2, "0")}-01`;
-    const monthTo = toDateKeyLocal(new Date(yy, mm, 0));
-    if (detailFromEl) detailFromEl.value = monthFrom;
-    if (detailToEl) detailToEl.value = monthTo;
-    if (detailSearchEl) detailSearchEl.value = "";
-    if (detailCategoryEl) detailCategoryEl.value = cat;
-
-    topExpenseTempFilterActive = true;
-    showAllFilteredRows = true;
-    selectedDayKey = null;
-    calendarMonthDate = new Date();
-
-    setActiveTab("mas");
-    refresh();
-    scrollToMovimientosSection();
-    setStatus(`Filtro aplicado: ${cat} (${monthLabel(CURRENT_MONTH)}).`);
-  });
-}
-
-if (budgetSummaryListEl) {
-  budgetSummaryListEl.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-budget-cat]");
-    if (!btn) return;
-    const cat = btn.getAttribute("data-budget-cat");
-    if (!cat) return;
-    setActiveTab("mas");
-    if (detailTypeEl) detailTypeEl.value = "Gasto";
-    if (detailCategoryEl) detailCategoryEl.value = cat;
-    if (detailSearchEl) detailSearchEl.value = "";
-    selectedDayKey = null;
-    refresh();
-    scrollToMovimientosSection();
-    showToast(`Filtro: ${cat}`);
-  });
-}
-
-if (btnExportExcel) {
-  btnExportExcel.addEventListener("click", () => {
-    exportFilteredToExcel();
-  });
-}
-
-if (btnDownloadTemplate) {
-  btnDownloadTemplate.addEventListener("click", () => {
-    downloadImportTemplate();
-  });
-}
-
-if (btnImportFile) {
-  btnImportFile.addEventListener("click", () => {
-    handleImportFileClick();
-  });
-}
-
-if (btnClearMyData) {
-  btnClearMyData.addEventListener("click", async () => {
-    await clearMyData();
-  });
-}
-
-let resizeTimer = null;
-window.addEventListener("resize", () => {
-  hideChartTooltip();
-  if (resizeTimer) clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => refresh(), 120);
-});
-
-window.addEventListener("scroll", hideChartTooltip, { passive: true });
-
-btnSignup.addEventListener("click", async () => {
-  await runAsyncAction(async () => {
-    setAuthActionBusy(btnSignup, "Creando cuenta...");
-    setStatus("Creando cuenta...", "info");
-    await signup();
-  }, (err) => `Fallo en Crear cuenta: ${err?.message || String(err)}`);
-  clearAuthActionBusy();
-});
-
-btnLogin.addEventListener("click", async () => {
-  await runAsyncAction(async () => {
-    setAuthActionBusy(btnLogin, "Iniciando sesi\u00f3n...");
-    setStatus("Iniciando sesi\u00f3n...", "info");
-    await login();
-  }, (err) => `Fallo en Iniciar sesi\u00f3n: ${err?.message || String(err)}`);
-  clearAuthActionBusy();
-});
-
-btnRecover.addEventListener("click", async () => {
-  await runAsyncAction(async () => {
-    setAuthActionBusy(btnRecover, "Enviando correo...");
-    setStatus("Enviando recuperaci\u00f3n...", "info");
-    await recoverPassword();
-  }, (err) => `Fallo en Recuperar contrase\u00f1a: ${err?.message || String(err)}`);
-  clearAuthActionBusy();
-});
-
-btnLogout.addEventListener("click", async () => {
-  await runAsyncAction(
-    async () => logout(),
-    (err) => `Fallo en Cerrar sesi\u00f3n: ${err?.message || String(err)}`
-  );
-});
-
-btnLogoutMini.addEventListener("click", async () => {
-  await runAsyncAction(
-    async () => logout(),
-    (err) => `Fallo en Cerrar sesi\u00f3n: ${err?.message || String(err)}`
-  );
-});
-
-quickButtons.forEach((btn) => {
-  if (!btn) return;
-  btn.addEventListener("click", async () => {
-    const category = btn.dataset.category || "Supermercado";
-    await quickAddExpense(category, btn);
-  });
-});
-
-quickCategorySelects.forEach((selectEl) => {
-  if (!selectEl) return;
-  selectEl.addEventListener("change", () => {
-    syncQuickCategorySelectOptions();
-    refreshQuickConfigValidation();
-  });
-});
-
-if (btnQuickConfigSave) {
-  btnQuickConfigSave.addEventListener("click", saveQuickCategoriesFromUi);
-}
-
-if (btnQuickConfigReset) {
-  btnQuickConfigReset.addEventListener("click", resetQuickCategories);
-}
-
-if (btnSavingsGoalSave) {
-  btnSavingsGoalSave.addEventListener("click", saveSavingsGoalFromUi);
-}
-
-if (btnSavingsGoalClear) {
-  btnSavingsGoalClear.addEventListener("click", clearSavingsGoalFromUi);
-}
-
-if (btnConvertArs) {
-  btnConvertArs.addEventListener("click", async () => {
-    await fetchArsRateForSelectedCurrency();
-    const converted = convertArsToSelectedCurrency();
-    if (!(converted > 0)) return;
-    document.getElementById("monto").value = converted.toFixed(2);
-    if (arsResultEl) arsResultEl.value = money(converted);
-    setStatus(`Convertido a ${selectedCurrency}: ${money(converted)}.`);
-  });
-}
-
-if (btnRefreshRate) {
-  btnRefreshRate.addEventListener("click", async () => {
-    await fetchArsRateForSelectedCurrency();
-    setStatus("Cotizacion actualizada.");
-  });
-}
-
-if (arsAmountEl) arsAmountEl.addEventListener("input", updateArsResultPreview);
-if (spreadPctEl) {
-  spreadPctEl.addEventListener("input", () => {
-    const v = parseDecimalInputValue(spreadPctEl.value || 0);
-    if (v >= 0) saveSpreadPct(v);
-    updateArsResultPreview();
-  });
-}
-
-btnBudgetSave.addEventListener("click", () => {
-  const cat = budgetCategoryEl.value;
-  const amount = parseDecimalInputValue(budgetAmountEl.value || 0);
-  const next = { ...budgets };
-  if (amount > 0) next[cat] = amount;
-  else delete next[cat];
-  saveBudgets(next);
-  budgetAmountEl.value = "";
-  setStatus(`Presupuesto actualizado para ${cat}.`);
-  refresh();
+bindAppEvents({
+  form,
+  handleFormSubmit,
+  filtroMes,
+  setHasUserChosenMonth: (value) => {
+    hasUserChosenMonth = value;
+  },
+  setCalendarMonthDate: (date) => {
+    calendarMonthDate = date;
+  },
+  setSelectedDayKey: (value) => {
+    selectedDayKey = value;
+  },
+  refresh,
+  currencyEl,
+  saveCurrency,
+  updateArsConvertVisibility,
+  arsConvertBoxEl,
+  fetchArsRateForSelectedCurrency,
+  updateArsResultPreview,
+  themeEl,
+  saveTheme,
+  applyTheme,
+  analysisPanelEl,
+  hideChartTooltip,
+  bindChartInteractions,
+  rememberEl,
+  applyRememberPreference,
+  getAuthSession: () => authSession,
+  saveSession,
+  emailEl,
+  validateEmailField,
+  passwordEl,
+  validatePasswordField,
+  tipoEl,
+  updateCategoryOptions,
+  categoriaEl,
+  tabBtns,
+  setActiveTab,
+  lista,
+  startEditTransaction,
+  duplicateTransaction,
+  deleteTransaction,
+  calPrevEl,
+  calNextEl,
+  moveCalendarMonth,
+  calGridEl,
+  setShowAllFilteredRows: (value) => {
+    showAllFilteredRows = value;
+  },
+  btnCancelEdit,
+  resetTransactionForm,
+  setStatus,
+  btnEmptyStartEl,
+  btnEmptyGoCargarEl,
+  montoEl,
+  btnGateSignin,
+  btnGateSignup,
+  entryGateEl,
+  detailTypeEl,
+  detailCategoryEl,
+  detailFromEl,
+  detailToEl,
+  detailSearchEl,
+  yoyPeriodAEl,
+  yoyPeriodBEl,
+  yoyCategoryEl,
+  btnDetailClear,
+  resetDetailFilters,
+  setTopExpenseTempFilterActive: (value) => {
+    topExpenseTempFilterActive = value;
+  },
+  topExpensesListEl,
+  CURRENT_MONTH,
+  toDateKeyLocal,
+  monthLabel,
+  scrollToMovimientosSection,
+  budgetSummaryListEl,
+  showToast,
+  btnExportExcel,
+  exportFilteredToExcel,
+  btnDownloadTemplate,
+  downloadImportTemplate,
+  btnImportFile,
+  handleImportFileClick,
+  btnClearMyData,
+  clearMyData,
+  runAsyncAction,
+  btnSignup,
+  setAuthActionBusy,
+  signup,
+  clearAuthActionBusy,
+  btnLogin,
+  login,
+  btnRecover,
+  recoverPassword,
+  btnLogout,
+  logout,
+  btnLogoutMini,
+  quickButtons,
+  quickAddExpense,
+  quickCategorySelects,
+  syncQuickCategorySelectOptions,
+  refreshQuickConfigValidation,
+  btnQuickConfigSave,
+  saveQuickCategoriesFromUi,
+  btnQuickConfigReset,
+  resetQuickCategories,
+  btnSavingsGoalSave,
+  saveSavingsGoalFromUi,
+  btnSavingsGoalClear,
+  clearSavingsGoalFromUi,
+  btnConvertArs,
+  convertArsToSelectedCurrency,
+  arsResultEl,
+  money,
+  getSelectedCurrency: () => selectedCurrency,
+  btnRefreshRate,
+  arsAmountEl,
+  spreadPctEl,
+  parseDecimalInputValue,
+  saveSpreadPct,
+  btnBudgetSave,
+  budgetCategoryEl,
+  budgetAmountEl,
+  getBudgets: () => budgets,
+  saveBudgets
 });
 
 (async () => {
@@ -1917,6 +1620,7 @@ btnBudgetSave.addEventListener("click", () => {
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
 })();
+
 
 
 
