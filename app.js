@@ -245,16 +245,20 @@ function getCurrentTab() {
   return ["cargar", "resumen", "mas", "opciones"].includes(tab) ? tab : "cargar";
 }
 
+function resetDetailFilters() {
+  if (detailTypeEl) detailTypeEl.value = "Todos";
+  if (detailCategoryEl) detailCategoryEl.value = "Todos";
+  if (detailFromEl) detailFromEl.value = "";
+  if (detailToEl) detailToEl.value = "";
+  if (detailSearchEl) detailSearchEl.value = "";
+}
+
 function setActiveTab(tab) {
   if (tab !== "mas" && topExpenseTempFilterActive) {
     topExpenseTempFilterActive = false;
     showAllFilteredRows = false;
     selectedDayKey = null;
-    if (detailTypeEl) detailTypeEl.value = "Todos";
-    if (detailCategoryEl) detailCategoryEl.value = "Todos";
-    if (detailFromEl) detailFromEl.value = "";
-    if (detailToEl) detailToEl.value = "";
-    if (detailSearchEl) detailSearchEl.value = "";
+    resetDetailFilters();
   }
   saveActiveTab(tab);
   if (tab === "mas" && !selectedDayKey) {
@@ -390,6 +394,14 @@ function clearAuthActionBusy() {
   setAuthButtons();
 }
 
+async function runAsyncAction(action, onErrorMessage) {
+  try {
+    await action();
+  } catch (err) {
+    setStatus(onErrorMessage(err), "error");
+  }
+}
+
 function showSyncBadge(message, tone = "ok", autoHideMs = 0) {
   if (!syncBadgeEl) return;
 
@@ -475,33 +487,43 @@ function showToast(message) {
   }, 1500);
 }
 
-function loadTx() {
+function readJsonStorage(store, key, fallback) {
   try {
-    return JSON.parse(localStorage.getItem(KEY) || "[]");
+    const raw = store.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
   } catch {
-    return [];
+    return fallback;
   }
+}
+
+function writeJsonStorage(store, key, value) {
+  store.setItem(key, JSON.stringify(value));
+}
+
+function readNumericStorage(key, fallback) {
+  const parsed = Number(localStorage.getItem(key));
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function loadTx() {
+  return readJsonStorage(localStorage, KEY, []);
 }
 
 function saveTx(items) {
-  localStorage.setItem(KEY, JSON.stringify(items));
+  writeJsonStorage(localStorage, KEY, items);
 }
 
 function loadBudgets() {
-  try {
-    return JSON.parse(localStorage.getItem(BUDGETS_KEY) || "{}");
-  } catch {
-    return {};
-  }
+  return readJsonStorage(localStorage, BUDGETS_KEY, {});
 }
 
 function saveBudgets(data) {
   budgets = data;
-  localStorage.setItem(BUDGETS_KEY, JSON.stringify(data));
+  writeJsonStorage(localStorage, BUDGETS_KEY, data);
 }
 
 function loadArsRate() {
-  const v = Number(localStorage.getItem(ARS_RATE_KEY) || 1100);
+  const v = readNumericStorage(ARS_RATE_KEY, 1100);
   return v > 0 ? v : 1100;
 }
 
@@ -511,7 +533,7 @@ function saveArsRate(v) {
 }
 
 function loadSpreadPct() {
-  const v = Number(localStorage.getItem(SPREAD_PCT_KEY) || 3);
+  const v = readNumericStorage(SPREAD_PCT_KEY, 3);
   return v >= 0 ? v : 3;
 }
 
@@ -547,7 +569,7 @@ function saveCurrency(currency) {
 }
 
 function loadSavingsGoal() {
-  const v = Number(localStorage.getItem(SAVINGS_GOAL_KEY) || 0);
+  const v = readNumericStorage(SAVINGS_GOAL_KEY, 0);
   return v > 0 ? v : 0;
 }
 
@@ -558,37 +580,27 @@ function saveSavingsGoal(value) {
 }
 
 function loadQuickCategories() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(QUICK_CATS_KEY) || "null");
-    return sanitizeQuickCategories(parsed);
-  } catch {
-    return [...QUICK_CATEGORY_DEFAULTS];
-  }
+  return sanitizeQuickCategories(readJsonStorage(localStorage, QUICK_CATS_KEY, null));
 }
 
 function saveQuickCategories(categories) {
   quickCategories = sanitizeQuickCategories(categories);
-  localStorage.setItem(QUICK_CATS_KEY, JSON.stringify(quickCategories));
+  writeJsonStorage(localStorage, QUICK_CATS_KEY, quickCategories);
 }
 
 function loadSession() {
-  try {
-    const local = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
-    if (local?.access_token) {
-      sessionPersistMode = "local";
-      return local;
-    }
-    const session = JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null");
-    if (session?.access_token) {
-      sessionPersistMode = "session";
-      return session;
-    }
+  const local = readJsonStorage(localStorage, SESSION_KEY, null);
+  if (local?.access_token) {
     sessionPersistMode = "local";
-    return null;
-  } catch {
-    sessionPersistMode = "local";
-    return null;
+    return local;
   }
+  const session = readJsonStorage(sessionStorage, SESSION_KEY, null);
+  if (session?.access_token) {
+    sessionPersistMode = "session";
+    return session;
+  }
+  sessionPersistMode = "local";
+  return null;
 }
 
 function loadRememberMe() {
@@ -604,10 +616,10 @@ function saveRememberMe(enabled) {
 function saveSession(session) {
   authSession = session;
   if (sessionPersistMode === "session") {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    writeJsonStorage(sessionStorage, SESSION_KEY, session);
     localStorage.removeItem(SESSION_KEY);
   } else {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    writeJsonStorage(localStorage, SESSION_KEY, session);
     sessionStorage.removeItem(SESSION_KEY);
   }
 }
@@ -3518,11 +3530,7 @@ if (yoyPeriodBEl) yoyPeriodBEl.addEventListener("change", refresh);
 if (yoyCategoryEl) yoyCategoryEl.addEventListener("change", refresh);
 if (btnDetailClear) {
   btnDetailClear.addEventListener("click", () => {
-    if (detailTypeEl) detailTypeEl.value = "Todos";
-    if (detailCategoryEl) detailCategoryEl.value = "Todos";
-    if (detailFromEl) detailFromEl.value = "";
-    if (detailToEl) detailToEl.value = "";
-    if (detailSearchEl) detailSearchEl.value = "";
+    resetDetailFilters();
     showAllFilteredRows = false;
     topExpenseTempFilterActive = false;
     refresh();
@@ -3609,55 +3617,44 @@ window.addEventListener("resize", () => {
 window.addEventListener("scroll", hideChartTooltip, { passive: true });
 
 btnSignup.addEventListener("click", async () => {
-  try {
+  await runAsyncAction(async () => {
     setAuthActionBusy(btnSignup, "Creando cuenta...");
     setStatus("Creando cuenta...", "info");
     await signup();
-  } catch (err) {
-    setStatus(`Fallo en Crear cuenta: ${err?.message || String(err)}`, "error");
-  } finally {
-    clearAuthActionBusy();
-  }
+  }, (err) => `Fallo en Crear cuenta: ${err?.message || String(err)}`);
+  clearAuthActionBusy();
 });
 
 btnLogin.addEventListener("click", async () => {
-  try {
+  await runAsyncAction(async () => {
     setAuthActionBusy(btnLogin, "Iniciando sesi\u00f3n...");
     setStatus("Iniciando sesi\u00f3n...", "info");
     await login();
-  } catch (err) {
-    setStatus(`Fallo en Iniciar sesi\u00f3n: ${err?.message || String(err)}`, "error");
-  } finally {
-    clearAuthActionBusy();
-  }
+  }, (err) => `Fallo en Iniciar sesi\u00f3n: ${err?.message || String(err)}`);
+  clearAuthActionBusy();
 });
 
 btnRecover.addEventListener("click", async () => {
-  try {
+  await runAsyncAction(async () => {
     setAuthActionBusy(btnRecover, "Enviando correo...");
     setStatus("Enviando recuperaci\u00f3n...", "info");
     await recoverPassword();
-  } catch (err) {
-    setStatus(`Fallo en Recuperar contrase\u00f1a: ${err?.message || String(err)}`, "error");
-  } finally {
-    clearAuthActionBusy();
-  }
+  }, (err) => `Fallo en Recuperar contrase\u00f1a: ${err?.message || String(err)}`);
+  clearAuthActionBusy();
 });
 
 btnLogout.addEventListener("click", async () => {
-  try {
-    await logout();
-  } catch (err) {
-    setStatus(`Fallo en Cerrar sesi\u00f3n: ${err?.message || String(err)}`);
-  }
+  await runAsyncAction(
+    async () => logout(),
+    (err) => `Fallo en Cerrar sesi\u00f3n: ${err?.message || String(err)}`
+  );
 });
 
 btnLogoutMini.addEventListener("click", async () => {
-  try {
-    await logout();
-  } catch (err) {
-    setStatus(`Fallo en Cerrar sesi\u00f3n: ${err?.message || String(err)}`);
-  }
+  await runAsyncAction(
+    async () => logout(),
+    (err) => `Fallo en Cerrar sesi\u00f3n: ${err?.message || String(err)}`
+  );
 });
 
 quickButtons.forEach((btn) => {
