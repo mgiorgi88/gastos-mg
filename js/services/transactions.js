@@ -4,7 +4,7 @@ export function createTransactionsService({
   setTxData,
   loadTx,
   saveTx,
-  refresh,
+  getRefresh,
   requireCloudSession,
   sbAuthFetch,
   getResponseErrorMessage,
@@ -15,7 +15,7 @@ export function createTransactionsService({
     const currentUser = getCurrentUser();
     if (!currentUser) {
       setTxData(getLocalTransactionStore());
-      refresh();
+      getRefresh()?.();
       return;
     }
 
@@ -29,7 +29,7 @@ export function createTransactionsService({
       const msg = await getResponseErrorMessage(resp);
       setStatus(`Error cargando nube: ${msg}`, "error");
       setTxData(loadTx());
-      refresh();
+      getRefresh()?.();
       return;
     }
 
@@ -43,7 +43,7 @@ export function createTransactionsService({
       detalle: r.detalle || ""
     })));
     saveTx(getTxData());
-    refresh();
+    getRefresh()?.();
   }
 
   async function seedCloudIfEmpty() {
@@ -93,7 +93,7 @@ export function createTransactionsService({
       all.push(tx);
       saveTx(all);
       setTxData(all);
-      refresh();
+      getRefresh()?.();
       return;
     }
 
@@ -125,7 +125,7 @@ export function createTransactionsService({
       const next = loadTx().map((x) => (String(x.id) === String(id) ? { ...x, ...tx, id: x.id } : x));
       saveTx(next);
       setTxData(next);
-      refresh();
+      getRefresh()?.();
       return true;
     }
 
@@ -158,7 +158,7 @@ export function createTransactionsService({
       const next = loadTx().filter((x) => String(x.id) !== String(id));
       saveTx(next);
       setTxData(next);
-      refresh();
+      getRefresh()?.();
       return;
     }
 
@@ -182,7 +182,7 @@ export function createTransactionsService({
       if (!requireCloudSession("borrar tus datos")) return false;
       saveTx([]);
       setTxData([]);
-      refresh();
+      getRefresh()?.();
       return true;
     }
 

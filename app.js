@@ -166,9 +166,6 @@ import {
 } from "./js/services/storage.js";
 import {
   hideSyncBadgeState,
-  isValidEmailValue,
-  setButtonLoadingState,
-  setFieldVisualState,
   setStatusMessage,
   showSyncBadgeState,
   showToastMessage
@@ -178,6 +175,7 @@ import { createAuthService } from "./js/services/auth.js";
 import { createTransactionsService } from "./js/services/transactions.js";
 import { createImportExportService } from "./js/services/import-export.js";
 import { createFormUi } from "./js/ui/form-ui.js";
+import { createAuthUi } from "./js/ui/auth-ui.js";
 import { createQuickActionsUi } from "./js/ui/quick-actions.js";
 import { createCalendarUi } from "./js/ui/calendar.js";
 import { createChartsUi } from "./js/ui/charts.js";
@@ -304,79 +302,6 @@ function setActiveTab(tab) {
 
 function setStatus(msg, tone = "info") {
   setStatusMessage(authStatusEl, msg, tone);
-}
-
-function setButtonLoading(button, isLoading, loadingText = "Procesando...") {
-  setButtonLoadingState(button, isLoading, loadingText);
-}
-
-function setFieldState(input, hintEl, state = "idle", message = "") {
-  setFieldVisualState(input, hintEl, state, message);
-}
-
-function isValidEmail(value) {
-  return isValidEmailValue(value);
-}
-
-function validateEmailField({ required = false } = {}) {
-  const value = emailEl?.value?.trim() || "";
-  if (!value) {
-    setFieldState(emailEl, emailHintEl, required ? "invalid" : "idle", required ? "Introduce un email valido." : "");
-    return !required;
-  }
-  if (!isValidEmail(value)) {
-    setFieldState(emailEl, emailHintEl, "invalid", "Revisa el formato del email.");
-    return false;
-  }
-  setFieldState(emailEl, emailHintEl, "valid", "Email correcto.");
-  return true;
-}
-
-function validatePasswordField({ required = false, minLength = 0 } = {}) {
-  const value = passwordEl?.value || "";
-  if (!value) {
-    setFieldState(passwordEl, passwordHintEl, required ? "invalid" : "idle", required ? "Introduce tu contraseña." : "");
-    return !required;
-  }
-  if (minLength > 0 && value.length < minLength) {
-    setFieldState(passwordEl, passwordHintEl, "invalid", `Usa al menos ${minLength} caracteres.`);
-    return false;
-  }
-  setFieldState(passwordEl, passwordHintEl, "valid", minLength > 0 ? "Longitud correcta." : "Contraseña lista.");
-  return true;
-}
-
-function setAuthActionBusy(activeButton = null, loadingText = "Procesando...") {
-  authActionInFlight = Boolean(activeButton);
-  const authButtons = [btnLogin, btnSignup, btnRecover];
-  authButtons.forEach((btn) => {
-    if (!btn) return;
-    const isActive = btn === activeButton;
-    btn.disabled = authActionInFlight || btn.disabled;
-    setButtonLoading(btn, isActive, loadingText);
-    if (!isActive && authActionInFlight) btn.disabled = true;
-  });
-  if (btnGateSignin) btnGateSignin.disabled = authActionInFlight;
-  if (btnGateSignup) btnGateSignup.disabled = authActionInFlight;
-}
-
-function clearAuthActionBusy() {
-  authActionInFlight = false;
-  [btnLogin, btnSignup, btnRecover].forEach((btn) => {
-    if (!btn) return;
-    setButtonLoading(btn, false);
-  });
-  if (btnGateSignin) btnGateSignin.disabled = false;
-  if (btnGateSignup) btnGateSignup.disabled = false;
-  setAuthButtons();
-}
-
-async function runAsyncAction(action, onErrorMessage) {
-  try {
-    await action();
-  } catch (err) {
-    setStatus(onErrorMessage(err), "error");
-  }
 }
 
 function showSyncBadge(message, tone = "ok", autoHideMs = 0) {
@@ -621,36 +546,6 @@ function getAllSortedTransactions() {
   return [...txData].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
 }
 
-function setAuthButtons() {
-  const logged = Boolean(currentUser);
-  const activeTab = getCurrentTab();
-  if (authCardEl) authCardEl.hidden = logged || activeTab !== "opciones";
-  if (accountMiniEl) accountMiniEl.hidden = !logged || activeTab !== "opciones";
-  if (accountMiniEmailEl) accountMiniEmailEl.textContent = logged ? currentUser.email : "";
-  if (cloudIndicatorEl) {
-    cloudIndicatorEl.textContent = logged ? "Nube: Conectado" : "Nube: Local";
-    cloudIndicatorEl.classList.toggle("ok", logged);
-  }
-  if (btnSignup) btnSignup.disabled = logged || authActionInFlight;
-  if (btnLogin) btnLogin.disabled = logged || authActionInFlight;
-  if (btnRecover) btnRecover.disabled = logged || authActionInFlight;
-  if (btnLogout) {
-    btnLogout.disabled = !logged;
-    btnLogout.hidden = !logged;
-  }
-  if (emailEl) emailEl.disabled = logged;
-  if (passwordEl) passwordEl.disabled = logged;
-  if (btnLogoutMini) btnLogoutMini.disabled = !logged;
-  if (!logged) hadRecentSyncError = false;
-  refreshSyncIndicator();
-  updateEntryGate();
-}
-
-function updateEntryGate() {
-  if (!entryGateEl) return;
-  entryGateEl.hidden = Boolean(currentUser);
-}
-
 const {
   getPayloadErrorMessage,
   getResponseErrorMessage,
@@ -683,7 +578,7 @@ const {
   },
   loadTx,
   saveTx,
-  refresh,
+  getRefresh: () => refresh,
   requireCloudSession,
   sbAuthFetch,
   getResponseErrorMessage,
@@ -956,6 +851,44 @@ const { refresh } = createRefreshController({
   renderBudgetStatus
 });
 
+const {
+  clearAuthActionBusy,
+  runAsyncAction,
+  setAuthActionBusy,
+  setAuthButtons,
+  updateEntryGate,
+  validateEmailField,
+  validatePasswordField
+} = createAuthUi({
+  authCardEl,
+  accountMiniEl,
+  accountMiniEmailEl,
+  cloudIndicatorEl,
+  btnSignup,
+  btnLogin,
+  btnRecover,
+  btnLogout,
+  btnLogoutMini,
+  btnGateSignin,
+  btnGateSignup,
+  emailEl,
+  emailHintEl,
+  passwordEl,
+  passwordHintEl,
+  entryGateEl,
+  getCurrentUser: () => currentUser,
+  getCurrentTab,
+  getAuthActionInFlight: () => authActionInFlight,
+  setAuthActionInFlight: (value) => {
+    authActionInFlight = value;
+  },
+  resetSyncError: () => {
+    hadRecentSyncError = false;
+  },
+  refreshSyncIndicator,
+  setStatus
+});
+
 const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
   emailEl,
   passwordEl,
@@ -1226,6 +1159,8 @@ bindAppEvents({
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
 })();
+
+
 
 
 
