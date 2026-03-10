@@ -161,6 +161,17 @@ import {
   saveTx,
   writeJsonStorage
 } from "./js/services/storage.js";
+import {
+  hideSyncBadgeState,
+  isValidEmailValue,
+  setButtonLoadingState,
+  setFieldVisualState,
+  setStatusMessage,
+  showSyncBadgeState,
+  showToastMessage
+} from "./js/ui/status.js";
+import { createSupabaseService } from "./js/services/supabase.js";
+import { createAuthService } from "./js/services/auth.js";
 
 /**
  * @typedef {Object} Transaction
@@ -273,54 +284,19 @@ function setActiveTab(tab) {
 }
 
 function setStatus(msg, tone = "info") {
-  if (authStatusEl) authStatusEl.textContent = msg;
-  if (authStatusEl) {
-    authStatusEl.classList.remove("status-info", "status-success", "status-error");
-    authStatusEl.classList.add(`status-${tone}`);
-  }
-  try {
-    console.log("[GastosMG]", msg);
-  } catch {
-    // Ignore console issues.
-  }
+  setStatusMessage(authStatusEl, msg, tone);
 }
 
 function setButtonLoading(button, isLoading, loadingText = "Procesando...") {
-  if (!button) return;
-  if (isLoading) {
-    if (!button.dataset.originalText) button.dataset.originalText = button.textContent || "";
-    button.disabled = true;
-    button.classList.add("is-loading");
-    button.textContent = loadingText;
-    return;
-  }
-  button.classList.remove("is-loading");
-  if (button.dataset.originalText) {
-    button.textContent = button.dataset.originalText;
-  }
+  setButtonLoadingState(button, isLoading, loadingText);
 }
 
 function setFieldState(input, hintEl, state = "idle", message = "") {
-  if (!input) return;
-  input.classList.remove("input-valid", "input-invalid");
-  if (hintEl) {
-    hintEl.hidden = !message;
-    hintEl.textContent = message;
-    hintEl.classList.remove("hint-error", "hint-ok");
-  }
-  if (state === "valid") {
-    input.classList.add("input-valid");
-    if (hintEl && message) hintEl.classList.add("hint-ok");
-    return;
-  }
-  if (state === "invalid") {
-    input.classList.add("input-invalid");
-    if (hintEl && message) hintEl.classList.add("hint-error");
-  }
+  setFieldVisualState(input, hintEl, state, message);
 }
 
 function isValidEmail(value) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
+  return isValidEmailValue(value);
 }
 
 function validateEmailField({ required = false } = {}) {
@@ -385,26 +361,11 @@ async function runAsyncAction(action, onErrorMessage) {
 }
 
 function showSyncBadge(message, tone = "ok", autoHideMs = 0) {
-  if (!syncBadgeEl) return;
-
-  syncBadgeEl.textContent = message;
-  syncBadgeEl.hidden = false;
-  syncBadgeEl.classList.remove("syncing", "ok", "error", "show");
-  syncBadgeEl.classList.add(tone, "show");
-  if (syncBadgeTimer) clearTimeout(syncBadgeTimer);
-  if (autoHideMs > 0) {
-    syncBadgeTimer = setTimeout(() => {
-      syncBadgeEl.classList.remove("show", "syncing", "ok", "error");
-      syncBadgeEl.hidden = true;
-    }, autoHideMs);
-  }
+  syncBadgeTimer = showSyncBadgeState(syncBadgeEl, message, tone, autoHideMs, syncBadgeTimer);
 }
 
 function hideSyncBadge() {
-  if (!syncBadgeEl) return;
-  if (syncBadgeTimer) clearTimeout(syncBadgeTimer);
-  syncBadgeEl.classList.remove("show", "syncing", "ok", "error");
-  syncBadgeEl.hidden = true;
+  syncBadgeTimer = hideSyncBadgeState(syncBadgeEl, syncBadgeTimer);
 }
 
 function refreshSyncIndicator() {
@@ -456,17 +417,7 @@ function setClearMyDataStatus(msg) {
 }
 
 function showToast(message) {
-  if (!toastEl) return;
-  toastEl.textContent = message;
-  toastEl.hidden = false;
-  toastEl.classList.add("show");
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => {
-    toastEl.classList.remove("show");
-    setTimeout(() => {
-      toastEl.hidden = true;
-    }, 190);
-  }, 1500);
+  toastTimer = showToastMessage(toastEl, message, toastTimer);
 }
 
 function saveBudgets(data) {
@@ -2499,162 +2450,21 @@ function updateEntryGate() {
   entryGateEl.hidden = Boolean(currentUser);
 }
 
-const NETWORK_TIMEOUT_MS = 12000;
-const NETWORK_RETRY_ATTEMPTS = 2;
-
-function wait(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function fetchWithTimeout(url, init, timeoutMs = NETWORK_TIMEOUT_MS) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
-  try {
-    return await fetch(url, { ...init, signal: ctrl.signal });
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-function buildErrorResponse(message, status = 599) {
-  const payload = JSON.stringify({ error: message, msg: message, message });
-  return new Response(payload, {
-    status,
-    headers: { "Content-Type": "application/json" }
-  });
-}
-
-async function getResponseErrorMessage(resp) {
-  if (!resp) return "Error de red";
-  try {
-    const data = await resp.clone().json();
-    const msg = data?.msg || data?.error_description || data?.error || data?.message || data?.hint;
-    if (msg) return String(msg);
-  } catch {
-    // Ignore JSON parse errors.
-  }
-  try {
-    const txt = await resp.clone().text();
-    const clean = String(txt || "").trim();
-    if (clean) return clean.slice(0, 240);
-  } catch {
-    // Ignore text parse errors.
-  }
-  return `HTTP ${resp.status}`;
-}
-
-function getPayloadErrorMessage(data, resp) {
-  const msg = data?.msg || data?.error_description || data?.error || data?.message || data?.hint;
-  return msg || `HTTP ${resp.status}`;
-}
-
-async function sbFetch(path, options = {}) {
-  const { method = "GET", body, auth = false, retry = true, timeoutMs = NETWORK_TIMEOUT_MS } = options;
-  const upperMethod = String(method || "GET").toUpperCase();
-  const canRetry = retry && (upperMethod === "GET" || upperMethod === "HEAD");
-  const attempts = canRetry ? NETWORK_RETRY_ATTEMPTS : 1;
-  const trackSync = options.trackSync ?? Boolean(currentUser);
-  const headers = {
-    apikey: SUPABASE_ANON_KEY,
-    "Content-Type": "application/json"
-  };
-
-  if (auth && authSession?.access_token) {
-    headers.Authorization = `Bearer ${authSession.access_token}`;
-  }
-
-  let closed = false;
-  const closeSync = (ok) => {
-    if (closed || !trackSync) return;
-    closed = true;
-    endSyncOperation(ok);
-  };
-  if (trackSync) beginSyncOperation();
-
-  for (let i = 1; i <= attempts; i += 1) {
-    try {
-      const resp = await fetchWithTimeout(`${SUPABASE_URL}${path}`, {
-        method: upperMethod,
-        headers,
-        body: body ? JSON.stringify(body) : undefined
-      }, timeoutMs);
-
-      if (canRetry && (resp.status >= 500 || resp.status === 429) && i < attempts) {
-        await wait(260 * i);
-        continue;
-      }
-      closeSync(resp.ok);
-      return resp;
-    } catch (err) {
-      if (i < attempts) {
-        await wait(260 * i);
-        continue;
-      }
-      if (err?.name === "AbortError") {
-        closeSync(false);
-        return buildErrorResponse("Tiempo de espera agotado al conectar con la nube.", 504);
-      }
-      closeSync(false);
-      return buildErrorResponse("No se pudo conectar con la nube. Revisa internet.", 599);
-    }
-  }
-
-  closeSync(false);
-  return buildErrorResponse("Error de red inesperado.", 599);
-}
-
-async function refreshAuthToken() {
-  if (!authSession?.refresh_token) return false;
-
-  const resp = await sbFetch("/auth/v1/token?grant_type=refresh_token", {
-    method: "POST",
-    body: { refresh_token: authSession.refresh_token },
-    auth: false
-  });
-
-  const data = await resp.json().catch(() => null);
-  if (!resp.ok || !data?.access_token) {
-    clearSession();
-    return false;
-  }
-
-  saveSession(data);
-  return true;
-}
-
-async function sbAuthFetch(path, options = {}, retry = true) {
-  let resp = await sbFetch(path, { ...options, auth: true });
-  if (resp.status !== 401 || !retry) return resp;
-
-  const ok = await refreshAuthToken();
-  if (!ok) return resp;
-
-  resp = await sbFetch(path, { ...options, auth: true });
-  return resp;
-}
-
-async function fetchCurrentUser() {
-  if (!authSession?.access_token) return null;
-
-  const resp = await sbAuthFetch("/auth/v1/user", { method: "GET" });
-  if (!resp.ok) return null;
-
-  return resp.json();
-}
-
-async function fetchCurrentUserState() {
-  if (!authSession?.access_token) {
-    return { ok: false, status: 401, user: null };
-  }
-
-  const resp = await sbAuthFetch("/auth/v1/user", { method: "GET" });
-  if (!resp.ok) {
-    return { ok: false, status: resp.status, user: null };
-  }
-
-  const user = await resp.json().catch(() => null);
-  return { ok: Boolean(user), status: resp.status, user };
-}
+const {
+  getPayloadErrorMessage,
+  getResponseErrorMessage,
+  sbFetch,
+  sbAuthFetch,
+  fetchCurrentUser,
+  fetchCurrentUserState
+} = createSupabaseService({
+  getAuthSession: () => authSession,
+  getCurrentUser: () => currentUser,
+  saveSession,
+  clearSession,
+  beginSyncOperation,
+  endSyncOperation
+});
 
 async function loadCloudData() {
   if (!currentUser) {
@@ -2728,167 +2538,35 @@ async function seedCloudIfEmpty() {
   }
 }
 
-async function signup() {
-  const email = emailEl.value.trim();
-  const password = passwordEl.value;
-
-  const validEmail = validateEmailField({ required: true });
-  const validPassword = validatePasswordField({ required: true, minLength: 6 });
-  if (!validEmail) {
-    setStatus("Revisa el email antes de crear la cuenta.", "error");
-    emailEl?.focus();
-    return;
-  }
-  if (!validPassword) {
-    setStatus("Completa email y contrase\u00f1a (m\u00ednimo 6 caracteres).", "error");
-    passwordEl?.focus();
-    return;
-  }
-
-  const resp = await sbFetch("/auth/v1/signup", {
-    method: "POST",
-    body: { email, password },
-    auth: false
-  });
-
-  const data = await resp.json().catch(() => null);
-  if (!resp.ok) {
-    const msg = getPayloadErrorMessage(data, resp);
-    setStatus(`Error al crear cuenta: ${msg}`, "error");
-    return;
-  }
-
-  if (data?.access_token) {
-    applyRememberPreference();
-    saveSession(data);
-    currentUser = data.user || null;
-    setAuthButtons();
-    setStatus(`Conectado como ${currentUser?.email || email}`, "success");
-    await seedCloudIfEmpty();
-    await loadCloudData();
-    setActiveTab("cargar");
-    refresh();
-  } else {
-    setStatus("Cuenta creada. Revisa tu email para confirmar y luego inicia sesi\u00f3n.", "success");
-  }
-}
-
-async function login() {
-  const email = emailEl.value.trim();
-  const password = passwordEl.value;
-
-  const validEmail = validateEmailField({ required: true });
-  const validPassword = validatePasswordField({ required: true });
-  if (!validEmail) {
-    setStatus("Revisa el email antes de iniciar sesi\u00f3n.", "error");
-    emailEl?.focus();
-    return;
-  }
-  if (!validPassword) {
-    setStatus("Ingresa email y contrase\u00f1a.", "error");
-    passwordEl?.focus();
-    return;
-  }
-
-  const resp = await sbFetch("/auth/v1/token?grant_type=password", {
-    method: "POST",
-    body: { email, password },
-    auth: false
-  });
-
-  const data = await resp.json().catch(() => null);
-  if (!resp.ok || !data?.access_token) {
-    const msg = getPayloadErrorMessage(data, resp);
-    setStatus(`Error de inicio de sesi\u00f3n: ${msg}`, "error");
-    return;
-  }
-
-  applyRememberPreference();
-  saveSession(data);
-  currentUser = data.user || null;
-  setAuthButtons();
-  setStatus(`Conectado como ${currentUser?.email || email}`, "success");
-  await seedCloudIfEmpty();
-  await loadCloudData();
-  setActiveTab("cargar");
-  refresh();
-}
-
-async function recoverPassword() {
-  const email = emailEl.value.trim();
-  const validEmail = validateEmailField({ required: true });
-  if (!validEmail) {
-    setStatus("Escribe tu email para recuperar contrase\u00f1a.", "error");
-    emailEl?.focus();
-    return;
-  }
-
-  const resp = await sbFetch("/auth/v1/recover", {
-    method: "POST",
-    body: { email },
-    auth: false
-  });
-
-  if (!resp.ok) {
-    const data = await resp.json().catch(() => null);
-    const msg = getPayloadErrorMessage(data, resp);
-    setStatus(`Error al enviar recuperaci\u00f3n: ${msg}`, "error");
-    return;
-  }
-
-  setStatus("Si el email existe, Supabase envi\u00f3 un correo de recuperaci\u00f3n.", "success");
-}
-
-async function logout() {
-  if (authSession?.access_token) {
-    await sbAuthFetch("/auth/v1/logout", { method: "POST" }).catch(() => {});
-  }
-  clearSession();
-  currentUser = null;
-  txData = getLocalTransactionStore();
-  setAuthButtons();
-  updateEntryGate();
-  refresh();
-  setStatus(isLocalDevelopment() ? "Sesi\u00f3n cerrada. Modo local activo." : "Sesi\u00f3n cerrada.", "info");
-}
-
-async function initAuth() {
-  if (!authSession?.access_token) {
-    currentUser = null;
-    setStatus(isLocalDevelopment() ? "Sin sesi\u00f3n. Puedes iniciar sesi\u00f3n para guardar en la nube." : "Inicia sesi\u00f3n para usar la app.", "info");
-    setAuthButtons();
-    txData = getLocalTransactionStore();
-    refresh();
-    return;
-  }
-
-  const authState = await fetchCurrentUserState();
-  if (!authState.ok) {
-    // Keep the stored session if the network is temporarily unavailable.
-    if (authState.status >= 500 || authState.status === 504 || authState.status === 599) {
-      currentUser = authSession?.user || currentUser;
-      setAuthButtons();
-      setStatus("Sesion restaurada. La nube se reintentara al reconectar.", "info");
-      txData = getLocalTransactionStore();
-      refresh();
-      return;
-    }
-
-    clearSession();
-    currentUser = null;
-    setStatus("Sesi\u00f3n expirada. Inicia sesi\u00f3n nuevamente.", "error");
-    setAuthButtons();
-    txData = getLocalTransactionStore();
-    refresh();
-    return;
-  }
-
-  currentUser = authState.user;
-  setAuthButtons();
-  setStatus(`Conectado como ${currentUser.email}`, "success");
-  await seedCloudIfEmpty();
-  await loadCloudData();
-}
+const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
+  emailEl,
+  passwordEl,
+  validateEmailField,
+  validatePasswordField,
+  setStatus,
+  applyRememberPreference,
+  saveSession,
+  setCurrentUser: (user) => {
+    currentUser = user;
+  },
+  setAuthButtons,
+  seedCloudIfEmpty,
+  loadCloudData,
+  setActiveTab,
+  refresh,
+  getPayloadErrorMessage,
+  sbFetch,
+  sbAuthFetch,
+  clearSession,
+  getLocalTransactionStore,
+  setTxData: (rows) => {
+    txData = rows;
+  },
+  updateEntryGate,
+  isLocalDevelopment,
+  fetchCurrentUserState,
+  getAuthSession: () => authSession
+});
 
 async function addTransaction(tx) {
   if (!currentUser) {
