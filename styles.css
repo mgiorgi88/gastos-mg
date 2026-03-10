@@ -511,6 +511,30 @@ label {
   font-size: 0.94rem;
 }
 
+#auth-status {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+#auth-status.status-info {
+  color: var(--muted);
+}
+
+#auth-status.status-success {
+  color: var(--success);
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+#auth-status.status-error {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.22);
+}
+
 #account-mini {
   padding-top: 14px;
   padding-bottom: 14px;
@@ -557,6 +581,24 @@ button {
 
 button:hover {
   transform: translateY(-1px);
+}
+
+button.is-loading {
+  position: relative;
+  cursor: wait;
+}
+
+button.is-loading::after {
+  content: "";
+  width: 14px;
+  height: 14px;
+  margin-left: 8px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  display: inline-block;
+  vertical-align: -2px;
+  animation: spinLoader 0.7s linear infinite;
 }
 
 .btn-primary {
@@ -611,6 +653,11 @@ button:hover {
   0% { transform: scale(1); }
   50% { transform: scale(0.97); }
   100% { transform: scale(1); }
+}
+
+@keyframes spinLoader {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 input::placeholder {

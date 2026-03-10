@@ -215,6 +215,7 @@ let hadRecentSyncError = false;
 let quickCategories = loadQuickCategories();
 let savingsGoal = loadSavingsGoal();
 let syncBadgeTimer = null;
+let authActionInFlight = false;
 
 document.getElementById("fecha").valueAsDate = new Date();
 
@@ -283,13 +284,57 @@ function setActiveTab(tab) {
   }
 }
 
-function setStatus(msg) {
+function setStatus(msg, tone = "info") {
   if (authStatusEl) authStatusEl.textContent = msg;
+  if (authStatusEl) {
+    authStatusEl.classList.remove("status-info", "status-success", "status-error");
+    authStatusEl.classList.add(`status-${tone}`);
+  }
   try {
     console.log("[GastosMG]", msg);
   } catch {
     // Ignore console issues.
   }
+}
+
+function setButtonLoading(button, isLoading, loadingText = "Procesando...") {
+  if (!button) return;
+  if (isLoading) {
+    if (!button.dataset.originalText) button.dataset.originalText = button.textContent || "";
+    button.disabled = true;
+    button.classList.add("is-loading");
+    button.textContent = loadingText;
+    return;
+  }
+  button.classList.remove("is-loading");
+  if (button.dataset.originalText) {
+    button.textContent = button.dataset.originalText;
+  }
+}
+
+function setAuthActionBusy(activeButton = null, loadingText = "Procesando...") {
+  authActionInFlight = Boolean(activeButton);
+  const authButtons = [btnLogin, btnSignup, btnRecover];
+  authButtons.forEach((btn) => {
+    if (!btn) return;
+    const isActive = btn === activeButton;
+    btn.disabled = authActionInFlight || btn.disabled;
+    setButtonLoading(btn, isActive, loadingText);
+    if (!isActive && authActionInFlight) btn.disabled = true;
+  });
+  if (btnGateSignin) btnGateSignin.disabled = authActionInFlight;
+  if (btnGateSignup) btnGateSignup.disabled = authActionInFlight;
+}
+
+function clearAuthActionBusy() {
+  authActionInFlight = false;
+  [btnLogin, btnSignup, btnRecover].forEach((btn) => {
+    if (!btn) return;
+    setButtonLoading(btn, false);
+  });
+  if (btnGateSignin) btnGateSignin.disabled = false;
+  if (btnGateSignup) btnGateSignup.disabled = false;
+  setAuthButtons();
 }
 
 function showSyncBadge(message, tone = "ok", autoHideMs = 0) {
@@ -2477,9 +2522,9 @@ function setAuthButtons() {
     cloudIndicatorEl.textContent = logged ? "Nube: Conectado" : "Nube: Local";
     cloudIndicatorEl.classList.toggle("ok", logged);
   }
-  if (btnSignup) btnSignup.disabled = logged;
-  if (btnLogin) btnLogin.disabled = logged;
-  if (btnRecover) btnRecover.disabled = logged;
+  if (btnSignup) btnSignup.disabled = logged || authActionInFlight;
+  if (btnLogin) btnLogin.disabled = logged || authActionInFlight;
+  if (btnRecover) btnRecover.disabled = logged || authActionInFlight;
   if (btnLogout) {
     btnLogout.disabled = !logged;
     btnLogout.hidden = !logged;
@@ -2731,7 +2776,7 @@ async function signup() {
   const password = passwordEl.value;
 
   if (!email || password.length < 6) {
-    setStatus("Completa email y contrase\u00f1a (m\u00ednimo 6 caracteres).");
+    setStatus("Completa email y contrase\u00f1a (m\u00ednimo 6 caracteres).", "error");
     return;
   }
 
@@ -2744,7 +2789,7 @@ async function signup() {
   const data = await resp.json().catch(() => null);
   if (!resp.ok) {
     const msg = getPayloadErrorMessage(data, resp);
-    setStatus(`Error al crear cuenta: ${msg}`);
+    setStatus(`Error al crear cuenta: ${msg}`, "error");
     return;
   }
 
@@ -2753,13 +2798,13 @@ async function signup() {
     saveSession(data);
     currentUser = data.user || null;
     setAuthButtons();
-    setStatus(`Conectado como ${currentUser?.email || email}`);
+    setStatus(`Conectado como ${currentUser?.email || email}`, "success");
     await seedCloudIfEmpty();
     await loadCloudData();
     setActiveTab("cargar");
     refresh();
   } else {
-    setStatus("Cuenta creada. Revisa tu email para confirmar y luego inicia sesi\u00f3n.");
+    setStatus("Cuenta creada. Revisa tu email para confirmar y luego inicia sesi\u00f3n.", "success");
   }
 }
 
@@ -2768,7 +2813,7 @@ async function login() {
   const password = passwordEl.value;
 
   if (!email || !password) {
-    setStatus("Ingresa email y contrase\u00f1a.");
+    setStatus("Ingresa email y contrase\u00f1a.", "error");
     return;
   }
 
@@ -2781,7 +2826,7 @@ async function login() {
   const data = await resp.json().catch(() => null);
   if (!resp.ok || !data?.access_token) {
     const msg = getPayloadErrorMessage(data, resp);
-    setStatus(`Error de inicio de sesi\u00f3n: ${msg}`);
+    setStatus(`Error de inicio de sesi\u00f3n: ${msg}`, "error");
     return;
   }
 
@@ -2789,7 +2834,7 @@ async function login() {
   saveSession(data);
   currentUser = data.user || null;
   setAuthButtons();
-  setStatus(`Conectado como ${currentUser?.email || email}`);
+  setStatus(`Conectado como ${currentUser?.email || email}`, "success");
   await seedCloudIfEmpty();
   await loadCloudData();
   setActiveTab("cargar");
@@ -2799,7 +2844,7 @@ async function login() {
 async function recoverPassword() {
   const email = emailEl.value.trim();
   if (!email) {
-    setStatus("Escribe tu email para recuperar contrase\u00f1a.");
+    setStatus("Escribe tu email para recuperar contrase\u00f1a.", "error");
     return;
   }
 
@@ -2812,11 +2857,11 @@ async function recoverPassword() {
   if (!resp.ok) {
     const data = await resp.json().catch(() => null);
     const msg = getPayloadErrorMessage(data, resp);
-    setStatus(`Error al enviar recuperaci\u00f3n: ${msg}`);
+    setStatus(`Error al enviar recuperaci\u00f3n: ${msg}`, "error");
     return;
   }
 
-  setStatus("Si el email existe, Supabase envi\u00f3 un correo de recuperaci\u00f3n.");
+  setStatus("Si el email existe, Supabase envi\u00f3 un correo de recuperaci\u00f3n.", "success");
 }
 
 async function logout() {
@@ -2829,13 +2874,13 @@ async function logout() {
   setAuthButtons();
   updateEntryGate();
   refresh();
-  setStatus(isLocalDevelopment() ? "Sesi\u00f3n cerrada. Modo local activo." : "Sesi\u00f3n cerrada.");
+  setStatus(isLocalDevelopment() ? "Sesi\u00f3n cerrada. Modo local activo." : "Sesi\u00f3n cerrada.", "info");
 }
 
 async function initAuth() {
   if (!authSession?.access_token) {
     currentUser = null;
-    setStatus(isLocalDevelopment() ? "Sin sesi\u00f3n. Puedes iniciar sesi\u00f3n para guardar en la nube." : "Inicia sesi\u00f3n para usar la app.");
+    setStatus(isLocalDevelopment() ? "Sin sesi\u00f3n. Puedes iniciar sesi\u00f3n para guardar en la nube." : "Inicia sesi\u00f3n para usar la app.", "info");
     setAuthButtons();
     txData = getLocalTransactionStore();
     refresh();
@@ -2848,7 +2893,7 @@ async function initAuth() {
     if (authState.status >= 500 || authState.status === 504 || authState.status === 599) {
       currentUser = authSession?.user || currentUser;
       setAuthButtons();
-      setStatus("Sesion restaurada. La nube se reintentara al reconectar.");
+      setStatus("Sesion restaurada. La nube se reintentara al reconectar.", "info");
       txData = getLocalTransactionStore();
       refresh();
       return;
@@ -2856,7 +2901,7 @@ async function initAuth() {
 
     clearSession();
     currentUser = null;
-    setStatus("Sesi\u00f3n expirada. Inicia sesi\u00f3n nuevamente.");
+    setStatus("Sesi\u00f3n expirada. Inicia sesi\u00f3n nuevamente.", "error");
     setAuthButtons();
     txData = getLocalTransactionStore();
     refresh();
@@ -2865,7 +2910,7 @@ async function initAuth() {
 
   currentUser = authState.user;
   setAuthButtons();
-  setStatus(`Conectado como ${currentUser.email}`);
+  setStatus(`Conectado como ${currentUser.email}`, "success");
   await seedCloudIfEmpty();
   await loadCloudData();
 }
@@ -3482,28 +3527,37 @@ window.addEventListener("scroll", hideChartTooltip, { passive: true });
 
 btnSignup.addEventListener("click", async () => {
   try {
-    setStatus("Creando cuenta...");
+    setAuthActionBusy(btnSignup, "Creando cuenta...");
+    setStatus("Creando cuenta...", "info");
     await signup();
   } catch (err) {
-    setStatus(`Fallo en Crear cuenta: ${err?.message || String(err)}`);
+    setStatus(`Fallo en Crear cuenta: ${err?.message || String(err)}`, "error");
+  } finally {
+    clearAuthActionBusy();
   }
 });
 
 btnLogin.addEventListener("click", async () => {
   try {
-    setStatus("Iniciando sesi\u00f3n...");
+    setAuthActionBusy(btnLogin, "Iniciando sesi\u00f3n...");
+    setStatus("Iniciando sesi\u00f3n...", "info");
     await login();
   } catch (err) {
-    setStatus(`Fallo en Iniciar sesi\u00f3n: ${err?.message || String(err)}`);
+    setStatus(`Fallo en Iniciar sesi\u00f3n: ${err?.message || String(err)}`, "error");
+  } finally {
+    clearAuthActionBusy();
   }
 });
 
 btnRecover.addEventListener("click", async () => {
   try {
-    setStatus("Enviando recuperaci\u00f3n...");
+    setAuthActionBusy(btnRecover, "Enviando correo...");
+    setStatus("Enviando recuperaci\u00f3n...", "info");
     await recoverPassword();
   } catch (err) {
-    setStatus(`Fallo en Recuperar contrase\u00f1a: ${err?.message || String(err)}`);
+    setStatus(`Fallo en Recuperar contrase\u00f1a: ${err?.message || String(err)}`, "error");
+  } finally {
+    clearAuthActionBusy();
   }
 });
 
