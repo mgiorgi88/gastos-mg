@@ -75,6 +75,7 @@ import {
   currentMonthLabelEl,
   currencyEl,
   dayTitleEl,
+  detalleEl,
   detailAvgEl,
   detailCategoryEl,
   detailCountEl,
@@ -86,6 +87,7 @@ import {
   emailEl,
   emailHintEl,
   entryGateEl,
+  fechaEl,
   filtroMes,
   form,
   gastosEl,
@@ -93,6 +95,7 @@ import {
   importStatusEl,
   ingresosEl,
   lista,
+  montoEl,
   movimientosSectionEl,
   passwordEl,
   passwordHintEl,
@@ -173,6 +176,7 @@ import {
 import { createSupabaseService } from "./js/services/supabase.js";
 import { createAuthService } from "./js/services/auth.js";
 import { createTransactionsService } from "./js/services/transactions.js";
+import { createFormUi } from "./js/ui/form-ui.js";
 
 /**
  * @typedef {Object} Transaction
@@ -585,36 +589,6 @@ async function bootstrapHistorico() {
 
 function getMonth(dateStr) {
   return String(dateStr).slice(0, 7);
-}
-
-function updateCategoryOptions(tipo, selected = "") {
-  const categorias = CATEGORIAS[tipo] || [];
-  categoriaEl.innerHTML = categorias
-    .map((categoria) => `<option value="${categoria}">${CATEGORY_ICONS[categoria] || "\u2022"} ${categoria}</option>`)
-    .join("");
-  categoriaEl.value = categorias.includes(selected) ? selected : (categorias[0] || "");
-}
-
-function setupBudgetCategoryOptions() {
-  if (!budgetCategoryEl) return;
-  budgetCategoryEl.innerHTML = CATEGORIAS.Gasto
-    .map((c) => `<option value="${c}">${CATEGORY_ICONS[c] || "\u2022"} ${c}</option>`)
-    .join("");
-}
-
-function setupYoyCategoryOptions() {
-  if (!yoyCategoryEl) return;
-  const previous = yoyCategoryEl.value;
-  yoyCategoryEl.innerHTML = [
-    '<option value="__ALL__">Todas las categorias</option>',
-    ...CATEGORIAS.Gasto
-    .map((c) => `<option value="${c}">${CATEGORY_ICONS[c] || "\u2022"} ${c}</option>`)
-  ].join("");
-  if (previous === "__ALL__" || (previous && CATEGORIAS.Gasto.includes(previous))) {
-    yoyCategoryEl.value = previous;
-  } else {
-    yoyCategoryEl.value = "__ALL__";
-  }
 }
 
 function sanitizeQuickCategories(value) {
@@ -1332,48 +1306,6 @@ function renderSelectedDayRows(rows) {
     });
 
   vacio.hidden = dayRows.length > 0;
-}
-
-function setEditingState(tx = null) {
-  editingTxId = tx ? String(tx.id) : null;
-  if (btnSubmitTx) btnSubmitTx.textContent = tx ? "Guardar cambios" : "Guardar";
-  if (btnCancelEdit) btnCancelEdit.hidden = !tx;
-  if (txFormModeEl) txFormModeEl.hidden = !tx;
-}
-
-function startEditTransaction(id) {
-  const tx = txData.find((x) => String(x.id) === String(id));
-  if (!tx) {
-    setStatus("No se encontro el movimiento para editar.");
-    return;
-  }
-
-  document.getElementById("fecha").value = String(tx.fecha).slice(0, 10);
-  tipoEl.value = tx.tipo === "Ingreso" ? "Ingreso" : "Gasto";
-  updateCategoryOptions(tipoEl.value, tx.categoria);
-  document.getElementById("monto").value = Number(tx.monto).toFixed(2);
-  document.getElementById("detalle").value = tx.detalle || "";
-  updateArsConvertVisibility();
-  setEditingState(tx);
-  form.scrollIntoView({ behavior: "smooth", block: "start" });
-  setStatus(`Editando: ${tx.categoria} del ${tx.fecha}.`);
-}
-
-function resetTransactionForm() {
-  form.reset();
-  document.getElementById("fecha").valueAsDate = new Date();
-  tipoEl.value = "Gasto";
-  updateCategoryOptions("Gasto");
-  updateArsConvertVisibility();
-  setEditingState(null);
-}
-
-function animatePrimarySave(target = btnSubmitTx) {
-  if (!target) return;
-  target.classList.remove("saving");
-  void target.offsetWidth;
-  target.classList.add("saving");
-  setTimeout(() => target.classList.remove("saving"), 260);
 }
 
 function flashSavedFeedback(label = "Guardado") {
@@ -2491,6 +2423,50 @@ const {
   getLocalTransactionStore
 });
 
+const {
+  animatePrimarySave,
+  convertArsToSelectedCurrency,
+  fetchArsRateForSelectedCurrency,
+  resetTransactionForm,
+  setEditingState,
+  setupBudgetCategoryOptions,
+  setupYoyCategoryOptions,
+  startEditTransaction,
+  updateArsConvertVisibility,
+  updateArsResultPreview,
+  updateCategoryOptions
+} = createFormUi({
+  CATEGORIAS,
+  CATEGORY_ICONS,
+  form,
+  fechaEl,
+  montoEl,
+  detalleEl,
+  tipoEl,
+  categoriaEl,
+  budgetCategoryEl,
+  yoyCategoryEl,
+  arsConvertBoxEl,
+  arsAmountEl,
+  arsRateEl,
+  spreadPctEl,
+  arsResultEl,
+  btnSubmitTx,
+  btnCancelEdit,
+  txFormModeEl,
+  getTxData: () => txData,
+  getSelectedCurrency: () => selectedCurrency,
+  getArsRate: () => arsRate,
+  saveArsRate,
+  saveSpreadPct,
+  parseDecimalInputValue,
+  setStatus,
+  money,
+  onEditingChange: (id) => {
+    editingTxId = id;
+  }
+});
+
 const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
   emailEl,
   passwordEl,
@@ -2546,83 +2522,6 @@ async function quickAddExpense(category, sourceBtn = null) {
   flashSavedFeedback("Guardado");
   setStatus(`Carga rapida guardada: ${category} ${money(amount)}.`);
   showToast(`Guardado: ${category}`);
-}
-
-function updateArsConvertVisibility() {
-  if (!arsConvertBoxEl) return;
-  const show =
-    tipoEl.value === "Ingreso" &&
-    categoriaEl.value === "Alquiler Depto Argentina" &&
-    selectedCurrency === "USD";
-  arsConvertBoxEl.hidden = !show;
-  arsConvertBoxEl.style.display = show ? "grid" : "none";
-  if (!show) {
-    if (arsAmountEl) arsAmountEl.value = "";
-    if (arsResultEl) arsResultEl.value = "";
-  }
-  if (show) {
-    fetchArsRateForSelectedCurrency();
-    updateArsResultPreview();
-  }
-}
-
-function convertArsToSelectedCurrency() {
-  const ars = parseDecimalInputValue(arsAmountEl.value || 0);
-  const rate = parseDecimalInputValue(arsRateEl.value || arsRate || 0);
-  const spread = parseDecimalInputValue(spreadPctEl?.value || spreadPct || 0);
-  if (!(ars > 0) || !(rate > 0)) {
-    setStatus("No se pudo convertir: falta ARS o tipo de cambio.");
-    return null;
-  }
-  saveArsRate(rate);
-  if (spread >= 0) saveSpreadPct(spread);
-  if (selectedCurrency === "ARS") return ars;
-  const gross = ars / rate;
-  const net = gross * (1 - (spread / 100));
-  return net > 0 ? net : 0;
-}
-
-async function fetchArsRateForSelectedCurrency() {
-  if (!arsRateEl) return;
-
-  if (selectedCurrency === "ARS") {
-    arsRateEl.value = "1";
-    saveArsRate(1);
-    updateArsResultPreview();
-    return;
-  }
-
-  try {
-    const resp = await fetch("https://open.er-api.com/v6/latest/ARS", { cache: "no-store" });
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
-    const perArs = Number(data?.rates?.[selectedCurrency] || 0);
-    if (!(perArs > 0)) throw new Error("sin cotizacion");
-    const arsPerUnit = 1 / perArs;
-    saveArsRate(arsPerUnit);
-    arsRateEl.value = arsPerUnit.toFixed(4);
-    updateArsResultPreview();
-  } catch {
-    if (arsRate > 0) {
-      arsRateEl.value = Number(arsRate).toFixed(4);
-      updateArsResultPreview();
-      setStatus("No se pudo actualizar la cotizacion online. Se usa la ultima guardada.");
-    } else {
-      setStatus("No se pudo obtener tipo de cambio online.");
-    }
-  }
-}
-
-function updateArsResultPreview() {
-  if (!arsResultEl || !arsAmountEl || !arsRateEl) return;
-  const ars = parseDecimalInputValue(arsAmountEl.value || 0);
-  const rate = parseDecimalInputValue(arsRateEl.value || 0);
-  if (!(ars > 0) || !(rate > 0)) {
-    arsResultEl.value = "";
-    return;
-  }
-  const converted = selectedCurrency === "ARS" ? ars : ars / rate;
-  arsResultEl.value = money(converted);
 }
 
 async function clearMyData() {
@@ -3162,4 +3061,9 @@ btnBudgetSave.addEventListener("click", () => {
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
 })();
+
+
+
+
+
 
