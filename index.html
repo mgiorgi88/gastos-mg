@@ -17,13 +17,13 @@
   <section id="entry-gate" class="entry-gate" hidden>
     <div class="entry-card">
       <p class="entry-kicker">Gastos MG</p>
-      <h2>Controla tus gastos en segundos</h2>
-      <p class="entry-lead">Registra ingresos y gastos, sincroniza en la nube y consulta tu resumen desde cualquier dispositivo.</p>
+      <h2>Entra a tu historial personal</h2>
+      <p class="entry-lead">Accede a tus movimientos, tu resumen y tus comparativas desde cualquier dispositivo con una sola cuenta.</p>
       <div class="gate-actions">
         <button id="btn-gate-signin" type="button" class="btn-primary">Iniciar sesi&oacute;n</button>
         <button id="btn-gate-signup" type="button" class="btn-secondary">Crear cuenta</button>
       </div>
-      <p class="entry-footnote">Crea tu cuenta para sincronizar tus datos y acceder desde cualquier dispositivo.</p>
+      <p class="entry-footnote">Tus datos quedan ligados a tu usuario y se sincronizan automaticamente en la nube.</p>
     </div>
   </section>
   <main class="app">
@@ -53,9 +53,11 @@
       <div class="grid">
         <label>Email
           <input type="email" id="auth-email" placeholder="tu@email.com">
+          <small id="auth-email-hint" class="field-hint" hidden></small>
         </label>
         <label>Contrase&ntilde;a
           <input type="password" id="auth-password" placeholder="Minimo 6 caracteres">
+          <small id="auth-password-hint" class="field-hint" hidden></small>
         </label>
       </div>
       <label class="remember-me">
@@ -69,14 +71,16 @@
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesi&oacute;n</button>
       </div>
       <p class="muted">Si olvidaste tu clave, usa "Recuperar Contrase&ntilde;a".</p>
-      <p class="muted">Version: v138</p>
+      <p class="muted">Version: v139</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
-    <section class="card" data-panel="opciones">
+    <section class="card sync-card" data-panel="opciones">
       <h2>Sincronizacion</h2>
-      <p id="cloud-indicator" class="cloud-indicator">Nube: Local</p>
-      <p id="sync-indicator" class="sync-indicator sync-local">Sincronizacion: Local</p>
+      <div class="sync-card-grid">
+        <p id="cloud-indicator" class="cloud-indicator">Nube: Local</p>
+        <p id="sync-indicator" class="sync-indicator sync-local">Sincronizacion: Local</p>
+      </div>
     </section>
 
     <section id="account-mini" class="card" data-panel="opciones" hidden>

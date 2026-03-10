@@ -117,6 +117,8 @@ const resumenContentCards = Array.from(document.querySelectorAll('[data-panel="r
 
 const emailEl = document.getElementById("auth-email");
 const passwordEl = document.getElementById("auth-password");
+const emailHintEl = document.getElementById("auth-email-hint");
+const passwordHintEl = document.getElementById("auth-password-hint");
 const rememberEl = document.getElementById("auth-remember");
 const btnSignup = document.getElementById("btn-signup");
 const btnLogin = document.getElementById("btn-login");
@@ -310,6 +312,57 @@ function setButtonLoading(button, isLoading, loadingText = "Procesando...") {
   if (button.dataset.originalText) {
     button.textContent = button.dataset.originalText;
   }
+}
+
+function setFieldState(input, hintEl, state = "idle", message = "") {
+  if (!input) return;
+  input.classList.remove("input-valid", "input-invalid");
+  if (hintEl) {
+    hintEl.hidden = !message;
+    hintEl.textContent = message;
+    hintEl.classList.remove("hint-error", "hint-ok");
+  }
+  if (state === "valid") {
+    input.classList.add("input-valid");
+    if (hintEl && message) hintEl.classList.add("hint-ok");
+    return;
+  }
+  if (state === "invalid") {
+    input.classList.add("input-invalid");
+    if (hintEl && message) hintEl.classList.add("hint-error");
+  }
+}
+
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
+}
+
+function validateEmailField({ required = false } = {}) {
+  const value = emailEl?.value?.trim() || "";
+  if (!value) {
+    setFieldState(emailEl, emailHintEl, required ? "invalid" : "idle", required ? "Introduce un email valido." : "");
+    return !required;
+  }
+  if (!isValidEmail(value)) {
+    setFieldState(emailEl, emailHintEl, "invalid", "Revisa el formato del email.");
+    return false;
+  }
+  setFieldState(emailEl, emailHintEl, "valid", "Email correcto.");
+  return true;
+}
+
+function validatePasswordField({ required = false, minLength = 0 } = {}) {
+  const value = passwordEl?.value || "";
+  if (!value) {
+    setFieldState(passwordEl, passwordHintEl, required ? "invalid" : "idle", required ? "Introduce tu contraseña." : "");
+    return !required;
+  }
+  if (minLength > 0 && value.length < minLength) {
+    setFieldState(passwordEl, passwordHintEl, "invalid", `Usa al menos ${minLength} caracteres.`);
+    return false;
+  }
+  setFieldState(passwordEl, passwordHintEl, "valid", minLength > 0 ? "Longitud correcta." : "Contraseña lista.");
+  return true;
 }
 
 function setAuthActionBusy(activeButton = null, loadingText = "Procesando...") {
@@ -2775,8 +2828,16 @@ async function signup() {
   const email = emailEl.value.trim();
   const password = passwordEl.value;
 
-  if (!email || password.length < 6) {
+  const validEmail = validateEmailField({ required: true });
+  const validPassword = validatePasswordField({ required: true, minLength: 6 });
+  if (!validEmail) {
+    setStatus("Revisa el email antes de crear la cuenta.", "error");
+    emailEl?.focus();
+    return;
+  }
+  if (!validPassword) {
     setStatus("Completa email y contrase\u00f1a (m\u00ednimo 6 caracteres).", "error");
+    passwordEl?.focus();
     return;
   }
 
@@ -2812,8 +2873,16 @@ async function login() {
   const email = emailEl.value.trim();
   const password = passwordEl.value;
 
-  if (!email || !password) {
+  const validEmail = validateEmailField({ required: true });
+  const validPassword = validatePasswordField({ required: true });
+  if (!validEmail) {
+    setStatus("Revisa el email antes de iniciar sesi\u00f3n.", "error");
+    emailEl?.focus();
+    return;
+  }
+  if (!validPassword) {
     setStatus("Ingresa email y contrase\u00f1a.", "error");
+    passwordEl?.focus();
     return;
   }
 
@@ -2843,8 +2912,10 @@ async function login() {
 
 async function recoverPassword() {
   const email = emailEl.value.trim();
-  if (!email) {
+  const validEmail = validateEmailField({ required: true });
+  if (!validEmail) {
     setStatus("Escribe tu email para recuperar contrase\u00f1a.", "error");
+    emailEl?.focus();
     return;
   }
 
@@ -3327,6 +3398,18 @@ if (rememberEl) {
   rememberEl.addEventListener("change", () => {
     applyRememberPreference();
     if (authSession?.access_token) saveSession(authSession);
+  });
+}
+
+if (emailEl) {
+  emailEl.addEventListener("input", () => validateEmailField());
+  emailEl.addEventListener("blur", () => validateEmailField({ required: Boolean(emailEl.value.trim()) }));
+}
+
+if (passwordEl) {
+  passwordEl.addEventListener("input", () => validatePasswordField());
+  passwordEl.addEventListener("blur", () => {
+    validatePasswordField({ required: Boolean(passwordEl.value), minLength: passwordEl.value ? 6 : 0 });
   });
 }
 
