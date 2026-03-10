@@ -1,144 +1,166 @@
-const KEY = "mis_gastos_v1";
-const BOOTSTRAP_KEY = "mis_gastos_bootstrap_v1";
-const MIGRATION_KEY = "mis_gastos_migration_v2";
-const SESSION_KEY = "mis_gastos_supabase_session_v1";
-const CURRENCY_KEY = "mis_gastos_currency_v1";
-const BUDGETS_KEY = "mis_gastos_budgets_v1";
-const ARS_RATE_KEY = "mis_gastos_ars_rate_v1";
-const SPREAD_PCT_KEY = "mis_gastos_spread_pct_v1";
-const THEME_KEY = "mis_gastos_theme_v1";
-const ACTIVE_TAB_KEY = "mis_gastos_active_tab_v1";
-const REMEMBER_ME_KEY = "mis_gastos_remember_me_v1";
-const QUICK_CATS_KEY = "mis_gastos_quick_cats_v1";
-const SAVINGS_GOAL_KEY = "mis_gastos_savings_goal_v1";
-const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
-
-const SUPABASE_URL = "https://gwtioxerklmzjssweqgm.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_rcTj1A_vRoeOQ7yDOjPQ7g_PlmfsQPs";
-
-const form = document.getElementById("tx-form");
-const btnSubmitTx = document.getElementById("btn-submit-tx");
-const btnCancelEdit = document.getElementById("btn-cancel-edit");
-const txFormModeEl = document.getElementById("tx-form-mode");
-const quickAmountEl = document.getElementById("quick-amount");
-const quickDetailEl = document.getElementById("quick-detail");
-const btnQuickSuper = document.getElementById("btn-quick-super");
-const btnQuickComp = document.getElementById("btn-quick-comp");
-const btnQuickSal = document.getElementById("btn-quick-sal");
-const btnQuickGas = document.getElementById("btn-quick-gas");
-const cargarEmptyStateEl = document.getElementById("cargar-empty-state");
-const btnEmptyStartEl = document.getElementById("btn-empty-start");
-const resumenEmptyCardEl = document.getElementById("resumen-empty-card");
-const btnEmptyGoCargarEl = document.getElementById("btn-empty-go-cargar");
-const quickCat1El = document.getElementById("quick-cat-1");
-const quickCat2El = document.getElementById("quick-cat-2");
-const quickCat3El = document.getElementById("quick-cat-3");
-const quickCat4El = document.getElementById("quick-cat-4");
-const btnQuickConfigSave = document.getElementById("btn-quick-config-save");
-const btnQuickConfigReset = document.getElementById("btn-quick-config-reset");
-const quickConfigStatusEl = document.getElementById("quick-config-status");
-const savingsGoalAmountEl = document.getElementById("savings-goal-amount");
-const btnSavingsGoalSave = document.getElementById("btn-savings-goal-save");
-const btnSavingsGoalClear = document.getElementById("btn-savings-goal-clear");
-const savingsGoalStatusEl = document.getElementById("savings-goal-status");
-const detailTypeEl = document.getElementById("detail-type");
-const detailCategoryEl = document.getElementById("detail-category");
-const detailFromEl = document.getElementById("detail-from");
-const detailToEl = document.getElementById("detail-to");
-const detailSearchEl = document.getElementById("detail-search");
-const btnDetailClear = document.getElementById("btn-detail-clear");
-const btnExportExcel = document.getElementById("btn-export-excel");
-const detailTotalEl = document.getElementById("detail-total");
-const detailCountEl = document.getElementById("detail-count");
-const detailAvgEl = document.getElementById("detail-avg");
-const cmpTitleEl = document.getElementById("cmp-title");
-const cmpIngresosEl = document.getElementById("cmp-ingresos");
-const cmpGastosEl = document.getElementById("cmp-gastos");
-const cmpBalanceEl = document.getElementById("cmp-balance");
-const chartMonthlyEl = document.getElementById("chart-monthly");
-const chartMonthlyInsightEl = document.getElementById("chart-monthly-insight");
-const chartMonthlyLegendEl = document.getElementById("chart-monthly-legend");
-const chartCategoryEl = document.getElementById("chart-category");
-const chartCategoryInsightEl = document.getElementById("chart-category-insight");
-const chartCategoryLegendEl = document.getElementById("chart-category-legend");
-const analysisPanelEl = document.getElementById("analysis-panel");
-const budgetCategoryEl = document.getElementById("budget-category");
-const budgetAmountEl = document.getElementById("budget-amount");
-const btnBudgetSave = document.getElementById("btn-budget-save");
-const budgetListEl = document.getElementById("budget-list");
-const btnDownloadTemplate = document.getElementById("btn-download-template");
-const importFileEl = document.getElementById("import-file");
-const btnImportFile = document.getElementById("btn-import-file");
-const importStatusEl = document.getElementById("import-status");
-const btnClearMyData = document.getElementById("btn-clear-my-data");
-const clearMyDataStatusEl = document.getElementById("clear-my-data-status");
-const arsConvertBoxEl = document.getElementById("ars-convert-box");
-const arsAmountEl = document.getElementById("ars-amount");
-const arsRateEl = document.getElementById("ars-rate");
-const spreadPctEl = document.getElementById("spread-pct");
-const arsResultEl = document.getElementById("ars-result");
-const btnConvertArs = document.getElementById("btn-convert-ars");
-const btnRefreshRate = document.getElementById("btn-refresh-rate");
-const lista = document.getElementById("lista");
-const vacio = document.getElementById("vacio");
-const filtroMes = document.getElementById("filtro-mes");
-const currencyEl = document.getElementById("currency-select");
-const themeEl = document.getElementById("theme-select");
-const trend3mEl = document.getElementById("trend-3m");
-const calPrevEl = document.getElementById("cal-prev");
-const calNextEl = document.getElementById("cal-next");
-const calTitleEl = document.getElementById("cal-title");
-const calGridEl = document.getElementById("cal-grid");
-const dayTitleEl = document.getElementById("day-title");
-const tipoEl = document.getElementById("tipo");
-const categoriaEl = document.getElementById("categoria");
-
-const ingresosEl = document.getElementById("ingresos");
-const gastosEl = document.getElementById("gastos");
-const balanceEl = document.getElementById("balance");
-const currentMonthLabelEl = document.getElementById("current-month-label");
-const balanceSparklineEl = document.getElementById("balance-sparkline");
-const balanceTrendEl = document.getElementById("balance-trend");
-const spendingAlertEl = document.getElementById("spending-alert");
-const yoyCategoryEl = document.getElementById("yoy-category");
-const yoyPeriodAEl = document.getElementById("yoy-period-a");
-const yoyPeriodBEl = document.getElementById("yoy-period-b");
-const yoySummaryEl = document.getElementById("yoy-summary");
-const yoyMiniChartEl = document.getElementById("yoy-mini-chart");
-const yoyMiniLegendEl = document.getElementById("yoy-mini-legend");
-const yoyTitleEl = document.getElementById("yoy-title");
-const yoyIngresosEl = document.getElementById("yoy-ingresos");
-const yoyGastosEl = document.getElementById("yoy-gastos");
-const yoyBalanceEl = document.getElementById("yoy-balance");
-const topExpensesListEl = document.getElementById("top-expenses-list");
-const budgetSummaryListEl = document.getElementById("budget-summary-list");
-const savingsGoalSummaryEl = document.getElementById("savings-goal-summary");
-const resumenContentCards = Array.from(document.querySelectorAll('[data-panel="resumen"]')).filter((el) => el.id !== "resumen-empty-card");
-
-const emailEl = document.getElementById("auth-email");
-const passwordEl = document.getElementById("auth-password");
-const emailHintEl = document.getElementById("auth-email-hint");
-const passwordHintEl = document.getElementById("auth-password-hint");
-const rememberEl = document.getElementById("auth-remember");
-const btnSignup = document.getElementById("btn-signup");
-const btnLogin = document.getElementById("btn-login");
-const btnRecover = document.getElementById("btn-recover");
-const btnLogout = document.getElementById("btn-logout");
-const authStatusEl = document.getElementById("auth-status");
-const cloudIndicatorEl = document.getElementById("cloud-indicator");
-const syncIndicatorEl = document.getElementById("sync-indicator");
-const authCardEl = document.getElementById("auth-card");
-const accountMiniEl = document.getElementById("account-mini");
-const accountMiniEmailEl = document.getElementById("account-mini-email");
-const btnLogoutMini = document.getElementById("btn-logout-mini");
-const entryGateEl = document.getElementById("entry-gate");
-const btnGateSignin = document.getElementById("btn-gate-signin");
-const btnGateSignup = document.getElementById("btn-gate-signup");
-const movimientosSectionEl = document.getElementById("movimientos-section");
-const toastEl = document.getElementById("toast");
-const syncBadgeEl = document.getElementById("sync-badge");
-const tabBtns = document.querySelectorAll(".tab-btn");
-const tabPanels = document.querySelectorAll("[data-panel]");
+import {
+  ACTIVE_TAB_KEY,
+  BOOTSTRAP_KEY,
+  CATEGORY_ICONS,
+  CATEGORIAS,
+  CURRENT_MONTH,
+  KEY,
+  MIGRATION_KEY,
+  QUICK_CATEGORY_DEFAULTS,
+  SUPABASE_ANON_KEY,
+  SUPABASE_URL
+} from "./js/config/constants.js";
+import {
+  accountMiniEl,
+  accountMiniEmailEl,
+  analysisPanelEl,
+  arsAmountEl,
+  arsConvertBoxEl,
+  arsRateEl,
+  arsResultEl,
+  authCardEl,
+  authStatusEl,
+  balanceEl,
+  balanceSparklineEl,
+  balanceTrendEl,
+  budgetAmountEl,
+  budgetCategoryEl,
+  budgetListEl,
+  budgetSummaryListEl,
+  btnBudgetSave,
+  btnCancelEdit,
+  btnClearMyData,
+  btnConvertArs,
+  btnDetailClear,
+  btnDownloadTemplate,
+  btnEmptyGoCargarEl,
+  btnEmptyStartEl,
+  btnExportExcel,
+  btnGateSignin,
+  btnGateSignup,
+  btnImportFile,
+  btnLogin,
+  btnLogout,
+  btnLogoutMini,
+  btnQuickComp,
+  btnQuickConfigReset,
+  btnQuickConfigSave,
+  btnQuickGas,
+  btnQuickSal,
+  btnQuickSuper,
+  btnRecover,
+  btnRefreshRate,
+  btnSavingsGoalClear,
+  btnSavingsGoalSave,
+  btnSignup,
+  btnSubmitTx,
+  calGridEl,
+  calNextEl,
+  calPrevEl,
+  calTitleEl,
+  cargarEmptyStateEl,
+  categoriaEl,
+  chartCategoryEl,
+  chartCategoryInsightEl,
+  chartCategoryLegendEl,
+  chartMonthlyEl,
+  chartMonthlyInsightEl,
+  chartMonthlyLegendEl,
+  clearMyDataStatusEl,
+  cloudIndicatorEl,
+  cmpBalanceEl,
+  cmpGastosEl,
+  cmpIngresosEl,
+  cmpTitleEl,
+  currentMonthLabelEl,
+  currencyEl,
+  dayTitleEl,
+  detailAvgEl,
+  detailCategoryEl,
+  detailCountEl,
+  detailFromEl,
+  detailSearchEl,
+  detailToEl,
+  detailTotalEl,
+  detailTypeEl,
+  emailEl,
+  emailHintEl,
+  entryGateEl,
+  filtroMes,
+  form,
+  gastosEl,
+  importFileEl,
+  importStatusEl,
+  ingresosEl,
+  lista,
+  movimientosSectionEl,
+  passwordEl,
+  passwordHintEl,
+  quickAmountEl,
+  quickButtons,
+  quickCat1El,
+  quickCat2El,
+  quickCat3El,
+  quickCat4El,
+  quickCategorySelects,
+  quickConfigStatusEl,
+  quickDetailEl,
+  rememberEl,
+  resumenContentCards,
+  resumenEmptyCardEl,
+  savingsGoalAmountEl,
+  savingsGoalStatusEl,
+  savingsGoalSummaryEl,
+  spendingAlertEl,
+  spreadPctEl,
+  syncBadgeEl,
+  syncIndicatorEl,
+  tabBtns,
+  tabPanels,
+  themeEl,
+  tipoEl,
+  toastEl,
+  topExpensesListEl,
+  trend3mEl,
+  txFormModeEl,
+  vacio,
+  yoyBalanceEl,
+  yoyCategoryEl,
+  yoyGastosEl,
+  yoyIngresosEl,
+  yoyMiniChartEl,
+  yoyMiniLegendEl,
+  yoyPeriodAEl,
+  yoyPeriodBEl,
+  yoySummaryEl,
+  yoyTitleEl
+} from "./js/core/dom.js";
+import {
+  clearSessionStorage,
+  loadArsRate,
+  loadBudgets,
+  loadCurrency,
+  loadQuickCategoriesRaw,
+  loadRememberMe,
+  loadSavingsGoal,
+  loadSessionData,
+  loadSpreadPct,
+  loadTheme,
+  loadTx,
+  readJsonStorage,
+  readNumericStorage,
+  saveArsRateValue,
+  saveBudgetsValue,
+  saveCurrencyValue,
+  saveQuickCategoriesValue,
+  saveRememberMe,
+  saveSavingsGoalValue,
+  saveSessionWithMode,
+  saveSpreadPctValue,
+  saveThemeValue,
+  saveTx,
+  writeJsonStorage
+} from "./js/services/storage.js";
 
 /**
  * @typedef {Object} Transaction
@@ -150,53 +172,12 @@ const tabPanels = document.querySelectorAll("[data-panel]");
  * @property {string} [detalle]
  */
 
-const CATEGORIAS = {
-  Gasto: [
-    "Alquiler",
-    "Hipoteca",
-    "Supermercado",
-    "Auto",
-    "Seguro",
-    "Compras",
-    "Ropa",
-    "Servicios",
-    "Viajes",
-    "Salidas",
-    "Gasolina",
-    "Salud",
-    "Transporte"
-  ],
-  Ingreso: ["Sueldo", "Depositos", "Alquiler Depto Argentina"]
-};
-
-const CATEGORY_ICONS = {
-  Alquiler: "\u{1F3E0}",
-  Hipoteca: "\u{1F3E1}",
-  Supermercado: "\u{1F6D2}",
-  Auto: "\u{1F697}",
-  Seguro: "\u{1F6E1}\uFE0F",
-  Compras: "\u{1F6CD}\uFE0F",
-  Ropa: "\u{1F455}",
-  Servicios: "\u{1F4A1}",
-  Viajes: "\u{2708}\uFE0F",
-  Salidas: "\u{1F37D}\uFE0F",
-  Gasolina: "\u{26FD}",
-  Salud: "\u{1F48A}",
-  Transporte: "\u{1F68C}",
-  Sueldo: "\u{1F4BC}",
-  Depositos: "\u{1F3E6}",
-  "Alquiler Depto Argentina": "\u{1F3D8}\uFE0F"
-};
-
-const QUICK_CATEGORY_DEFAULTS = ["Supermercado", "Compras", "Salidas", "Gasolina"];
-const quickButtons = [btnQuickSuper, btnQuickComp, btnQuickSal, btnQuickGas];
-const quickCategorySelects = [quickCat1El, quickCat2El, quickCat3El, quickCat4El];
-
 let currentUser = null;
 let txData = [];
 let hasUserChosenMonth = false;
-let sessionPersistMode = "local";
-let authSession = loadSession();
+const sessionData = loadSessionData();
+let sessionPersistMode = sessionData.persistMode;
+let authSession = sessionData.session;
 let selectedCurrency = loadCurrency();
 let budgets = loadBudgets();
 let arsRate = loadArsRate();
@@ -219,7 +200,8 @@ let savingsGoal = loadSavingsGoal();
 let syncBadgeTimer = null;
 let authActionInFlight = false;
 
-document.getElementById("fecha").valueAsDate = new Date();
+const fechaEl = document.getElementById("fecha");
+if (fechaEl) fechaEl.valueAsDate = new Date();
 
 function money(value) {
   const localeMap = {
@@ -487,147 +469,53 @@ function showToast(message) {
   }, 1500);
 }
 
-function readJsonStorage(store, key, fallback) {
-  try {
-    const raw = store.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function writeJsonStorage(store, key, value) {
-  store.setItem(key, JSON.stringify(value));
-}
-
-function readNumericStorage(key, fallback) {
-  const parsed = Number(localStorage.getItem(key));
-  return Number.isFinite(parsed) ? parsed : fallback;
-}
-
-function loadTx() {
-  return readJsonStorage(localStorage, KEY, []);
-}
-
-function saveTx(items) {
-  writeJsonStorage(localStorage, KEY, items);
-}
-
-function loadBudgets() {
-  return readJsonStorage(localStorage, BUDGETS_KEY, {});
-}
-
 function saveBudgets(data) {
   budgets = data;
-  writeJsonStorage(localStorage, BUDGETS_KEY, data);
-}
-
-function loadArsRate() {
-  const v = readNumericStorage(ARS_RATE_KEY, 1100);
-  return v > 0 ? v : 1100;
+  saveBudgetsValue(data);
 }
 
 function saveArsRate(v) {
   arsRate = v;
-  localStorage.setItem(ARS_RATE_KEY, String(v));
-}
-
-function loadSpreadPct() {
-  const v = readNumericStorage(SPREAD_PCT_KEY, 3);
-  return v >= 0 ? v : 3;
+  saveArsRateValue(v);
 }
 
 function saveSpreadPct(v) {
   spreadPct = v;
-  localStorage.setItem(SPREAD_PCT_KEY, String(v));
-}
-
-function loadTheme() {
-  const valid = new Set(["light", "dark"]);
-  const stored = localStorage.getItem(THEME_KEY) || "light";
-  return valid.has(stored) ? stored : "light";
+  saveSpreadPctValue(v);
 }
 
 function saveTheme(theme) {
   selectedTheme = theme;
-  localStorage.setItem(THEME_KEY, theme);
+  saveThemeValue(theme);
 }
 
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
 }
 
-function loadCurrency() {
-  const valid = new Set(["EUR", "ARS", "USD"]);
-  const stored = localStorage.getItem(CURRENCY_KEY) || "EUR";
-  return valid.has(stored) ? stored : "EUR";
-}
-
 function saveCurrency(currency) {
   selectedCurrency = currency;
-  localStorage.setItem(CURRENCY_KEY, currency);
-}
-
-function loadSavingsGoal() {
-  const v = readNumericStorage(SAVINGS_GOAL_KEY, 0);
-  return v > 0 ? v : 0;
+  saveCurrencyValue(currency);
 }
 
 function saveSavingsGoal(value) {
   savingsGoal = value > 0 ? value : 0;
-  if (savingsGoal > 0) localStorage.setItem(SAVINGS_GOAL_KEY, String(savingsGoal));
-  else localStorage.removeItem(SAVINGS_GOAL_KEY);
-}
-
-function loadQuickCategories() {
-  return sanitizeQuickCategories(readJsonStorage(localStorage, QUICK_CATS_KEY, null));
+  saveSavingsGoalValue(savingsGoal);
 }
 
 function saveQuickCategories(categories) {
   quickCategories = sanitizeQuickCategories(categories);
-  writeJsonStorage(localStorage, QUICK_CATS_KEY, quickCategories);
-}
-
-function loadSession() {
-  const local = readJsonStorage(localStorage, SESSION_KEY, null);
-  if (local?.access_token) {
-    sessionPersistMode = "local";
-    return local;
-  }
-  const session = readJsonStorage(sessionStorage, SESSION_KEY, null);
-  if (session?.access_token) {
-    sessionPersistMode = "session";
-    return session;
-  }
-  sessionPersistMode = "local";
-  return null;
-}
-
-function loadRememberMe() {
-  const stored = localStorage.getItem(REMEMBER_ME_KEY);
-  if (stored === null) return true;
-  return stored === "1";
-}
-
-function saveRememberMe(enabled) {
-  localStorage.setItem(REMEMBER_ME_KEY, enabled ? "1" : "0");
+  saveQuickCategoriesValue(quickCategories);
 }
 
 function saveSession(session) {
   authSession = session;
-  if (sessionPersistMode === "session") {
-    writeJsonStorage(sessionStorage, SESSION_KEY, session);
-    localStorage.removeItem(SESSION_KEY);
-  } else {
-    writeJsonStorage(localStorage, SESSION_KEY, session);
-    sessionStorage.removeItem(SESSION_KEY);
-  }
+  saveSessionWithMode(session, sessionPersistMode);
 }
 
 function clearSession() {
   authSession = null;
-  localStorage.removeItem(SESSION_KEY);
-  sessionStorage.removeItem(SESSION_KEY);
+  clearSessionStorage();
 }
 
 function applyRememberPreference() {
@@ -792,6 +680,10 @@ function sanitizeQuickCategories(value) {
     if (!unique.includes(x)) unique.push(x);
   });
   return unique.slice(0, 4);
+}
+
+function loadQuickCategories() {
+  return sanitizeQuickCategories(loadQuickCategoriesRaw());
 }
 
 function renderQuickButtons() {
