@@ -234,7 +234,6 @@ const state = createAppState({
   authActionInFlight: false
 });
 
-const fechaEl = document.getElementById("fecha");
 if (fechaEl) fechaEl.valueAsDate = new Date();
 
 function money(value) {
@@ -611,6 +610,7 @@ const {
   animatePrimarySave,
   convertArsToSelectedCurrency,
   fetchArsRateForSelectedCurrency,
+  flashSavedFeedback,
   resetTransactionForm,
   setEditingState,
   setupBudgetCategoryOptions,

@@ -176,10 +176,21 @@ export function createFormUi({
     setTimeout(() => target.classList.remove("saving"), 260);
   }
 
+  function flashSavedFeedback(label = "Guardado", target = btnSubmitTx) {
+    if (!target) return;
+    const originalText = target.dataset.originalText || target.textContent || "";
+    target.dataset.originalText = originalText;
+    target.textContent = label;
+    setTimeout(() => {
+      target.textContent = target.dataset.originalText || originalText;
+    }, 1100);
+  }
+
   return {
     animatePrimarySave,
     convertArsToSelectedCurrency,
     fetchArsRateForSelectedCurrency,
+    flashSavedFeedback,
     resetTransactionForm,
     setEditingState,
     setupBudgetCategoryOptions,
