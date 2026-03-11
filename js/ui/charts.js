@@ -207,17 +207,16 @@ export function createChartsUi({
     if (chartMonthlyInsightEl && last && prev) {
       const delta = last.gastos - prev.gastos;
       const pct = prev.gastos > 0 ? `${Math.abs((delta / prev.gastos) * 100).toFixed(1)}%` : "n/a";
-      const icon = delta > 0 ? "??" : delta < 0 ? "??" : "?";
       const trendWord = delta > 0 ? "subieron" : delta < 0 ? "bajaron" : "estables";
       let streakText = "";
       if (rows.length >= 3) {
         const g0 = rows[rows.length - 3].gastos;
         const g1 = rows[rows.length - 2].gastos;
         const g2 = rows[rows.length - 1].gastos;
-        if (g2 < g1 && g1 < g0) streakText = " ?? 2 meses seguidos bajando gastos.";
-        else if (g2 > g1 && g1 > g0) streakText = " ?? 2 meses seguidos subiendo gastos.";
+        if (g2 < g1 && g1 < g0) streakText = " 2 meses seguidos bajando gastos.";
+        else if (g2 > g1 && g1 > g0) streakText = " 2 meses seguidos subiendo gastos.";
       }
-      chartMonthlyInsightEl.textContent = `${icon} Gastos ${trendWord}: ${money(Math.abs(delta))} (${pct}) vs mes anterior.${streakText}`;
+      chartMonthlyInsightEl.textContent = `Gastos ${trendWord}: ${money(Math.abs(delta))} (${pct}) vs mes anterior.${streakText}`;
     }
 
     if (chartMonthlyLegendEl) {
@@ -309,7 +308,7 @@ export function createChartsUi({
 
     if (chartCategoryInsightEl) {
       const ratioText = `${Math.round((Number(share) / 100) * 10)}/10`;
-      chartCategoryInsightEl.textContent = `?? Mayor categoria: ${topCat} (${share}%). Peso: ${ratioText} del gasto mensual. Top 3: ${top3Share}%.`;
+      chartCategoryInsightEl.textContent = `Mayor categoria: ${topCat} (${share}%). Peso: ${ratioText} del gasto mensual. Top 3: ${top3Share}%.`;
     }
 
     if (chartCategoryLegendEl) {
@@ -425,8 +424,8 @@ export function createChartsUi({
       const endVal = points[points.length - 1] || 0;
       const prevVal = points[points.length - 2] || 0;
       const delta = endVal - prevVal;
-      const trendIcon = delta > 0 ? "??" : delta < 0 ? "??" : "?";
-      balanceTrendEl.textContent = `${trendIcon} Verde = ahorro, rojo = deficit. Ultimo balance: ${money(endVal)}`;
+      const trendPrefix = delta > 0 ? "Mejora." : delta < 0 ? "Caída." : "Sin cambios.";
+      balanceTrendEl.textContent = `${trendPrefix} Verde = ahorro, rojo = deficit. Ultimo balance: ${money(endVal)}`;
     }
   }
 
