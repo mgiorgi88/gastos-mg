@@ -66,6 +66,33 @@ Abrir en navegador:
 
 `http://localhost:8091/index.html?app=gastos-mg-personal`
 
+### Smoke test local
+
+Para validar que una refactorizacion no ha roto la app:
+
+```powershell
+cd "C:\Users\MARIANO\OneDrive\Scripts\Gastos MG"
+python tests\smoke_test.py
+```
+
+O en Windows:
+
+```powershell
+.\Run Smoke Test.bat
+```
+
+El smoke test levanta un servidor temporal y comprueba:
+
+- carga inicial de la app
+- navegacion entre pestanas
+- alta de un movimiento
+- edicion
+- duplicado
+- borrado
+- render del resumen
+
+Si falla, corta con un error indicando el paso roto.
+
 ### Uso en iPhone (como app)
 
 1. Abrir la URL publica en Safari.
