@@ -92,7 +92,7 @@ export function createRefreshController({
     yoyPeriodA = CURRENT_MONTH,
     yoyPeriodB = previousYearMonthKey(CURRENT_MONTH)
   ) {
-    renderCalendar(detailRows);
+    renderCalendar(all);
     renderSelectedDayRows(detailRows);
     drawMonthlyIncomeExpenseChart(all, monthKey);
     drawCategoryDonutChart(all, monthKey);
