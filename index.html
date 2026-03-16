@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon.svg">
-  <link rel="stylesheet" href="styles.css?v=171">
+  <link rel="stylesheet" href="styles.css?v=172">
 </head>
 <body class="app-boot">
   <section id="entry-gate" class="entry-gate" hidden>
@@ -85,7 +85,7 @@
         <p id="cloud-indicator" class="cloud-indicator">Nube: Local</p>
         <p id="sync-indicator" class="sync-indicator sync-local">Sincronizacion: Local</p>
       </div>
-      <p class="build-version build-version-options">Version visible: v171</p>
+      <p class="build-version build-version-options">Version visible: v172</p>
     </section>
 
     <section id="account-mini" class="card card-opciones card-opciones-compact card-opciones-account-mini" data-panel="opciones" hidden>
@@ -337,6 +337,7 @@
       <div class="top-expenses">
         <h3 class="muted top-expenses-title">Top 3 gastos del mes</h3>
         <ul id="top-expenses-list" class="top-expenses-list"></ul>
+        <p id="top-expenses-note" class="summary-note muted">Sin datos suficientes para destacar categorias.</p>
       </div>
       <p id="spending-alert" class="summary-alert summary-alert-neutral">Sin datos suficientes para comparar gasto mensual.</p>
       <div id="budget-summary-list" class="budget-summary-list"></div>
@@ -374,6 +375,7 @@
           <strong id="cmp-balance">-</strong>
         </article>
       </div>
+      <p id="cmp-summary" class="summary-note muted">Sin datos suficientes para comparar ambos meses.</p>
     </section>
 
     <section id="summary-yoy-card" class="card card-resumen" data-panel="resumen">
@@ -483,8 +485,8 @@
 
   <div id="toast" class="toast" hidden></div>
 
-  <script src="stats-utils.js?v=171"></script>
+  <script src="stats-utils.js?v=172"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script type="module" src="app.js?v=171"></script>
+  <script type="module" src="app.js?v=172"></script>
 </body>
 </html>

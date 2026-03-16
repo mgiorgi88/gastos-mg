@@ -9,6 +9,7 @@ export function createSummaryUi({
   cmpIngresosEl,
   cmpGastosEl,
   cmpBalanceEl,
+  cmpSummaryEl,
   spendingAlertEl,
   yoyCategoryEl,
   yoySummaryEl,
@@ -17,6 +18,7 @@ export function createSummaryUi({
   yoyGastosEl,
   yoyBalanceEl,
   topExpensesListEl,
+  topExpensesNoteEl,
   budgetSummaryListEl,
   budgetListEl,
   savingsGoalAmountEl,
@@ -68,6 +70,31 @@ export function createSummaryUi({
     const b = fmtDelta(curr.balance, prev.balance);
     cmpBalanceEl.className = b.cls;
     cmpBalanceEl.textContent = b.text;
+
+    if (!cmpSummaryEl) return;
+
+    const hasCurrData = curr.ingresos > 0 || curr.gastos > 0;
+    const hasPrevData = prev.ingresos > 0 || prev.gastos > 0;
+    if (!hasCurrData && !hasPrevData) {
+      cmpSummaryEl.textContent = "Sin movimientos en ninguno de los dos meses.";
+      return;
+    }
+
+    const deltas = [
+      { label: "ingresos", value: curr.ingresos - prev.ingresos },
+      { label: "gastos", value: curr.gastos - prev.gastos },
+      { label: "balance", value: curr.balance - prev.balance }
+    ].sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
+
+    const strongest = deltas[0];
+    if (!(Math.abs(strongest.value) > 0)) {
+      cmpSummaryEl.textContent = `Mes muy parecido a ${monthLabel(prevKey)}, sin cambios relevantes en ingresos, gastos ni balance.`;
+      return;
+    }
+
+    const label = strongest.label === "gastos" ? "el gasto" : strongest.label === "ingresos" ? "los ingresos" : "el balance";
+    const trendText = strongest.value > 0 ? "subieron" : "bajaron";
+    cmpSummaryEl.textContent = `La mayor variacion estuvo en ${label}: ${trendText} ${money(Math.abs(strongest.value))} frente a ${monthLabel(prevKey)}.`;
   }
 
   function renderLast3Months(all, selectedMonth = CURRENT_MONTH) {
@@ -133,19 +160,27 @@ export function createSummaryUi({
     const absPct = Math.abs(pct).toFixed(1);
     const avgLabel = money(avg);
 
+    const currentRows = all.filter((x) => x.tipo === "Gasto" && getMonth(x.fecha) === CURRENT_MONTH);
+    const byCategory = {};
+    currentRows.forEach((x) => {
+      byCategory[x.categoria] = (byCategory[x.categoria] || 0) + Number(x.monto || 0);
+    });
+    const topCategoryEntry = Object.entries(byCategory).sort((a, b) => b[1] - a[1])[0];
+    const topCategorySuffix = topCategoryEntry ? ` Lidera ${topCategoryEntry[0]} con ${money(topCategoryEntry[1])}.` : "";
+
     if (pct <= -10) {
       spendingAlertEl.classList.add("summary-alert-good");
-      spendingAlertEl.textContent = `Gasto del mes ${absPct}% por debajo del promedio 3M (${avgLabel}).`;
+      spendingAlertEl.textContent = `Gasto del mes ${absPct}% por debajo del promedio 3M (${avgLabel}).${topCategorySuffix}`;
       return;
     }
     if (pct >= 10) {
       spendingAlertEl.classList.add("summary-alert-bad");
-      spendingAlertEl.textContent = `Alerta: gasto del mes ${absPct}% por encima del promedio 3M (${avgLabel}).`;
+      spendingAlertEl.textContent = `Alerta: gasto del mes ${absPct}% por encima del promedio 3M (${avgLabel}).${topCategorySuffix}`;
       return;
     }
 
     spendingAlertEl.classList.add("summary-alert-warn");
-    spendingAlertEl.textContent = `Gasto del mes en linea con el promedio 3M (${avgLabel}).`;
+    spendingAlertEl.textContent = `Gasto del mes en linea con el promedio 3M (${avgLabel}).${topCategorySuffix}`;
   }
 
   function renderYearOverYearCategory(all, periodA = CURRENT_MONTH, periodB = previousYearMonthKey(CURRENT_MONTH)) {
@@ -237,7 +272,7 @@ export function createSummaryUi({
       return `
         <li class="budget-item">
           <span>${cat}</span>
-          <small>Presupuesto: ${money(budget)} · Gastado: ${money(spent)}</small>
+          <small>Presupuesto: ${money(budget)} - Gastado: ${money(spent)}</small>
           <strong class="${statusClass}">${diff >= 0 ? "Restante" : "Exceso"}: ${money(Math.abs(diff))}</strong>
         </li>
       `;
@@ -336,7 +371,7 @@ export function createSummaryUi({
 
     savingsGoalSummaryEl.innerHTML = `
       <h3>Meta de ahorro mensual</h3>
-      <p>Meta: ${money(goal)} · Actual: ${money(balanceValue)} (${pct.toFixed(1)}%)</p>
+      <p>Meta: ${money(goal)} - Actual: ${money(balanceValue)} (${pct.toFixed(1)}%)</p>
       <div class="savings-goal-progress">
         <div class="savings-goal-progress-bar" style="width:${progress}%;"></div>
       </div>
@@ -409,6 +444,7 @@ export function createSummaryUi({
 
     if (top.length === 0) {
       topExpensesListEl.innerHTML = '<li class="muted">Sin gastos cargados este mes.</li>';
+      if (topExpensesNoteEl) topExpensesNoteEl.textContent = "Aun no hay categorias para detectar concentracion de gasto.";
       return;
     }
 
@@ -426,6 +462,12 @@ export function createSummaryUi({
         `;
       })
       .join("");
+
+    if (topExpensesNoteEl) {
+      const topShare = total > 0 ? (top.reduce((acc, [, val]) => acc + val, 0) / total) * 100 : 0;
+      const [topCategory, topValue] = top[0];
+      topExpensesNoteEl.textContent = `${topCategory} es la categoria que mas pesa este mes con ${money(topValue)}. El top 3 concentra ${topShare.toFixed(0)}% del gasto total.`;
+    }
   }
 
   return {
@@ -447,3 +489,4 @@ export function createSummaryUi({
     updateMonthlySummaryUI
   };
 }
+

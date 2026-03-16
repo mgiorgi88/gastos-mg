@@ -1132,6 +1132,12 @@ button:focus {
   gap: 6px;
 }
 
+.summary-note {
+  margin: 12px 2px 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
 .top-expenses-list li {
   font-size: 0.92rem;
 }
