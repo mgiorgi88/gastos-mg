@@ -554,6 +554,30 @@ body.app-boot #sync-badge {
   gap: 12px;
 }
 
+.panel-group-copy {
+  max-width: 60ch;
+}
+
+.card-opciones .muted {
+  font-size: 0.92rem;
+}
+
+.card-opciones .btn-primary {
+  box-shadow: 0 8px 18px rgba(59, 130, 246, 0.2);
+}
+
+.card-opciones .btn-tertiary {
+  background: rgba(148, 163, 184, 0.08);
+}
+
+#sync-card .build-version-options {
+  margin-top: 12px;
+}
+
+#options-danger-card .auth-actions {
+  border-top-color: rgba(239, 68, 68, 0.14);
+}
+
 .card h2 {
   margin-top: 0;
   margin-bottom: var(--space-sm);
