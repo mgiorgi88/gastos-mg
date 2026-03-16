@@ -615,6 +615,8 @@ const calculatorTargetEl = document.getElementById("calculator-target");
 const calculatorDisplayEl = document.getElementById("calculator-display");
 const calculatorLiveTotalEl = document.getElementById("calculator-live-total");
 const calculatorCloseBtn = document.getElementById("calculator-close");
+const quickAmountCalculatorSlotEl = document.getElementById("quick-amount-calculator-slot");
+const montoCalculatorSlotEl = document.getElementById("monto-calculator-slot");
 let activeCalculatorInput = null;
 const mobileUserAgent =
   navigator.userAgentData?.mobile ||
@@ -658,22 +660,32 @@ function hideCalculator() {
   activeCalculatorInput = null;
 }
 
+function resolveCalculatorSlot(element) {
+  if (element === quickAmountEl) return quickAmountCalculatorSlotEl;
+  if (element === montoEl) return montoCalculatorSlotEl;
+  return null;
+}
+
 function showCalculatorFor(element, options = {}) {
   if (!calculatorKeypadEl || !calculatorDisplayEl || !element) return;
   const { focusInput = true } = options;
   if (isTouchCalculatorDevice && document.activeElement instanceof HTMLElement) {
     document.activeElement.blur();
   }
+  if (isTouchCalculatorDevice) {
+    const slotEl = resolveCalculatorSlot(element);
+    if (slotEl && calculatorKeypadEl.parentElement !== slotEl) {
+      slotEl.appendChild(calculatorKeypadEl);
+    }
+  }
   activeCalculatorInput = element;
   calculatorKeypadEl.hidden = false;
   calculatorKeypadEl.setAttribute("aria-hidden", "false");
   updateCalculatorScreen();
   if (focusInput) element.focus();
-}
-
-function applyTouchCalculatorLayout() {
-  if (!calculatorKeypadEl || !isTouchCalculatorDevice) return;
-  calculatorKeypadEl.classList.add("touch-inline");
+  if (isTouchCalculatorDevice) {
+    calculatorKeypadEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
 }
 
 function applyCalcKey(key) {
@@ -687,6 +699,11 @@ function applyCalcKey(key) {
 
   if (key === "backspace") {
     setCalculatorValue(current.slice(0, -1));
+    return;
+  }
+
+  if (key === "close") {
+    hideCalculator();
     return;
   }
 
@@ -721,7 +738,9 @@ function bindCalculatorTrigger(inputEl) {
     inputEl.setAttribute("inputmode", "none");
   }
 
-  inputEl.addEventListener("focus", () => showCalculatorFor(inputEl));
+  if (!isTouchCalculatorDevice) {
+    inputEl.addEventListener("focus", () => showCalculatorFor(inputEl));
+  }
   inputEl.addEventListener("click", (event) => {
     if (isTouchCalculatorDevice) event.preventDefault();
     showCalculatorFor(inputEl, { focusInput: !isTouchCalculatorDevice });
@@ -742,18 +761,8 @@ function bindCalculatorTrigger(inputEl) {
   });
 }
 
-applyTouchCalculatorLayout();
 bindCalculatorTrigger(montoEl);
 bindCalculatorTrigger(quickAmountEl);
-
-document.querySelectorAll("[data-calc-target]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const targetId = button.getAttribute("data-calc-target");
-    const inputEl = targetId ? document.getElementById(targetId) : null;
-    if (!inputEl) return;
-    showCalculatorFor(inputEl, { focusInput: false });
-  });
-});
 
 if (calculatorCloseBtn) calculatorCloseBtn.addEventListener("click", hideCalculator);
 if (calculatorKeypadEl) {
@@ -775,8 +784,7 @@ document.addEventListener("click", (event) => {
   }
   const isInputTarget = target === montoEl || target === quickAmountEl;
   const isInputLabel = Boolean(montoEl?.closest("label")?.contains(target) || quickAmountEl?.closest("label")?.contains(target));
-  const isCalcLauncher = Boolean(target.closest("[data-calc-target]"));
-  if (isInputTarget || isInputLabel || isCalcLauncher || calculatorKeypadEl.contains(target)) {
+  if (isInputTarget || isInputLabel || calculatorKeypadEl.contains(target)) {
     return;
   }
   hideCalculator();
@@ -1327,9 +1335,5 @@ bindAppEvents({
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
 })();
-
-
-
-
 
 

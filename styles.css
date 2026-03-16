@@ -270,12 +270,14 @@ body {
 
 .calculator-paper {
   width: min(420px, 100%);
+  max-height: calc(100vh - 32px);
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 16px;
-  padding: 12px;
+  padding: 10px;
   display: grid;
-  gap: 8px;
+  gap: 6px;
+  overflow: auto;
   box-shadow: 0 15px 30px rgba(0,0,0,0.3);
 }
 
@@ -315,10 +317,15 @@ body {
   color: #b91c1c;
 }
 
-.calculator-row {
+.calculator-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
+  gap: 6px;
+}
+
+.calculator-slot {
+  display: block;
+  margin-top: 8px;
 }
 
 .calc-btn {
@@ -326,8 +333,9 @@ body {
   border-radius: 10px;
   background: var(--soft);
   color: var(--ink);
-  font-size: 1.1rem;
-  padding: 10px 0;
+  font-size: 1rem;
+  min-height: 44px;
+  padding: 0;
   cursor: pointer;
 }
 
@@ -340,38 +348,19 @@ body {
   color: var(--on-primary);
 }
 
-.calc-wide {
-  grid-column: span 2;
-}
-
-.calc-close {
-  margin-top: 4px;
-}
-
 :root[data-theme="dark"] .calculator-display-error,
 :root[data-theme="dark"] .calculator-live-total-error {
   color: #fda4af;
 }
 
-.calc-open-btn {
-  margin-top: 8px;
-  width: fit-content;
-  min-width: 72px;
-}
+@media (max-height: 760px) {
+  .calculator-paper {
+    max-height: calc(100vh - 20px);
+  }
 
-.calculator-keypad.touch-inline {
-  position: sticky;
-  inset: auto;
-  bottom: 10px;
-  z-index: 40;
-  background: transparent;
-  padding: 10px 0 0;
-  display: block;
-}
-
-.calculator-keypad.touch-inline .calculator-paper {
-  width: 100%;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  .calc-btn {
+    min-height: 40px;
+  }
 }
 
 
