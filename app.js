@@ -234,7 +234,8 @@ const state = createAppState({
   savingsGoal: loadSavingsGoal(),
   syncBadgeTimer: null,
   authActionInFlight: false,
-  appReady: false
+  appReady: false,
+  syncUiReady: false
 });
 
 if (fechaEl) fechaEl.valueAsDate = new Date();
@@ -336,7 +337,7 @@ function setStatus(msg, tone = "info") {
 }
 
 function showSyncBadge(message, tone = "ok", autoHideMs = 0) {
-  if (!state.appReady) return;
+  if (!state.appReady || !state.syncUiReady) return;
   state.syncBadgeTimer = showSyncBadgeState(syncBadgeEl, message, tone, autoHideMs, state.syncBadgeTimer);
 }
 
@@ -346,7 +347,9 @@ function hideSyncBadge() {
 
 function refreshSyncIndicator() {
   if (!syncIndicatorEl) return;
-  if (!state.appReady) {
+  if (!state.appReady || !state.syncUiReady) {
+    syncIndicatorEl.classList.remove("sync-local", "sync-online", "sync-syncing", "sync-error");
+    syncIndicatorEl.textContent = "";
     hideSyncBadge();
     return;
   }
@@ -1190,9 +1193,9 @@ bindAppEvents({
     updateArsConvertVisibility();
     refresh();
     state.appReady = true;
-    refreshSyncIndicator();
     document.body.classList.remove("app-boot");
     await initAuth();
+    state.syncUiReady = true;
     updateEntryGate();
     setActiveTab("cargar");
     refresh();
