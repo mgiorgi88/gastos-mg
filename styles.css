@@ -1568,7 +1568,7 @@ button:focus {
 
 .quick-actions {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: var(--space-xs);
   margin-top: var(--space-sm);
 }
@@ -1594,6 +1594,7 @@ button:focus {
   transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   font-weight: 600;
   text-align: center;
+  line-height: 1.2;
 }
 
 .category-btn:hover {
@@ -1792,10 +1793,6 @@ details summary {
 @media (max-width: 600px) {
   .app {
     padding-bottom: 120px;
-  }
-
-  .quick-actions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .entry-card {
