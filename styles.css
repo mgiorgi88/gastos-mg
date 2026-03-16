@@ -1059,11 +1059,15 @@ button:focus {
 }
 
 .stats article {
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 18px;
-  padding: 16px;
-  background: rgba(248, 250, 252, 0.9);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 20px;
+  padding: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 250, 253, 0.92)),
+    var(--soft);
+  box-shadow:
+    0 12px 24px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 .stats span {
@@ -1078,20 +1082,24 @@ button:focus {
 .stats strong {
   margin-top: 10px;
   display: block;
-  font-size: clamp(1.35rem, 2.5vw, 2rem);
-  line-height: 1.05;
+  font-size: clamp(1.45rem, 2.7vw, 2.15rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
 }
 
 .top-expenses {
-  margin-top: var(--space-sm);
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  border-radius: 16px;
-  background: rgba(248, 250, 252, 0.85);
-  padding: 14px 16px;
+  margin-top: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 250, 253, 0.9)),
+    var(--soft);
+  padding: 16px 18px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.035);
 }
 
 .top-expenses-title {
-  margin: 0 0 var(--space-xs);
+  margin: 0 0 10px;
 }
 
 .top-expenses-list {
@@ -1109,10 +1117,10 @@ button:focus {
 .top-expenses-item {
   width: 100%;
   margin-top: 0;
-  padding: 7px 8px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: transparent;
+  padding: 10px 12px;
+  border: 1px solid rgba(221, 229, 240, 0.85);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.8);
   color: inherit;
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -1124,7 +1132,7 @@ button:focus {
 
 .top-expenses-item:hover {
   border-color: var(--primary);
-  background: rgba(59, 130, 246, 0.08);
+  background: rgba(47, 111, 237, 0.06);
   transform: translateY(-1px);
 }
 
@@ -1226,15 +1234,18 @@ button:focus {
 }
 
 .yoy-compare {
-  margin-top: var(--space-sm);
-  padding: var(--space-sm);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--soft);
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid rgba(221, 229, 240, 0.88);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 250, 253, 0.9)),
+    var(--soft);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.03);
 }
 
 .yoy-compare p {
-  margin: 8px 0 0;
+  margin: 10px 0 0;
 }
 
 .yoy-mini-chart {
@@ -1251,12 +1262,15 @@ button:focus {
 }
 
 .budget-summary-item {
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--soft);
-  padding: 9px 10px;
+  border: 1px solid rgba(221, 229, 240, 0.88);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(247, 250, 253, 0.9)),
+    var(--soft);
+  padding: 12px 14px;
   cursor: pointer;
   text-align: left;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.03);
 }
 
 .budget-summary-item-head {
@@ -1299,12 +1313,15 @@ button:focus {
 
 .savings-goal-summary {
   margin-top: var(--space-sm);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--soft);
-  padding: 10px 12px;
+  border: 1px solid rgba(221, 229, 240, 0.88);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 250, 253, 0.9)),
+    var(--soft);
+  padding: 14px 16px;
   display: grid;
-  gap: 8px;
+  gap: 10px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.035);
 }
 
 .savings-goal-summary h3 {
@@ -1352,18 +1369,54 @@ button:focus {
 .chart-wrap {
   margin: 12px auto 0;
   border: 1px solid rgba(148, 163, 184, 0.16);
-  border-radius: 18px;
-  background: rgba(248, 250, 252, 0.78);
-  padding: 10px;
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 250, 253, 0.9)),
+    var(--soft);
+  padding: 14px 14px 12px;
   width: min(100%, 740px);
   aspect-ratio: 16 / 8;
   max-height: 300px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.035);
 }
 
 .chart-wrap canvas {
   width: 100%;
   height: 100%;
   display: block;
+}
+
+#summary-current-card {
+  overflow: hidden;
+}
+
+#summary-trends-card,
+#summary-month-compare-card,
+#summary-yoy-card {
+  position: relative;
+}
+
+#summary-trends-card::before,
+#summary-month-compare-card::before,
+#summary-yoy-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 52px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), rgba(47, 111, 237, 0));
+  opacity: 0.8;
+}
+
+#summary-trends-card > .grid,
+#summary-yoy-card > .grid {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(221, 229, 240, 0.85);
+  border-radius: 16px;
+  background: rgba(247, 250, 253, 0.72);
 }
 
 .donut-wrap {
@@ -1439,12 +1492,15 @@ button:focus {
 }
 
 .trend-item {
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  border-radius: 18px;
-  padding: 16px;
-  background: rgba(248, 250, 252, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 20px;
+  padding: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 250, 253, 0.92)),
+    var(--soft);
   display: grid;
-  gap: 6px;
+  gap: 7px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.035);
 }
 
 .trend-item span {
@@ -2060,10 +2116,22 @@ button:focus {
 
 :root[data-theme="dark"] .stats article,
 :root[data-theme="dark"] .top-expenses,
+:root[data-theme="dark"] .yoy-compare,
 :root[data-theme="dark"] .chart-wrap,
 :root[data-theme="dark"] .trend-item {
   background: rgba(15, 23, 42, 0.48);
   border-color: rgba(71, 85, 105, 0.42);
+}
+
+:root[data-theme="dark"] #summary-trends-card > .grid,
+:root[data-theme="dark"] #summary-yoy-card > .grid,
+:root[data-theme="dark"] .budget-summary-item,
+:root[data-theme="dark"] .savings-goal-summary {
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.54)),
+    var(--soft);
+  border-color: rgba(71, 85, 105, 0.42);
+  box-shadow: none;
 }
 
 :root[data-theme="dark"] .calendar-panel,
