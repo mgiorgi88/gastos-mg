@@ -256,6 +256,9 @@ function getCurrentTab() {
 }
 
 function setActiveTab(tab) {
+  if (tab !== "cargar") {
+    hideCalculator();
+  }
   if (tab !== "mas" && state.topExpenseTempFilterActive) {
     state.topExpenseTempFilterActive = false;
     state.showAllFilteredRows = false;
@@ -647,7 +650,6 @@ function evaluateMathExpression(value) {
 }
 
 function hideCalculator() {
-  if (isTouchCalculatorDevice) return;
   if (!calculatorKeypadEl) return;
   calculatorKeypadEl.hidden = true;
   calculatorKeypadEl.setAttribute("aria-hidden", "true");
@@ -665,6 +667,11 @@ function showCalculatorFor(element, options = {}) {
   calculatorKeypadEl.setAttribute("aria-hidden", "false");
   updateCalculatorScreen();
   if (focusInput) element.focus();
+}
+
+function applyTouchCalculatorLayout() {
+  if (!calculatorKeypadEl || !isTouchCalculatorDevice) return;
+  calculatorKeypadEl.classList.add("touch-inline");
 }
 
 function applyCalcKey(key) {
@@ -733,6 +740,7 @@ function bindCalculatorTrigger(inputEl) {
   });
 }
 
+applyTouchCalculatorLayout();
 bindCalculatorTrigger(montoEl);
 bindCalculatorTrigger(quickAmountEl);
 
@@ -757,7 +765,6 @@ if (calculatorKeypadEl) {
 }
 
 document.addEventListener("click", (event) => {
-  if (isTouchCalculatorDevice) return;
   if (!calculatorKeypadEl || !activeCalculatorInput) return;
   const target = event.target;
   if (!(target instanceof HTMLElement)) {
@@ -772,14 +779,6 @@ document.addEventListener("click", (event) => {
   }
   hideCalculator();
 });
-
-if (isTouchCalculatorDevice && calculatorKeypadEl) {
-  calculatorKeypadEl.hidden = false;
-  calculatorKeypadEl.setAttribute("aria-hidden", "false");
-  calculatorKeypadEl.classList.add("touch-inline");
-  activeCalculatorInput = montoEl || quickAmountEl;
-  updateCalculatorScreen();
-}
 
 const {
   animatePrimarySave,
@@ -1326,8 +1325,6 @@ bindAppEvents({
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
 })();
-
-
 
 
 
