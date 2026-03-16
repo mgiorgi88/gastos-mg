@@ -5,6 +5,10 @@ export function createSummaryUi({
   ingresosEl,
   gastosEl,
   balanceEl,
+  cmpTitleEl,
+  cmpIngresosEl,
+  cmpGastosEl,
+  cmpBalanceEl,
   spendingAlertEl,
   yoyCategoryEl,
   yoySummaryEl,
@@ -40,7 +44,7 @@ export function createSummaryUi({
   }
 
   function renderMonthlyComparison(all, selectedMonth) {
-    if (!yoyTitleEl || !yoyIngresosEl || !yoyGastosEl || !yoyBalanceEl) return;
+    if (!cmpTitleEl || !cmpIngresosEl || !cmpGastosEl || !cmpBalanceEl) return;
     const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
     const prevKey = (() => {
       const [y, m] = monthKey.split("-").map(Number);
@@ -51,19 +55,19 @@ export function createSummaryUi({
     const curr = StatsUtils.monthTotals(all, monthKey, statsByMonth);
     const prev = StatsUtils.monthTotals(all, prevKey, statsByMonth);
 
-    if (yoyTitleEl) yoyTitleEl.textContent = `${monthKey} vs ${prevKey}`;
+    cmpTitleEl.textContent = `${monthKey} vs ${prevKey}`;
 
     const i = fmtDelta(curr.ingresos, prev.ingresos);
-    yoyIngresosEl.className = i.cls;
-    yoyIngresosEl.textContent = i.text;
+    cmpIngresosEl.className = i.cls;
+    cmpIngresosEl.textContent = i.text;
 
     const g = fmtDeltaExpense(curr.gastos, prev.gastos);
-    yoyGastosEl.className = g.cls;
-    yoyGastosEl.textContent = g.text;
+    cmpGastosEl.className = g.cls;
+    cmpGastosEl.textContent = g.text;
 
     const b = fmtDelta(curr.balance, prev.balance);
-    yoyBalanceEl.className = b.cls;
-    yoyBalanceEl.textContent = b.text;
+    cmpBalanceEl.className = b.cls;
+    cmpBalanceEl.textContent = b.text;
   }
 
   function renderLast3Months(all, selectedMonth = CURRENT_MONTH) {
