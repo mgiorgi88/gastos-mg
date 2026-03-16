@@ -397,10 +397,10 @@ body.app-boot #sync-badge {
 }
 
 #options-budget-card details {
-  padding: 6px;
-  border: 1px solid rgba(148, 163, 184, 0.14);
-  border-radius: 18px;
-  background: rgba(248, 250, 252, 0.6);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 #options-budget-card .budget-list {
@@ -1570,11 +1570,12 @@ button:focus {
   box-shadow: inset 0 0 0 1px #fbbf24;
 }
 
-.calendar-marks {
+.calendar-dots {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 4px;
+  min-height: 10px;
 }
 
 .dot {
@@ -1582,6 +1583,7 @@ button:focus {
   width: 8px;
   height: 8px;
   border-radius: 999px;
+  flex: 0 0 auto;
 }
 
 .dot.income {
@@ -1954,7 +1956,6 @@ button:focus {
 :root[data-theme="dark"] #options-planning-card .grid,
 :root[data-theme="dark"] #options-import-card .grid,
 :root[data-theme="dark"] #options-preferences-card .options-inline-grid,
-:root[data-theme="dark"] #options-budget-card details,
 :root[data-theme="dark"] .cloud-indicator,
 :root[data-theme="dark"] .sync-indicator {
   background: rgba(15, 23, 42, 0.62);
@@ -2048,8 +2049,7 @@ details summary {
 }
 
 details[open] summary {
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
+  margin-bottom: 12px;
 }
 
 details > .grid,
