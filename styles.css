@@ -421,15 +421,21 @@ body.app-boot #sync-badge {
   padding: 8px 10px;
 }
 
-#auth-card .grid,
-#options-quick-card .grid,
-#options-planning-card .grid,
-#options-import-card .grid,
-#options-preferences-card .options-inline-grid {
+#auth-card .grid {
   padding: 14px;
   border: 1px solid rgba(148, 163, 184, 0.14);
   border-radius: 16px;
   background: rgba(248, 250, 252, 0.72);
+}
+
+#options-quick-card .grid,
+#options-planning-card .grid,
+#options-import-card .grid,
+#options-preferences-card .options-inline-grid {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 #options-budget-card details {
@@ -1450,10 +1456,10 @@ button:focus {
 #summary-trends-card > .grid,
 #summary-yoy-card > .grid {
   margin-top: 14px;
-  padding: 14px;
-  border: 1px solid rgba(221, 229, 240, 0.85);
-  border-radius: 16px;
-  background: rgba(247, 250, 253, 0.72);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .donut-wrap {
@@ -2156,10 +2162,6 @@ button:focus {
 }
 
 :root[data-theme="dark"] #auth-card .grid,
-:root[data-theme="dark"] #options-quick-card .grid,
-:root[data-theme="dark"] #options-planning-card .grid,
-:root[data-theme="dark"] #options-import-card .grid,
-:root[data-theme="dark"] #options-preferences-card .options-inline-grid,
 :root[data-theme="dark"] .cloud-indicator,
 :root[data-theme="dark"] .sync-indicator {
   background: rgba(15, 23, 42, 0.62);
