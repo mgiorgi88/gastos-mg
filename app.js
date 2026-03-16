@@ -204,6 +204,8 @@ import { buildInitialQuickCategories, createAppState } from "./js/core/state.js"
  */
 
 const sessionData = loadSessionData();
+const quickAmountPlusBtn = document.getElementById("quick-amount-plus");
+const montoPlusBtn = document.getElementById("monto-plus");
 const state = createAppState({
   currentUser: null,
   txData: [],
@@ -236,6 +238,38 @@ const state = createAppState({
 });
 
 if (fechaEl) fechaEl.valueAsDate = new Date();
+
+function insertTextAtCursor(inputEl, text) {
+  if (!(inputEl instanceof HTMLInputElement)) return;
+  const currentValue = String(inputEl.value || "");
+  const selectionStart = inputEl.selectionStart ?? currentValue.length;
+  const selectionEnd = inputEl.selectionEnd ?? currentValue.length;
+  inputEl.value = `${currentValue.slice(0, selectionStart)}${text}${currentValue.slice(selectionEnd)}`;
+  const nextCursor = selectionStart + text.length;
+  inputEl.setSelectionRange(nextCursor, nextCursor);
+  inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+  inputEl.focus();
+}
+
+function bindAmountPlusButton(buttonEl, inputEl) {
+  if (!(buttonEl instanceof HTMLButtonElement) || !(inputEl instanceof HTMLInputElement)) return;
+
+  const preserveFocus = (event) => {
+    event.preventDefault();
+    inputEl.focus();
+  };
+
+  buttonEl.addEventListener("pointerdown", preserveFocus);
+  buttonEl.addEventListener("mousedown", preserveFocus);
+  buttonEl.addEventListener("touchstart", preserveFocus, { passive: false });
+  buttonEl.addEventListener("click", (event) => {
+    event.preventDefault();
+    insertTextAtCursor(inputEl, "+");
+  });
+}
+
+bindAmountPlusButton(quickAmountPlusBtn, quickAmountEl);
+bindAmountPlusButton(montoPlusBtn, montoEl);
 
 function money(value) {
   return formatMoney(value, state.selectedCurrency);

@@ -220,7 +220,10 @@
       <h2>Carga rapida</h2>
       <div class="grid">
         <label>Importe rapido
-          <input type="text" id="quick-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00 o 12.50+8.20">
+          <div class="amount-input-row">
+            <input type="text" id="quick-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00 o 12.50+8.20">
+            <button type="button" id="quick-amount-plus" class="amount-plus-btn" aria-label="Agregar signo mas al importe rapido">+</button>
+          </div>
           <small class="muted">Puedes escribir una suma como 12.50+8.20.</small>
         </label>
         <label>Detalle rapido (opcional)
@@ -249,7 +252,10 @@
             </select>
           </label>
           <label>Monto
-            <input type="text" id="monto" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00 o 45+18.90" required>
+            <div class="amount-input-row">
+              <input type="text" id="monto" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00 o 45+18.90" required>
+              <button type="button" id="monto-plus" class="amount-plus-btn" aria-label="Agregar signo mas al monto">+</button>
+            </div>
             <small class="muted">Puedes escribir una suma como 45+18.90.</small>
           </label>
           <label>Categoria

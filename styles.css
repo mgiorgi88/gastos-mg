@@ -482,6 +482,17 @@ label {
   color: var(--muted);
 }
 
+.amount-input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.amount-input-row input {
+  width: 100%;
+}
+
 .field-hint {
   min-height: 16px;
   font-size: 0.8rem;
@@ -625,6 +636,35 @@ button {
 
 button:hover {
   transform: translateY(-1px);
+}
+
+button.amount-plus-btn {
+  display: none;
+  margin-top: 0;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 10px;
+  background: var(--soft);
+  color: var(--primary);
+  border: 1px solid var(--line);
+  box-shadow: none;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+button.amount-plus-btn:hover {
+  transform: none;
+  background: rgba(59, 130, 246, 0.08);
+}
+
+@media (pointer: coarse) {
+  button.amount-plus-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 button.is-loading {
