@@ -191,6 +191,7 @@ import {
   toDateKeyLocal
 } from "./js/utils/date.js";
 import { escapeHtml, formatMoney } from "./js/utils/formatters.js";
+import { parseDecimalExpression } from "./js/utils/number-input.js";
 import { buildInitialQuickCategories, createAppState } from "./js/core/state.js";
 
 /**
@@ -605,6 +606,180 @@ const {
   showToast,
   escapeHtml
 });
+
+const calculatorKeypadEl = document.getElementById("calculator-keypad");
+const calculatorTargetEl = document.getElementById("calculator-target");
+const calculatorDisplayEl = document.getElementById("calculator-display");
+const calculatorLiveTotalEl = document.getElementById("calculator-live-total");
+const calculatorCloseBtn = document.getElementById("calculator-close");
+let activeCalculatorInput = null;
+const isTouchCalculatorDevice =
+  "ontouchstart" in window ||
+  navigator.maxTouchPoints > 0 ||
+  window.matchMedia("(pointer: coarse)").matches;
+
+function updateCalculatorScreen() {
+  if (!calculatorDisplayEl || !calculatorLiveTotalEl || !activeCalculatorInput) return;
+  const raw = String(activeCalculatorInput.value || "").trim();
+  if (calculatorTargetEl) {
+    calculatorTargetEl.textContent =
+      activeCalculatorInput === quickAmountEl ? "Calculadora de importe rapido" : "Calculadora de monto";
+  }
+  calculatorDisplayEl.textContent = raw || "0";
+  calculatorDisplayEl.classList.remove("calculator-display-error");
+  calculatorLiveTotalEl.classList.remove("calculator-live-total-error");
+  if (!raw) {
+    calculatorLiveTotalEl.textContent = "Total: 0.00";
+    return;
+  }
+  const result = evaluateMathExpression(raw);
+  if (Number.isFinite(result)) {
+    calculatorLiveTotalEl.textContent = `Total: ${result.toFixed(2)}`;
+    return;
+  }
+  calculatorDisplayEl.classList.add("calculator-display-error");
+  calculatorLiveTotalEl.classList.add("calculator-live-total-error");
+  calculatorLiveTotalEl.textContent = "Total: expresion invalida";
+}
+
+function evaluateMathExpression(value) {
+  return parseDecimalExpression(value);
+}
+
+function hideCalculator() {
+  if (isTouchCalculatorDevice) return;
+  if (!calculatorKeypadEl) return;
+  calculatorKeypadEl.hidden = true;
+  calculatorKeypadEl.setAttribute("aria-hidden", "true");
+  activeCalculatorInput = null;
+}
+
+function showCalculatorFor(element, options = {}) {
+  if (!calculatorKeypadEl || !calculatorDisplayEl || !element) return;
+  const { focusInput = true } = options;
+  if (isTouchCalculatorDevice && document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
+  activeCalculatorInput = element;
+  calculatorKeypadEl.hidden = false;
+  calculatorKeypadEl.setAttribute("aria-hidden", "false");
+  updateCalculatorScreen();
+  if (focusInput) element.focus();
+}
+
+function applyCalcKey(key) {
+  if (!activeCalculatorInput) return;
+  const current = String(activeCalculatorInput.value || "");
+
+  if (key === "C") {
+    setCalculatorValue("");
+    return;
+  }
+
+  if (key === "backspace") {
+    setCalculatorValue(current.slice(0, -1));
+    return;
+  }
+
+  if (key === "⌫") {
+    setCalculatorValue(current.slice(0, -1));
+    return;
+  }
+
+  if (key === "=") {
+    const result = evaluateMathExpression(current);
+    if (Number.isFinite(result)) {
+      setCalculatorValue(result.toFixed(2).replace(/\.00$/, ""));
+    }
+    return;
+  }
+
+  setCalculatorValue(current + key);
+}
+
+function setCalculatorValue(value) {
+  if (!activeCalculatorInput) return;
+  activeCalculatorInput.value = value;
+  updateCalculatorScreen();
+}
+
+function bindCalculatorTrigger(inputEl) {
+  if (!inputEl) return;
+
+  if (isTouchCalculatorDevice) {
+    inputEl.readOnly = true;
+    inputEl.setAttribute("readonly", "readonly");
+    inputEl.setAttribute("inputmode", "none");
+  }
+
+  inputEl.addEventListener("focus", () => showCalculatorFor(inputEl));
+  inputEl.addEventListener("click", (event) => {
+    if (isTouchCalculatorDevice) event.preventDefault();
+    showCalculatorFor(inputEl, { focusInput: !isTouchCalculatorDevice });
+  });
+  inputEl.addEventListener(
+    "touchstart",
+    (event) => {
+      if (isTouchCalculatorDevice) event.preventDefault();
+      showCalculatorFor(inputEl, { focusInput: false });
+    },
+    { passive: false }
+  );
+  inputEl.addEventListener("pointerdown", (event) => {
+    const isTouchPointer = event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches;
+    if (!isTouchPointer) return;
+    event.preventDefault();
+    showCalculatorFor(inputEl, { focusInput: false });
+  });
+}
+
+bindCalculatorTrigger(montoEl);
+bindCalculatorTrigger(quickAmountEl);
+
+document.querySelectorAll("[data-calc-target]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const targetId = button.getAttribute("data-calc-target");
+    const inputEl = targetId ? document.getElementById(targetId) : null;
+    if (!inputEl) return;
+    showCalculatorFor(inputEl, { focusInput: false });
+  });
+});
+
+if (calculatorCloseBtn) calculatorCloseBtn.addEventListener("click", hideCalculator);
+if (calculatorKeypadEl) {
+  calculatorKeypadEl.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    const key = target.dataset.key;
+    if (!key) return;
+    applyCalcKey(key);
+  });
+}
+
+document.addEventListener("click", (event) => {
+  if (isTouchCalculatorDevice) return;
+  if (!calculatorKeypadEl || !activeCalculatorInput) return;
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) {
+    hideCalculator();
+    return;
+  }
+  const isInputTarget = target === montoEl || target === quickAmountEl;
+  const isInputLabel = Boolean(montoEl?.closest("label")?.contains(target) || quickAmountEl?.closest("label")?.contains(target));
+  const isCalcLauncher = Boolean(target.closest("[data-calc-target]"));
+  if (isInputTarget || isInputLabel || isCalcLauncher || calculatorKeypadEl.contains(target)) {
+    return;
+  }
+  hideCalculator();
+});
+
+if (isTouchCalculatorDevice && calculatorKeypadEl) {
+  calculatorKeypadEl.hidden = false;
+  calculatorKeypadEl.setAttribute("aria-hidden", "false");
+  calculatorKeypadEl.classList.add("touch-inline");
+  activeCalculatorInput = montoEl || quickAmountEl;
+  updateCalculatorScreen();
+}
 
 const {
   animatePrimarySave,
@@ -1151,13 +1326,6 @@ bindAppEvents({
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
 })();
-
-
-
-
-
-
-
 
 
 

@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon.svg">
-  <link rel="stylesheet" href="styles.css?v=142">
+  <link rel="stylesheet" href="styles.css?v=143">
 </head>
 <body>
   <section id="entry-gate" class="entry-gate" hidden>
@@ -220,7 +220,9 @@
       <h2>Carga rapida</h2>
       <div class="grid">
         <label>Importe rapido
-          <input type="text" id="quick-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00">
+          <input type="text" id="quick-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00 o 12.50+8.20">
+          <button type="button" class="btn-tertiary calc-open-btn" data-calc-target="quick-amount">Calc</button>
+          <small class="muted">Toca el campo para abrir la calculadora.</small>
         </label>
         <label>Detalle rapido (opcional)
           <input type="text" id="quick-detail" placeholder="Ej: compra semanal">
@@ -248,7 +250,9 @@
             </select>
           </label>
           <label>Monto
-            <input type="text" id="monto" inputmode="decimal" enterkeyhint="done" autocomplete="off" required>
+            <input type="text" id="monto" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00 o 45+18.90" required>
+            <button type="button" class="btn-tertiary calc-open-btn" data-calc-target="monto">Calc</button>
+            <small class="muted">Toca el campo para abrir la calculadora.</small>
           </label>
           <label>Categoria
             <select id="categoria" required></select>
@@ -451,15 +455,48 @@
       </div>
     </section>
   </main>
+
+  <section id="calculator-keypad" class="calculator-keypad" hidden aria-hidden="true">
+    <div class="calculator-paper">
+      <div id="calculator-target" class="calculator-target">Calculadora</div>
+      <div id="calculator-display" class="calculator-display">0</div>
+      <div id="calculator-live-total" class="calculator-live-total">Total: 0.00</div>
+      <div class="calculator-row">
+        <button type="button" class="calc-btn calc-op" data-key="C">C</button>
+        <button type="button" class="calc-btn calc-op" data-key="backspace">⌫</button>
+        <button type="button" class="calc-btn calc-op" data-key="/">÷</button>
+        <button type="button" class="calc-btn calc-op" data-key="*">×</button>
+      </div>
+      <div class="calculator-row">
+        <button type="button" class="calc-btn" data-key="7">7</button>
+        <button type="button" class="calc-btn" data-key="8">8</button>
+        <button type="button" class="calc-btn" data-key="9">9</button>
+        <button type="button" class="calc-btn calc-op" data-key="-">−</button>
+      </div>
+      <div class="calculator-row">
+        <button type="button" class="calc-btn" data-key="4">4</button>
+        <button type="button" class="calc-btn" data-key="5">5</button>
+        <button type="button" class="calc-btn" data-key="6">6</button>
+        <button type="button" class="calc-btn calc-op" data-key="+">+</button>
+      </div>
+      <div class="calculator-row">
+        <button type="button" class="calc-btn" data-key="1">1</button>
+        <button type="button" class="calc-btn" data-key="2">2</button>
+        <button type="button" class="calc-btn" data-key="3">3</button>
+        <button type="button" class="calc-btn calc-eq" data-key="=">=</button>
+      </div>
+      <div class="calculator-row">
+        <button type="button" class="calc-btn calc-wide" data-key="0">0</button>
+        <button type="button" class="calc-btn" data-key=".">.</button>
+      </div>
+      <button id="calculator-close" type="button" class="btn-tertiary calc-close">Cerrar</button>
+    </div>
+  </section>
+
   <div id="toast" class="toast" hidden></div>
 
-  <script src="stats-utils.js?v=142"></script>
+  <script src="stats-utils.js?v=143"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script type="module" src="app.js?v=142"></script>
+  <script type="module" src="app.js?v=143"></script>
 </body>
 </html>
-
-
-
-
-

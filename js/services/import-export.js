@@ -1,3 +1,5 @@
+import { parseDecimalInputValue } from "../utils/number-input.js";
+
 export function createImportExportService({
   CATEGORIAS,
   currentMonthKey,
@@ -62,11 +64,6 @@ export function createImportExportService({
       s = s.replace(",", ".");
     }
     return Number(s);
-  }
-
-  function parseDecimalInputValue(value) {
-    const n = parseImportedAmount(value);
-    return Number.isFinite(n) ? n : 0;
   }
 
   function formatDateKey(date) {

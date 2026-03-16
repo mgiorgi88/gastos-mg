@@ -258,8 +258,124 @@ body {
   padding-bottom: 18px;
 }
 
-.sync-card h2 {
-  margin-bottom: 12px;
+.calculator-keypad {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 16px;
+}
+
+.calculator-paper {
+  width: min(420px, 100%);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+}
+
+.calculator-target {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.calculator-display {
+  min-height: 42px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 1.4rem;
+  text-align: right;
+  word-break: break-all;
+}
+
+.calculator-display-error {
+  border-color: rgba(185, 28, 28, 0.45);
+  color: #b91c1c;
+}
+
+.calculator-live-total {
+  min-height: 20px;
+  text-align: right;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.calculator-live-total-error {
+  color: #b91c1c;
+}
+
+.calculator-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.calc-btn {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--soft);
+  color: var(--ink);
+  font-size: 1.1rem;
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+.calc-op {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.calc-eq {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.calc-wide {
+  grid-column: span 2;
+}
+
+.calc-close {
+  margin-top: 4px;
+}
+
+:root[data-theme="dark"] .calculator-display-error,
+:root[data-theme="dark"] .calculator-live-total-error {
+  color: #fda4af;
+}
+
+.calc-open-btn {
+  margin-top: 8px;
+  width: fit-content;
+  min-width: 72px;
+}
+
+.calculator-keypad.touch-inline {
+  position: sticky;
+  inset: auto;
+  bottom: 10px;
+  z-index: 40;
+  background: transparent;
+  padding: 10px 0 0;
+  display: block;
+}
+
+.calculator-keypad.touch-inline .calculator-paper {
+  width: 100%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+.calculator-keypad.touch-inline .calc-close {
+  display: none;
 }
 
 .sync-card-grid {
