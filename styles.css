@@ -52,6 +52,11 @@ body.app-boot [data-panel]:not([data-panel="cargar"]) {
   display: none !important;
 }
 
+body.app-boot .app,
+body.app-boot #sync-badge {
+  visibility: hidden;
+}
+
 .entry-gate {
   position: fixed;
   inset: 0;
@@ -319,10 +324,11 @@ body.app-boot [data-panel]:not([data-panel="cargar"]) {
   color: #b91c1c;
 }
 
-.calculator-actions-row {
+.calculator-toolbar {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 4px;
+  margin-bottom: 2px;
 }
 
 .calculator-slot {
@@ -331,7 +337,7 @@ body.app-boot [data-panel]:not([data-panel="cargar"]) {
   margin-top: 4px;
 }
 
-.calculator-numpad {
+.calculator-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 4px;
@@ -349,6 +355,18 @@ body.app-boot [data-panel]:not([data-panel="cargar"]) {
   font-weight: 600;
 }
 
+.calc-chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.76rem;
+  min-height: 30px;
+  padding: 0 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
 .calc-op {
   background: rgba(59, 130, 246, 0.08);
 }
@@ -360,10 +378,6 @@ body.app-boot [data-panel]:not([data-panel="cargar"]) {
 
 .calc-zero {
   grid-column: span 2;
-}
-
-.calc-eq-wide {
-  grid-column: span 3;
 }
 
 :root[data-theme="dark"] .calculator-display-error,

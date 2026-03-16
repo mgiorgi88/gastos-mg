@@ -232,7 +232,8 @@ const state = createAppState({
   ),
   savingsGoal: loadSavingsGoal(),
   syncBadgeTimer: null,
-  authActionInFlight: false
+  authActionInFlight: false,
+  appReady: false
 });
 
 if (fechaEl) fechaEl.valueAsDate = new Date();
@@ -300,6 +301,7 @@ function setStatus(msg, tone = "info") {
 }
 
 function showSyncBadge(message, tone = "ok", autoHideMs = 0) {
+  if (!state.appReady) return;
   state.syncBadgeTimer = showSyncBadgeState(syncBadgeEl, message, tone, autoHideMs, state.syncBadgeTimer);
 }
 
@@ -309,6 +311,10 @@ function hideSyncBadge() {
 
 function refreshSyncIndicator() {
   if (!syncIndicatorEl) return;
+  if (!state.appReady) {
+    hideSyncBadge();
+    return;
+  }
 
   syncIndicatorEl.classList.remove("sync-local", "sync-online", "sync-syncing", "sync-error");
   if (!state.currentUser) {
@@ -1316,13 +1322,14 @@ bindAppEvents({
     if (rememberEl) rememberEl.checked = loadRememberMe();
     applyTheme(state.selectedTheme);
     setActiveTab("cargar");
-    document.body.classList.remove("app-boot");
     updateArsConvertVisibility();
-    refresh();
     await initAuth();
     updateEntryGate();
     setActiveTab("cargar");
     refresh();
+    state.appReady = true;
+    refreshSyncIndicator();
+    document.body.classList.remove("app-boot");
   } catch (err) {
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
