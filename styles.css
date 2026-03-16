@@ -267,6 +267,10 @@ body.app-boot #sync-badge {
   letter-spacing: 0.02em;
 }
 
+.build-version-options {
+  margin-top: 12px;
+}
+
 .cloud-indicator {
   margin: 0;
   font-size: 0.86rem;
@@ -1808,6 +1812,19 @@ details summary {
 @media (max-width: 600px) {
   .app {
     padding-bottom: 120px;
+  }
+
+  .quick-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .category-btn {
+    min-height: 46px;
+    padding: 11px 12px;
+    font-size: 0.92rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .entry-card {
