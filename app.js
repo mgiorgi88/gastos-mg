@@ -1167,7 +1167,9 @@ bindAppEvents({
   try {
     setStatus("Inicializando app...");
     localStorage.removeItem(ACTIVE_TAB_KEY);
-    await disableServiceWorkerCache();
+    if (isLocalDevelopment()) {
+      await disableServiceWorkerCache();
+    }
     setupBudgetCategoryOptions();
     setupYoyCategoryOptions();
     setupQuickCategoryOptions();
@@ -1186,13 +1188,15 @@ bindAppEvents({
     applyTheme(state.selectedTheme);
     setActiveTab("cargar");
     updateArsConvertVisibility();
-    await initAuth();
-    updateEntryGate();
-    setActiveTab("cargar");
     refresh();
     state.appReady = true;
     refreshSyncIndicator();
     document.body.classList.remove("app-boot");
+    await initAuth();
+    updateEntryGate();
+    setActiveTab("cargar");
+    refresh();
+    refreshSyncIndicator();
   } catch (err) {
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
