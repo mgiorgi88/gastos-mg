@@ -277,14 +277,14 @@ body.app-boot #sync-badge {
 }
 
 .calculator-keypad .calculator-paper {
-  width: min(320px, 100%);
+  width: min(300px, 100%);
   max-height: none;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .calculator-paper {
-  width: min(320px, 100%);
+  width: min(300px, 100%);
   max-height: calc(100vh - 32px);
   background: var(--card);
   border: 1px solid var(--line);
@@ -324,22 +324,28 @@ body.app-boot #sync-badge {
   color: #b91c1c;
 }
 
-.calculator-toolbar {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 4px;
-  margin-bottom: 2px;
-}
-
 .calculator-slot {
   display: flex;
   justify-content: center;
   margin-top: 4px;
 }
 
+.calculator-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px;
+  gap: 6px;
+  align-items: stretch;
+}
+
 .calculator-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.calculator-side {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 4px;
 }
 
@@ -357,12 +363,12 @@ body.app-boot #sync-badge {
 
 .calc-chip {
   border: 1px solid var(--line);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--muted);
-  font-size: 0.76rem;
-  min-height: 30px;
-  padding: 0 10px;
+  border-radius: 7px;
+  background: var(--soft);
+  color: var(--ink);
+  font-size: 0.82rem;
+  min-height: 34px;
+  padding: 0 8px;
   cursor: pointer;
   font-weight: 700;
 }
@@ -378,6 +384,11 @@ body.app-boot #sync-badge {
 
 .calc-zero {
   grid-column: span 2;
+}
+
+.calculator-side .calc-chip:last-child {
+  min-height: 30px;
+  color: var(--muted);
 }
 
 :root[data-theme="dark"] .calculator-display-error,
