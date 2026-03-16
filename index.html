@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon.svg">
-  <link rel="stylesheet" href="styles.css?v=154">
+  <link rel="stylesheet" href="styles.css?v=156">
 </head>
 <body class="app-boot">
   <section id="entry-gate" class="entry-gate" hidden>
@@ -49,7 +49,7 @@
       <p class="panel-group-copy">Gestiona tu cuenta y revisa el estado de sincronizacion de forma separada del resto de ajustes.</p>
     </section>
 
-    <section id="auth-card" class="card card-opciones" data-panel="opciones">
+    <section id="auth-card" class="card card-opciones card-opciones-account" data-panel="opciones">
       <h2>Cuenta</h2>
       <div class="grid">
         <label>Email
@@ -75,16 +75,16 @@
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
-    <section class="card card-opciones card-opciones-compact sync-card" data-panel="opciones">
+    <section id="sync-card" class="card card-opciones card-opciones-compact sync-card" data-panel="opciones">
       <h2>Sincronizacion</h2>
       <div class="sync-card-grid">
         <p id="cloud-indicator" class="cloud-indicator">Nube: Local</p>
         <p id="sync-indicator" class="sync-indicator sync-local">Sincronizacion: Local</p>
       </div>
-      <p class="build-version build-version-options">Version visible: v155</p>
+      <p class="build-version build-version-options">Version visible: v156</p>
     </section>
 
-    <section id="account-mini" class="card card-opciones card-opciones-compact" data-panel="opciones" hidden>
+    <section id="account-mini" class="card card-opciones card-opciones-compact card-opciones-account-mini" data-panel="opciones" hidden>
       <h2>Cuenta</h2>
       <p class="muted">Conectado como <strong id="account-mini-email"></strong></p>
       <div class="auth-actions">
@@ -98,24 +98,26 @@
       <p class="panel-group-copy">Ajusta el aspecto general y define los accesos que usas todos los dias.</p>
     </section>
 
-    <section class="card card-opciones" data-panel="opciones">
+    <section id="options-preferences-card" class="card card-opciones" data-panel="opciones">
       <h2>Preferencias</h2>
-      <label class="theme-picker">Tema
-        <select id="theme-select">
-          <option value="light">Claro</option>
-          <option value="dark">Oscuro</option>
-        </select>
-      </label>
-      <label class="theme-picker">Moneda global
-        <select id="currency-select">
-          <option value="EUR">EUR - Euro</option>
-          <option value="ARS">ARS - Peso Argentino</option>
-          <option value="USD">USD - Dolar USA</option>
-        </select>
-      </label>
+      <div class="options-inline-grid">
+        <label class="theme-picker">Tema
+          <select id="theme-select">
+            <option value="light">Claro</option>
+            <option value="dark">Oscuro</option>
+          </select>
+        </label>
+        <label class="theme-picker">Moneda global
+          <select id="currency-select">
+            <option value="EUR">EUR - Euro</option>
+            <option value="ARS">ARS - Peso Argentino</option>
+            <option value="USD">USD - Dolar USA</option>
+          </select>
+        </label>
+      </div>
     </section>
 
-    <section class="card card-opciones" data-panel="opciones">
+    <section id="options-quick-card" class="card card-opciones" data-panel="opciones">
       <h2>Carga rapida</h2>
       <p class="muted">Elige las 4 categorias que quieres tener en los botones rapidos.</p>
       <div class="grid">
@@ -145,7 +147,7 @@
       <p class="panel-group-copy">Define metas y presupuestos para comparar tu avance sin mezclarlo con ajustes de cuenta.</p>
     </section>
 
-    <section class="card card-opciones" data-panel="opciones">
+    <section id="options-planning-card" class="card card-opciones" data-panel="opciones">
       <h2>Planificacion</h2>
       <div class="grid">
         <label>Meta mensual
@@ -159,7 +161,7 @@
       <p id="savings-goal-status" class="muted">Define una meta y la veras en el resumen del mes actual.</p>
     </section>
 
-    <section class="card card-opciones" data-panel="opciones">
+    <section id="options-budget-card" class="card card-opciones" data-panel="opciones">
       <h2>Presupuesto mensual</h2>
       <details id="budget-panel">
         <summary>Ver y editar presupuesto</summary>
@@ -185,7 +187,7 @@
       <p class="panel-group-copy">Trae historico, exporta tus ajustes y aplica acciones sensibles solo desde una zona controlada.</p>
     </section>
 
-    <section class="card card-opciones" data-panel="opciones">
+    <section id="options-import-card" class="card card-opciones" data-panel="opciones">
       <h2>Importar historico</h2>
       <p class="muted">Descarga una plantilla y carga tu historial en lote. Se valida antes de guardar.</p>
       <div class="auth-actions">
@@ -202,7 +204,7 @@
       <p id="import-status" class="muted">Formato esperado: fecha, tipo, categoria, monto, detalle, moneda.</p>
     </section>
 
-    <section class="card card-opciones card-opciones-danger" data-panel="opciones">
+    <section id="options-danger-card" class="card card-opciones card-opciones-danger" data-panel="opciones">
       <h2>Zona segura</h2>
       <p class="muted">Borra todos tus movimientos actuales. Esta accion no se puede deshacer.</p>
       <div class="auth-actions">
@@ -472,8 +474,8 @@
 
   <div id="toast" class="toast" hidden></div>
 
-  <script src="stats-utils.js?v=155"></script>
+  <script src="stats-utils.js?v=156"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script type="module" src="app.js?v=155"></script>
+  <script type="module" src="app.js?v=156"></script>
 </body>
 </html>

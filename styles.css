@@ -264,7 +264,7 @@ body.app-boot #sync-badge {
 }
 
 .theme-picker + .theme-picker {
-  margin-top: var(--space-sm);
+  margin-top: 0;
 }
 
 .hero p {
@@ -313,8 +313,9 @@ body.app-boot #sync-badge {
 }
 
 .sync-card-grid {
-  display: grid;
-  gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .sync-indicator {
@@ -350,6 +351,17 @@ body.app-boot #sync-badge {
   background: #ef4444;
 }
 
+.cloud-indicator,
+.sync-indicator {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(248, 250, 252, 0.72);
+}
+
 .session-bar {
   margin-top: 10px;
   display: flex;
@@ -366,6 +378,28 @@ body.app-boot #sync-badge {
 .session-bar button {
   margin-top: 0;
   padding: 8px 10px;
+}
+
+#auth-card .grid,
+#options-quick-card .grid,
+#options-planning-card .grid,
+#options-import-card .grid,
+#options-preferences-card .options-inline-grid {
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 16px;
+  background: rgba(248, 250, 252, 0.72);
+}
+
+#options-budget-card details {
+  padding: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 18px;
+  background: rgba(248, 250, 252, 0.6);
+}
+
+#options-budget-card .budget-list {
+  gap: 10px;
 }
 
 .tab-nav {
@@ -480,6 +514,44 @@ body.app-boot #sync-badge {
     linear-gradient(180deg, rgba(239, 68, 68, 0.05), rgba(239, 68, 68, 0.01)),
     var(--card);
   border-color: rgba(239, 68, 68, 0.16);
+}
+
+.card-opciones h2 {
+  margin-bottom: 8px;
+  font-size: 1.45rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.card-opciones > .grid,
+.card-opciones > .options-inline-grid,
+.card-opciones > details,
+.card-opciones > .sync-card-grid {
+  margin-top: 14px;
+}
+
+.card-opciones > .muted,
+.card-opciones > #auth-status,
+.card-opciones > .build-version-options,
+.card-opciones > [id$="-status"] {
+  margin-top: 14px;
+}
+
+.card-opciones .auth-actions {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.card-opciones .auth-actions-account {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.options-inline-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
 }
 
 .card h2 {
@@ -1854,6 +1926,18 @@ button:focus {
     linear-gradient(180deg, rgba(127, 29, 29, 0.3), rgba(15, 23, 42, 0.22)),
     var(--card);
   border-color: rgba(248, 113, 113, 0.24);
+}
+
+:root[data-theme="dark"] #auth-card .grid,
+:root[data-theme="dark"] #options-quick-card .grid,
+:root[data-theme="dark"] #options-planning-card .grid,
+:root[data-theme="dark"] #options-import-card .grid,
+:root[data-theme="dark"] #options-preferences-card .options-inline-grid,
+:root[data-theme="dark"] #options-budget-card details,
+:root[data-theme="dark"] .cloud-indicator,
+:root[data-theme="dark"] .sync-indicator {
+  background: rgba(15, 23, 42, 0.62);
+  border-color: rgba(71, 85, 105, 0.42);
 }
 
 :root[data-theme="dark"] .stats article,
