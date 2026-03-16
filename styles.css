@@ -2167,6 +2167,16 @@ button:focus {
   border-color: rgba(71, 85, 105, 0.42);
 }
 
+:root[data-theme="dark"] .top-expenses-item {
+  background: rgba(15, 23, 42, 0.62);
+  border-color: rgba(71, 85, 105, 0.42);
+}
+
+:root[data-theme="dark"] .top-expenses-item:hover {
+  background: rgba(77, 134, 255, 0.12);
+  border-color: rgba(77, 134, 255, 0.26);
+}
+
 :root[data-theme="dark"] #summary-trends-card > .grid,
 :root[data-theme="dark"] #summary-yoy-card > .grid,
 :root[data-theme="dark"] .budget-summary-item,
