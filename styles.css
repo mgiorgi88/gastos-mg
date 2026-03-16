@@ -277,21 +277,21 @@ body.app-boot #sync-badge {
 }
 
 .calculator-keypad .calculator-paper {
-  width: min(300px, 100%);
+  width: min(100%, 360px);
   max-height: none;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .calculator-paper {
-  width: min(300px, 100%);
+  width: min(100%, 360px);
   max-height: calc(100vh - 32px);
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 6px;
+  padding: 8px;
   display: grid;
-  gap: 3px;
+  gap: 6px;
   overflow: auto;
   box-shadow: 0 15px 30px rgba(0,0,0,0.3);
 }
@@ -327,50 +327,25 @@ body.app-boot #sync-badge {
 .calculator-slot {
   display: flex;
   justify-content: center;
-  margin-top: 4px;
-}
-
-.calculator-body {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 64px;
-  gap: 6px;
-  align-items: stretch;
+  margin-top: 6px;
 }
 
 .calculator-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 4px;
-}
-
-.calculator-side {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 4px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
 }
 
 .calc-btn {
   border: 1px solid var(--line);
-  border-radius: 7px;
+  border-radius: 10px;
   background: var(--soft);
   color: var(--ink);
-  font-size: 0.9rem;
-  min-height: 34px;
+  font-size: 1rem;
+  min-height: 46px;
   padding: 0;
   cursor: pointer;
   font-weight: 600;
-}
-
-.calc-chip {
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  background: var(--soft);
-  color: var(--ink);
-  font-size: 0.82rem;
-  min-height: 34px;
-  padding: 0 8px;
-  cursor: pointer;
-  font-weight: 700;
 }
 
 .calc-op {
@@ -386,9 +361,9 @@ body.app-boot #sync-badge {
   grid-column: span 2;
 }
 
-.calculator-side .calc-chip:last-child {
-  min-height: 30px;
-  color: var(--muted);
+.calc-placeholder {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 :root[data-theme="dark"] .calculator-display-error,
@@ -402,7 +377,7 @@ body.app-boot #sync-badge {
   }
 
   .calc-btn {
-    min-height: 34px;
+    min-height: 42px;
   }
 }
 
