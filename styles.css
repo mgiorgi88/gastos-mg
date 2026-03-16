@@ -274,13 +274,14 @@ body {
   z-index: auto;
   display: block;
   background: transparent;
-  padding: 8px 0 0;
+  padding: 6px 0 0;
 }
 
 .calculator-keypad-inline .calculator-paper {
   width: 100%;
   max-height: none;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .calculator-paper {
@@ -289,28 +290,29 @@ body {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 16px;
-  padding: 10px;
+  padding: 8px;
   display: grid;
-  gap: 6px;
+  gap: 4px;
   overflow: auto;
   box-shadow: 0 15px 30px rgba(0,0,0,0.3);
 }
 
 .calculator-target {
-  font-size: 0.85rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
 }
 
 .calculator-display {
-  min-height: 42px;
+  min-height: 36px;
   background: var(--soft);
   border: 1px solid var(--line);
   border-radius: 10px;
-  padding: 8px 10px;
-  font-size: 1.4rem;
+  padding: 6px 9px;
+  font-size: 1.15rem;
   text-align: right;
   word-break: break-all;
 }
@@ -321,9 +323,9 @@ body {
 }
 
 .calculator-live-total {
-  min-height: 20px;
+  min-height: 16px;
   text-align: right;
-  font-size: 0.92rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--muted);
 }
@@ -335,27 +337,28 @@ body {
 .calculator-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
+  gap: 5px;
 }
 
 .calculator-slot {
   display: block;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .calc-btn {
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--soft);
   color: var(--ink);
-  font-size: 1rem;
-  min-height: 44px;
+  font-size: 0.95rem;
+  min-height: 38px;
   padding: 0;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .calc-op {
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(59, 130, 246, 0.08);
 }
 
 .calc-eq {
@@ -374,7 +377,7 @@ body {
   }
 
   .calc-btn {
-    min-height: 40px;
+    min-height: 34px;
   }
 }
 
