@@ -347,6 +347,15 @@ body {
   color: var(--on-primary);
 }
 
+.calc-zero {
+  grid-column: span 2;
+}
+
+.calc-placeholder {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 :root[data-theme="dark"] .calculator-display-error,
 :root[data-theme="dark"] .calculator-live-total-error {
   color: #fda4af;
