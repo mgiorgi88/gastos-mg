@@ -616,9 +616,11 @@ const calculatorDisplayEl = document.getElementById("calculator-display");
 const calculatorLiveTotalEl = document.getElementById("calculator-live-total");
 const calculatorCloseBtn = document.getElementById("calculator-close");
 let activeCalculatorInput = null;
+const mobileUserAgent =
+  navigator.userAgentData?.mobile ||
+  /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent || "");
 const isTouchCalculatorDevice =
-  "ontouchstart" in window ||
-  navigator.maxTouchPoints > 0 ||
+  Boolean(mobileUserAgent) &&
   window.matchMedia("(pointer: coarse)").matches;
 
 function updateCalculatorScreen() {
@@ -1325,7 +1327,6 @@ bindAppEvents({
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
 })();
-
 
 
 
