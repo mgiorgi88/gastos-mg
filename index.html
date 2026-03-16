@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon.svg">
-  <link rel="stylesheet" href="styles.css?v=148">
+  <link rel="stylesheet" href="styles.css?v=149">
 </head>
 <body class="app-boot">
   <section id="entry-gate" class="entry-gate" hidden>
@@ -81,7 +81,7 @@
         <p id="cloud-indicator" class="cloud-indicator">Nube: Local</p>
         <p id="sync-indicator" class="sync-indicator sync-local">Sincronizacion: Local</p>
       </div>
-      <p class="build-version build-version-options">Version visible: v148</p>
+      <p class="build-version build-version-options">Version visible: v149</p>
     </section>
 
     <section id="account-mini" class="card" data-panel="opciones" hidden>
@@ -400,8 +400,9 @@
       </div>
     </section>
 
-    <section id="movimientos-section" class="card" data-panel="mas">
+    <section id="movimientos-section" class="card card-movimientos" data-panel="mas">
       <h2>Movimientos por dia</h2>
+      <p class="section-lead">Explora tu calendario, filtra rápido y revisa cada movimiento con una lectura más clara.</p>
       <div class="calendar-panel">
         <div class="calendar-head">
           <button id="cal-prev" type="button" class="danger">&#x2039;</button>
@@ -467,8 +468,8 @@
 
   <div id="toast" class="toast" hidden></div>
 
-  <script src="stats-utils.js?v=148"></script>
+  <script src="stats-utils.js?v=149"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script type="module" src="app.js?v=148"></script>
+  <script type="module" src="app.js?v=149"></script>
 </body>
 </html>

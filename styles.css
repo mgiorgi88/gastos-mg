@@ -449,6 +449,18 @@ body.app-boot #sync-badge {
   border-color: rgba(59, 130, 246, 0.15);
 }
 
+.card-movimientos {
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 32%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.02), rgba(15, 23, 42, 0)),
+    var(--card);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 22px;
+  padding: 20px;
+  margin-top: 16px;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.05);
+}
+
 .card h2 {
   margin-top: 0;
   margin-bottom: var(--space-sm);
@@ -1336,11 +1348,14 @@ button:focus {
 }
 
 .calendar-panel {
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--soft);
-  padding: var(--space-sm);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(248, 250, 252, 0.94)),
+    var(--soft);
+  padding: 16px;
   margin-bottom: var(--space-sm);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .calendar-head {
@@ -1352,11 +1367,15 @@ button:focus {
 
 .calendar-head strong {
   text-align: center;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
 }
 
 .calendar-head button {
   margin-top: 0;
+  min-height: 42px;
   padding: 8px 0;
+  border-radius: 12px;
 }
 
 .calendar-weekdays,
@@ -1389,22 +1408,25 @@ button:focus {
 }
 
 .calendar-cell {
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  min-height: 52px;
-  padding: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 14px;
+  min-height: 58px;
+  padding: 8px 7px;
   display: grid;
   align-content: space-between;
   cursor: pointer;
-  background: var(--card);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.9)),
+    var(--card);
   color: var(--ink);
-  font-weight: 500;
+  font-weight: 600;
   margin-top: 0;
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .calendar-cell:hover {
   transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
 }
 
 .calendar-cell small {
@@ -1498,49 +1520,67 @@ button:focus {
 }
 
 #movimientos-section .calendar-panel {
-  margin-bottom: var(--space-md);
+  margin-bottom: 18px;
 }
 
 #movimientos-section .calendar-legend {
-  margin-top: var(--space-sm);
-  padding-top: 2px;
+  margin-top: 14px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
 }
 
 #movimientos-section #day-title {
-  margin: var(--space-md) 0 var(--space-sm);
+  margin: 18px 0 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
 }
 
 #movimientos-section #vacio {
-  margin-top: var(--space-sm);
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: 1px dashed rgba(148, 163, 184, 0.35);
+  border-radius: 16px;
+  background: rgba(148, 163, 184, 0.07);
 }
 
 #movimientos-section #lista {
-  margin-top: var(--space-sm);
+  margin-top: 10px;
 }
 
 .item {
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 16px;
+  padding: 12px 14px;
   display: flex;
   justify-content: space-between;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(248, 250, 252, 0.92)),
+    var(--card);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .item:hover {
   transform: translateY(-1px);
   border-color: var(--primary);
+  box-shadow: 0 14px 24px rgba(59, 130, 246, 0.09);
 }
 
 .meta {
   display: grid;
-  gap: 3px;
+  gap: 4px;
 }
 
 .meta small {
   color: var(--muted);
+}
+
+.meta strong {
+  font-size: 1rem;
+  letter-spacing: -0.01em;
 }
 
 .tx-type {
@@ -1597,6 +1637,8 @@ button:focus {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  min-height: 38px;
+  border-radius: 10px;
 }
 
 .action-icon {
@@ -1737,12 +1779,52 @@ button:focus {
     var(--card);
 }
 
+:root[data-theme="dark"] .card-movimientos {
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.14), transparent 32%),
+    linear-gradient(180deg, rgba(30, 41, 59, 0.46), rgba(15, 23, 42, 0.22)),
+    var(--card);
+  border-color: rgba(71, 85, 105, 0.42);
+  box-shadow: 0 18px 38px rgba(2, 6, 23, 0.22);
+}
+
 :root[data-theme="dark"] .stats article,
 :root[data-theme="dark"] .top-expenses,
 :root[data-theme="dark"] .chart-wrap,
 :root[data-theme="dark"] .trend-item {
   background: rgba(15, 23, 42, 0.48);
   border-color: rgba(71, 85, 105, 0.42);
+}
+
+:root[data-theme="dark"] .calendar-panel,
+:root[data-theme="dark"] .detail-filters,
+:root[data-theme="dark"] .detail-kpis article,
+:root[data-theme="dark"] .item {
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.78), rgba(15, 23, 42, 0.58)),
+    var(--soft);
+  border-color: rgba(71, 85, 105, 0.42);
+  box-shadow: none;
+}
+
+:root[data-theme="dark"] .calendar-panel {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+:root[data-theme="dark"] .calendar-cell {
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.78)),
+    var(--card);
+  border-color: rgba(71, 85, 105, 0.42);
+}
+
+:root[data-theme="dark"] .calendar-cell:hover {
+  box-shadow: 0 10px 18px rgba(2, 6, 23, 0.25);
+}
+
+:root[data-theme="dark"] #movimientos-section #vacio {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(71, 85, 105, 0.48);
 }
 
 .budget-list {
@@ -1784,28 +1866,38 @@ details summary {
 .detail-filters {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--space-xs);
-  margin: var(--space-sm) 0;
+  gap: 12px;
+  margin: 18px 0 14px;
+  padding: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(248, 250, 252, 0.86), rgba(255, 255, 255, 0.9)),
+    var(--soft);
 }
 
 .detail-kpis {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-xs);
-  margin: var(--space-sm) 0;
+  gap: 12px;
+  margin: 16px 0 0;
 }
 
 .detail-kpis article {
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--soft);
-  padding: 10px;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.94)),
+    var(--soft);
+  padding: 14px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .detail-kpis article:hover {
   transform: translateY(-1px);
   border-color: var(--primary);
+  box-shadow: 0 14px 24px rgba(59, 130, 246, 0.09);
 }
 
 [data-panel].panel-enter {
@@ -1826,6 +1918,17 @@ details summary {
 .detail-kpis span {
   color: var(--muted);
   display: block;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+
+.detail-kpis strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.28rem;
+  letter-spacing: -0.02em;
 }
 
 .toast {
