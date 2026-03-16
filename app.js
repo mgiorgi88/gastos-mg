@@ -235,7 +235,8 @@ const state = createAppState({
   syncBadgeTimer: null,
   authActionInFlight: false,
   appReady: false,
-  syncUiReady: false
+  syncUiReady: false,
+  initialDataReady: false
 });
 
 if (fechaEl) fechaEl.valueAsDate = new Date();
@@ -858,6 +859,7 @@ const { refresh } = createRefreshController({
   cargarEmptyStateEl,
   resumenEmptyCardEl,
   resumenContentCards,
+  getInitialDataReady: () => state.initialDataReady,
   currentMonthLabelEl,
   CURRENT_MONTH,
   buildMonthOptions,
@@ -1195,12 +1197,15 @@ bindAppEvents({
     state.appReady = true;
     document.body.classList.remove("app-boot");
     await initAuth();
+    state.initialDataReady = true;
     state.syncUiReady = true;
     updateEntryGate();
     setActiveTab("cargar");
     refresh();
     refreshSyncIndicator();
   } catch (err) {
+    state.initialDataReady = true;
+    refresh();
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
 })();

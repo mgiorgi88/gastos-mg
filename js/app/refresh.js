@@ -5,6 +5,7 @@ export function createRefreshController({
   cargarEmptyStateEl,
   resumenEmptyCardEl,
   resumenContentCards,
+  getInitialDataReady,
   currentMonthLabelEl,
   CURRENT_MONTH,
   buildMonthOptions,
@@ -108,9 +109,10 @@ export function createRefreshController({
   function refresh() {
     const all = getAllSortedTransactions();
     const hasTransactions = all.length > 0;
+    const initialDataReady = getInitialDataReady();
 
-    if (cargarEmptyStateEl) cargarEmptyStateEl.hidden = hasTransactions;
-    if (resumenEmptyCardEl) resumenEmptyCardEl.hidden = hasTransactions;
+    if (cargarEmptyStateEl) cargarEmptyStateEl.hidden = !initialDataReady || hasTransactions;
+    if (resumenEmptyCardEl) resumenEmptyCardEl.hidden = !initialDataReady || hasTransactions;
     resumenContentCards.forEach((card) => {
       card.hidden = !hasTransactions || card.getAttribute("data-panel") !== "resumen" || getCurrentTab() !== "resumen";
     });
