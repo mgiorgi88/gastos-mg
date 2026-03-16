@@ -1068,6 +1068,15 @@ button:focus {
   box-shadow:
     0 12px 24px rgba(15, 23, 42, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.stats article:hover {
+  transform: translateY(-2px);
+  border-color: rgba(47, 111, 237, 0.2);
+  box-shadow:
+    0 16px 28px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 .stats span {
@@ -1096,6 +1105,13 @@ button:focus {
     var(--soft);
   padding: 16px 18px;
   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.035);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.top-expenses:hover {
+  transform: translateY(-1px);
+  border-color: rgba(47, 111, 237, 0.16);
+  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.05);
 }
 
 .top-expenses-title {
@@ -1271,6 +1287,13 @@ button:focus {
   cursor: pointer;
   text-align: left;
   box-shadow: 0 10px 20px rgba(15, 23, 42, 0.03);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.budget-summary-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(47, 111, 237, 0.2);
+  box-shadow: 0 14px 24px rgba(15, 23, 42, 0.05);
 }
 
 .budget-summary-item-head {
@@ -1322,6 +1345,13 @@ button:focus {
   display: grid;
   gap: 10px;
   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.035);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.savings-goal-summary:hover {
+  transform: translateY(-1px);
+  border-color: rgba(47, 111, 237, 0.18);
+  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.05);
 }
 
 .savings-goal-summary h3 {
@@ -1378,6 +1408,13 @@ button:focus {
   aspect-ratio: 16 / 8;
   max-height: 300px;
   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.035);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.chart-wrap:hover {
+  transform: translateY(-1px);
+  border-color: rgba(47, 111, 237, 0.18);
+  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.05);
 }
 
 .chart-wrap canvas {
@@ -1501,6 +1538,13 @@ button:focus {
   display: grid;
   gap: 7px;
   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.035);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.trend-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(47, 111, 237, 0.18);
+  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.05);
 }
 
 .trend-item span {
@@ -2315,6 +2359,17 @@ details > .muted {
 .toast.show {
   opacity: 1;
   transform: translateX(-50%) translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 .chart-tooltip {
