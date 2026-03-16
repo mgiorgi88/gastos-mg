@@ -49,7 +49,7 @@
       <p class="panel-group-copy">Gestiona tu cuenta y revisa el estado de sincronizacion de forma separada del resto de ajustes.</p>
     </section>
 
-    <section id="auth-card" class="card" data-panel="opciones">
+    <section id="auth-card" class="card card-opciones" data-panel="opciones">
       <h2>Cuenta</h2>
       <div class="grid">
         <label>Email
@@ -75,16 +75,16 @@
       <p id="auth-status" class="muted">Conecta tu cuenta para sincronizar en la nube.</p>
     </section>
 
-    <section class="card sync-card" data-panel="opciones">
+    <section class="card card-opciones card-opciones-compact sync-card" data-panel="opciones">
       <h2>Sincronizacion</h2>
       <div class="sync-card-grid">
         <p id="cloud-indicator" class="cloud-indicator">Nube: Local</p>
         <p id="sync-indicator" class="sync-indicator sync-local">Sincronizacion: Local</p>
       </div>
-      <p class="build-version build-version-options">Version visible: v154</p>
+      <p class="build-version build-version-options">Version visible: v155</p>
     </section>
 
-    <section id="account-mini" class="card" data-panel="opciones" hidden>
+    <section id="account-mini" class="card card-opciones card-opciones-compact" data-panel="opciones" hidden>
       <h2>Cuenta</h2>
       <p class="muted">Conectado como <strong id="account-mini-email"></strong></p>
       <div class="auth-actions">
@@ -98,7 +98,7 @@
       <p class="panel-group-copy">Ajusta el aspecto general y define los accesos que usas todos los dias.</p>
     </section>
 
-    <section class="card" data-panel="opciones">
+    <section class="card card-opciones" data-panel="opciones">
       <h2>Preferencias</h2>
       <label class="theme-picker">Tema
         <select id="theme-select">
@@ -115,7 +115,7 @@
       </label>
     </section>
 
-    <section class="card" data-panel="opciones">
+    <section class="card card-opciones" data-panel="opciones">
       <h2>Carga rapida</h2>
       <p class="muted">Elige las 4 categorias que quieres tener en los botones rapidos.</p>
       <div class="grid">
@@ -145,7 +145,7 @@
       <p class="panel-group-copy">Define metas y presupuestos para comparar tu avance sin mezclarlo con ajustes de cuenta.</p>
     </section>
 
-    <section class="card" data-panel="opciones">
+    <section class="card card-opciones" data-panel="opciones">
       <h2>Planificacion</h2>
       <div class="grid">
         <label>Meta mensual
@@ -159,7 +159,7 @@
       <p id="savings-goal-status" class="muted">Define una meta y la veras en el resumen del mes actual.</p>
     </section>
 
-    <section class="card" data-panel="opciones">
+    <section class="card card-opciones" data-panel="opciones">
       <h2>Presupuesto mensual</h2>
       <details id="budget-panel">
         <summary>Ver y editar presupuesto</summary>
@@ -185,7 +185,7 @@
       <p class="panel-group-copy">Trae historico, exporta tus ajustes y aplica acciones sensibles solo desde una zona controlada.</p>
     </section>
 
-    <section class="card" data-panel="opciones">
+    <section class="card card-opciones" data-panel="opciones">
       <h2>Importar historico</h2>
       <p class="muted">Descarga una plantilla y carga tu historial en lote. Se valida antes de guardar.</p>
       <div class="auth-actions">
@@ -202,7 +202,7 @@
       <p id="import-status" class="muted">Formato esperado: fecha, tipo, categoria, monto, detalle, moneda.</p>
     </section>
 
-    <section class="card" data-panel="opciones">
+    <section class="card card-opciones card-opciones-danger" data-panel="opciones">
       <h2>Zona segura</h2>
       <p class="muted">Borra todos tus movimientos actuales. Esta accion no se puede deshacer.</p>
       <div class="auth-actions">
@@ -419,57 +419,61 @@
           <span><i class="dot today"></i>Hoy</span>
         </div>
       </div>
-      <p id="day-title" class="muted"></p>
-      <ul id="lista"></ul>
-      <p id="vacio" class="muted">No hay movimientos en el periodo seleccionado.</p>
-      <div class="detail-filters">
-        <label>Tipo
-          <select id="detail-type">
-            <option value="Todos">Todos</option>
-            <option value="Gasto">Gasto</option>
-            <option value="Ingreso">Ingreso</option>
-          </select>
-        </label>
-        <label>Categoria
-          <select id="detail-category">
-            <option value="Todos">Todos</option>
-          </select>
-        </label>
-        <label>Desde
-          <input type="date" id="detail-from">
-        </label>
-        <label>Hasta
-          <input type="date" id="detail-to">
-        </label>
-        <label class="full">Buscar
-          <input type="text" id="detail-search" placeholder="Categoria o detalle">
-        </label>
+      <div class="movimientos-list-block">
+        <p id="day-title" class="muted"></p>
+        <ul id="lista"></ul>
+        <p id="vacio" class="muted">No hay movimientos en el periodo seleccionado.</p>
       </div>
-      <div class="auth-actions">
-        <button id="btn-detail-clear" type="button" class="btn-secondary">Limpiar filtros</button>
-        <button id="btn-export-excel" type="button" class="btn-secondary">Exportar Excel</button>
-      </div>
-      <div id="detail-kpis" class="detail-kpis">
-        <article>
-          <span>Total filtrado</span>
-          <strong id="detail-total">$0.00</strong>
-        </article>
-        <article>
-          <span>Movimientos</span>
-          <strong id="detail-count">0</strong>
-        </article>
-        <article>
-          <span>Promedio</span>
-          <strong id="detail-avg">$0.00</strong>
-        </article>
+      <div class="movimientos-tools-block">
+        <div class="detail-filters">
+          <label>Tipo
+            <select id="detail-type">
+              <option value="Todos">Todos</option>
+              <option value="Gasto">Gasto</option>
+              <option value="Ingreso">Ingreso</option>
+            </select>
+          </label>
+          <label>Categoria
+            <select id="detail-category">
+              <option value="Todos">Todos</option>
+            </select>
+          </label>
+          <label>Desde
+            <input type="date" id="detail-from">
+          </label>
+          <label>Hasta
+            <input type="date" id="detail-to">
+          </label>
+          <label class="full">Buscar
+            <input type="text" id="detail-search" placeholder="Categoria o detalle">
+          </label>
+        </div>
+        <div class="auth-actions">
+          <button id="btn-detail-clear" type="button" class="btn-secondary">Limpiar filtros</button>
+          <button id="btn-export-excel" type="button" class="btn-secondary">Exportar Excel</button>
+        </div>
+        <div id="detail-kpis" class="detail-kpis">
+          <article>
+            <span>Total filtrado</span>
+            <strong id="detail-total">$0.00</strong>
+          </article>
+          <article>
+            <span>Movimientos</span>
+            <strong id="detail-count">0</strong>
+          </article>
+          <article>
+            <span>Promedio</span>
+            <strong id="detail-avg">$0.00</strong>
+          </article>
+        </div>
       </div>
     </section>
   </main>
 
   <div id="toast" class="toast" hidden></div>
 
-  <script src="stats-utils.js?v=154"></script>
+  <script src="stats-utils.js?v=155"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script type="module" src="app.js?v=154"></script>
+  <script type="module" src="app.js?v=155"></script>
 </body>
 </html>

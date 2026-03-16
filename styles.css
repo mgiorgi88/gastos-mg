@@ -459,6 +459,29 @@ body.app-boot #sync-badge {
   box-shadow: 0 14px 34px rgba(15, 23, 42, 0.05);
 }
 
+.card-opciones {
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.015), rgba(15, 23, 42, 0)),
+    var(--card);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 20px;
+  padding: 18px 20px;
+  margin-top: 14px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.04);
+}
+
+.card-opciones-compact {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.card-opciones-danger {
+  background:
+    linear-gradient(180deg, rgba(239, 68, 68, 0.05), rgba(239, 68, 68, 0.01)),
+    var(--card);
+  border-color: rgba(239, 68, 68, 0.16);
+}
+
 .card h2 {
   margin-top: 0;
   margin-bottom: var(--space-sm);
@@ -562,15 +585,15 @@ body.app-boot #sync-badge {
 }
 
 [data-panel="opciones"].card {
-  margin-top: 0;
+  margin-top: 14px;
 }
 
 [data-panel="opciones"].card + [data-panel="opciones"].card {
-  margin-top: 0;
+  margin-top: 14px;
 }
 
 [data-panel="opciones"].panel-group-intro + [data-panel="opciones"].card {
-  margin-top: 0;
+  margin-top: 10px;
 }
 
 .grid {
@@ -1546,6 +1569,28 @@ button:focus {
   margin-top: 10px;
 }
 
+.movimientos-list-block,
+.movimientos-tools-block {
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(248, 250, 252, 0.82), rgba(255, 255, 255, 0.9)),
+    var(--soft);
+  padding: 16px;
+}
+
+.movimientos-list-block {
+  margin-top: 6px;
+}
+
+.movimientos-tools-block {
+  margin-top: 16px;
+}
+
+.movimientos-tools-block .auth-actions {
+  margin-top: 14px;
+}
+
 .item {
   border: 1px solid rgba(148, 163, 184, 0.18);
   border-radius: 16px;
@@ -1796,6 +1841,21 @@ button:focus {
   box-shadow: 0 18px 38px rgba(2, 6, 23, 0.22);
 }
 
+:root[data-theme="dark"] .card-opciones {
+  background:
+    linear-gradient(180deg, rgba(30, 41, 59, 0.46), rgba(15, 23, 42, 0.2)),
+    var(--card);
+  border-color: rgba(71, 85, 105, 0.42);
+  box-shadow: 0 18px 38px rgba(2, 6, 23, 0.18);
+}
+
+:root[data-theme="dark"] .card-opciones-danger {
+  background:
+    linear-gradient(180deg, rgba(127, 29, 29, 0.3), rgba(15, 23, 42, 0.22)),
+    var(--card);
+  border-color: rgba(248, 113, 113, 0.24);
+}
+
 :root[data-theme="dark"] .stats article,
 :root[data-theme="dark"] .top-expenses,
 :root[data-theme="dark"] .chart-wrap,
@@ -1805,6 +1865,8 @@ button:focus {
 }
 
 :root[data-theme="dark"] .calendar-panel,
+:root[data-theme="dark"] .movimientos-list-block,
+:root[data-theme="dark"] .movimientos-tools-block,
 :root[data-theme="dark"] .detail-filters,
 :root[data-theme="dark"] .detail-kpis article,
 :root[data-theme="dark"] .item {
@@ -1813,6 +1875,11 @@ button:focus {
     var(--soft);
   border-color: rgba(71, 85, 105, 0.42);
   box-shadow: none;
+}
+
+:root[data-theme="dark"] details summary {
+  background: rgba(15, 23, 42, 0.62);
+  border-color: rgba(71, 85, 105, 0.42);
 }
 
 :root[data-theme="dark"] .calendar-panel {
@@ -1869,6 +1936,23 @@ details summary {
   cursor: pointer;
   font-weight: 600;
   margin-bottom: var(--space-sm);
+  padding: 12px 14px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 14px;
+  background: rgba(248, 250, 252, 0.72);
+}
+
+details[open] summary {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+details > .grid,
+details > .auth-actions,
+details > .budget-list,
+details > .muted {
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .detail-filters {
