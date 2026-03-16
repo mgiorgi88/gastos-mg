@@ -1200,8 +1200,6 @@ bindAppEvents({
     state.initialDataReady = true;
     state.syncUiReady = true;
     updateEntryGate();
-    setActiveTab("cargar");
-    refresh();
     refreshSyncIndicator();
   } catch (err) {
     state.initialDataReady = true;
