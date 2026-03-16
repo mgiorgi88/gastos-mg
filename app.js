@@ -191,7 +191,6 @@ import {
   toDateKeyLocal
 } from "./js/utils/date.js";
 import { escapeHtml, formatMoney } from "./js/utils/formatters.js";
-import { parseDecimalExpression } from "./js/utils/number-input.js";
 import { buildInitialQuickCategories, createAppState } from "./js/core/state.js";
 
 /**
@@ -257,9 +256,6 @@ function getCurrentTab() {
 }
 
 function setActiveTab(tab) {
-  if (tab !== "cargar") {
-    hideCalculator();
-  }
   if (tab !== "mas" && state.topExpenseTempFilterActive) {
     state.topExpenseTempFilterActive = false;
     state.showAllFilteredRows = false;
@@ -614,177 +610,6 @@ const {
   getFlashSavedFeedback: () => flashSavedFeedback,
   showToast,
   escapeHtml
-});
-
-const calculatorKeypadEl = document.getElementById("calculator-keypad");
-const calculatorDisplayEl = document.getElementById("calculator-display");
-const calculatorLiveTotalEl = document.getElementById("calculator-live-total");
-const calculatorCloseBtn = document.getElementById("calculator-close");
-const quickAmountCalculatorSlotEl = document.getElementById("quick-amount-calculator-slot");
-const montoCalculatorSlotEl = document.getElementById("monto-calculator-slot");
-let activeCalculatorInput = null;
-const mobileUserAgent =
-  navigator.userAgentData?.mobile ||
-  /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent || "");
-const isTouchCalculatorDevice =
-  Boolean(mobileUserAgent) &&
-  window.matchMedia("(pointer: coarse)").matches;
-
-function updateCalculatorScreen() {
-  if (!calculatorDisplayEl || !calculatorLiveTotalEl || !activeCalculatorInput) return;
-  const raw = String(activeCalculatorInput.value || "").trim();
-  calculatorDisplayEl.textContent = raw || "0";
-  calculatorDisplayEl.classList.remove("calculator-display-error");
-  calculatorLiveTotalEl.classList.remove("calculator-live-total-error");
-  if (!raw) {
-    calculatorLiveTotalEl.textContent = "Total: 0.00";
-    return;
-  }
-  const result = evaluateMathExpression(raw);
-  if (Number.isFinite(result)) {
-    calculatorLiveTotalEl.textContent = `Total: ${result.toFixed(2)}`;
-    return;
-  }
-  calculatorDisplayEl.classList.add("calculator-display-error");
-  calculatorLiveTotalEl.classList.add("calculator-live-total-error");
-  calculatorLiveTotalEl.textContent = "Total: expresion invalida";
-}
-
-function evaluateMathExpression(value) {
-  return parseDecimalExpression(value);
-}
-
-function hideCalculator() {
-  if (!calculatorKeypadEl) return;
-  calculatorKeypadEl.hidden = true;
-  calculatorKeypadEl.setAttribute("aria-hidden", "true");
-  activeCalculatorInput = null;
-}
-
-function resolveCalculatorSlot(element) {
-  if (element === quickAmountEl) return quickAmountCalculatorSlotEl;
-  if (element === montoEl) return montoCalculatorSlotEl;
-  return null;
-}
-
-function showCalculatorFor(element, options = {}) {
-  if (!calculatorKeypadEl || !calculatorDisplayEl || !element) return;
-  const { focusInput = true } = options;
-  if (isTouchCalculatorDevice && document.activeElement instanceof HTMLElement) {
-    document.activeElement.blur();
-  }
-  const slotEl = resolveCalculatorSlot(element);
-  if (slotEl && calculatorKeypadEl.parentElement !== slotEl) {
-    slotEl.appendChild(calculatorKeypadEl);
-  }
-  activeCalculatorInput = element;
-  calculatorKeypadEl.hidden = false;
-  calculatorKeypadEl.setAttribute("aria-hidden", "false");
-  updateCalculatorScreen();
-  if (focusInput) element.focus();
-  if (isTouchCalculatorDevice) {
-    calculatorKeypadEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
-}
-
-function applyCalcKey(key) {
-  if (!activeCalculatorInput) return;
-  const current = String(activeCalculatorInput.value || "");
-
-  if (key === "C") {
-    setCalculatorValue("");
-    return;
-  }
-
-  if (key === "backspace") {
-    setCalculatorValue(current.slice(0, -1));
-    return;
-  }
-
-  if (key === "close") {
-    hideCalculator();
-    return;
-  }
-
-  if (key === "⌫") {
-    setCalculatorValue(current.slice(0, -1));
-    return;
-  }
-
-  if (key === "=") {
-    const result = evaluateMathExpression(current);
-    if (Number.isFinite(result)) {
-      setCalculatorValue(result.toFixed(2).replace(/\.00$/, ""));
-    }
-    return;
-  }
-
-  setCalculatorValue(current + key);
-}
-
-function setCalculatorValue(value) {
-  if (!activeCalculatorInput) return;
-  activeCalculatorInput.value = value;
-  updateCalculatorScreen();
-}
-
-function bindCalculatorTrigger(inputEl) {
-  if (!inputEl) return;
-
-  if (!isTouchCalculatorDevice) return;
-
-  inputEl.readOnly = true;
-  inputEl.setAttribute("readonly", "readonly");
-  inputEl.setAttribute("inputmode", "none");
-
-  inputEl.addEventListener("focus", () => showCalculatorFor(inputEl, { focusInput: false }));
-  inputEl.addEventListener("click", (event) => {
-    event.preventDefault();
-    showCalculatorFor(inputEl, { focusInput: false });
-  });
-  inputEl.addEventListener(
-    "touchstart",
-    (event) => {
-      event.preventDefault();
-      showCalculatorFor(inputEl, { focusInput: false });
-    },
-    { passive: false }
-  );
-  inputEl.addEventListener("pointerdown", (event) => {
-    const isTouchPointer = event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches;
-    if (!isTouchPointer) return;
-    event.preventDefault();
-    showCalculatorFor(inputEl, { focusInput: false });
-  });
-}
-
-bindCalculatorTrigger(montoEl);
-bindCalculatorTrigger(quickAmountEl);
-
-if (calculatorCloseBtn) calculatorCloseBtn.addEventListener("click", hideCalculator);
-if (calculatorKeypadEl) {
-  calculatorKeypadEl.addEventListener("click", (event) => {
-    const target = event.target;
-    if (!(target instanceof HTMLElement)) return;
-    const key = target.dataset.key;
-    if (!key) return;
-    applyCalcKey(key);
-  });
-}
-
-document.addEventListener("click", (event) => {
-  if (!calculatorKeypadEl || !activeCalculatorInput) return;
-  const target = event.target;
-  if (!(target instanceof HTMLElement)) {
-    hideCalculator();
-    return;
-  }
-  const isInputTarget = target === montoEl || target === quickAmountEl;
-  const isInputLabel = Boolean(montoEl?.closest("label")?.contains(target) || quickAmountEl?.closest("label")?.contains(target));
-  if (isInputTarget || isInputLabel || calculatorKeypadEl.contains(target)) {
-    return;
-  }
-  hideCalculator();
 });
 
 const {
