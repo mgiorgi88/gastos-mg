@@ -673,10 +673,13 @@ function showCalculatorFor(element, options = {}) {
     document.activeElement.blur();
   }
   if (isTouchCalculatorDevice) {
+    calculatorKeypadEl.classList.add("calculator-keypad-inline");
     const slotEl = resolveCalculatorSlot(element);
     if (slotEl && calculatorKeypadEl.parentElement !== slotEl) {
       slotEl.appendChild(calculatorKeypadEl);
     }
+  } else {
+    calculatorKeypadEl.classList.remove("calculator-keypad-inline");
   }
   activeCalculatorInput = element;
   calculatorKeypadEl.hidden = false;
@@ -1335,5 +1338,4 @@ bindAppEvents({
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
 })();
-
 

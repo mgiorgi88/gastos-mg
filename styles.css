@@ -268,6 +268,21 @@ body {
   padding: 16px;
 }
 
+.calculator-keypad-inline {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  display: block;
+  background: transparent;
+  padding: 8px 0 0;
+}
+
+.calculator-keypad-inline .calculator-paper {
+  width: 100%;
+  max-height: none;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
 .calculator-paper {
   width: min(420px, 100%);
   max-height: calc(100vh - 32px);
