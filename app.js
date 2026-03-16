@@ -755,6 +755,7 @@ const {
 const {
   loadQuickCategories,
   quickAddExpense,
+  renderQuickDetailSuggestions,
   refreshQuickConfigValidation,
   renderQuickButtons,
   resetQuickCategories,
@@ -781,7 +782,8 @@ const {
   animatePrimarySave,
   flashSavedFeedback,
   money,
-  parseDecimalInputValue
+  parseDecimalInputValue,
+  getTxData: () => state.txData
 });
 
 const {
@@ -930,6 +932,7 @@ const { refresh } = createRefreshController({
   renderSavingsGoalSummary,
   renderTopExpensesCurrentMonth,
   drawBalanceSparkline,
+  renderQuickDetailSuggestions,
   refreshDetailCategoryOptions,
   getFilteredDetailRows,
   setCurrentDetailRows: (rows) => {

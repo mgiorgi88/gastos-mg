@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon.svg">
-  <link rel="stylesheet" href="styles.css?v=170">
+  <link rel="stylesheet" href="styles.css?v=171">
 </head>
 <body class="app-boot">
   <section id="entry-gate" class="entry-gate" hidden>
@@ -85,7 +85,7 @@
         <p id="cloud-indicator" class="cloud-indicator">Nube: Local</p>
         <p id="sync-indicator" class="sync-indicator sync-local">Sincronizacion: Local</p>
       </div>
-      <p class="build-version build-version-options">Version visible: v170</p>
+      <p class="build-version build-version-options">Version visible: v171</p>
     </section>
 
     <section id="account-mini" class="card card-opciones card-opciones-compact card-opciones-account-mini" data-panel="opciones" hidden>
@@ -236,7 +236,12 @@
           <small class="muted">Puedes escribir una suma como 12.50+8.20.</small>
         </label>
         <label>Detalle rapido (opcional)
-          <input type="text" id="quick-detail" placeholder="Ej: compra semanal">
+          <input type="text" id="quick-detail" list="quick-detail-suggestions" placeholder="Ej: compra semanal">
+          <datalist id="quick-detail-suggestions"></datalist>
+          <div id="quick-detail-suggestion-wrap" class="quick-detail-suggestions" hidden>
+            <span class="quick-detail-suggestions-label">Usados hace poco</span>
+            <div id="quick-detail-suggestion-list" class="quick-detail-suggestion-list"></div>
+          </div>
         </label>
       </div>
       <div class="quick-actions">
@@ -478,8 +483,8 @@
 
   <div id="toast" class="toast" hidden></div>
 
-  <script src="stats-utils.js?v=170"></script>
+  <script src="stats-utils.js?v=171"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script type="module" src="app.js?v=170"></script>
+  <script type="module" src="app.js?v=171"></script>
 </body>
 </html>

@@ -19,6 +19,7 @@ export function createRefreshController({
   renderSavingsGoalSummary,
   renderTopExpensesCurrentMonth,
   drawBalanceSparkline,
+  renderQuickDetailSuggestions,
   refreshDetailCategoryOptions,
   getFilteredDetailRows,
   setCurrentDetailRows,
@@ -126,6 +127,7 @@ export function createRefreshController({
     renderTopExpensesCurrentMonth(all);
     if (currentMonthLabelEl) currentMonthLabelEl.textContent = `Mes actual: ${monthLabel(CURRENT_MONTH)}`;
     drawBalanceSparkline(all);
+    renderQuickDetailSuggestions();
 
     refreshDetailCategoryOptions(all);
     const detailRows = getFilteredDetailRows(all);

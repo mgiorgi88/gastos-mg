@@ -17,8 +17,76 @@ export function createQuickActionsUi({
   animatePrimarySave,
   flashSavedFeedback,
   money,
-  parseDecimalInputValue
+  parseDecimalInputValue,
+  getTxData
 }) {
+  const quickDetailSuggestionsEl = document.getElementById("quick-detail-suggestions");
+  const quickDetailSuggestionWrapEl = document.getElementById("quick-detail-suggestion-wrap");
+  const quickDetailSuggestionListEl = document.getElementById("quick-detail-suggestion-list");
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;");
+  }
+
+  function getRecentQuickDetails() {
+    if (typeof getTxData !== "function") return [];
+    const rows = Array.isArray(getTxData()) ? getTxData() : [];
+    const seen = new Set();
+    const details = [];
+
+    rows
+      .filter((row) => row && row.tipo === "Gasto")
+      .sort((a, b) => String(b.fecha || "").localeCompare(String(a.fecha || "")))
+      .forEach((row) => {
+        const detail = String(row.detalle || "").trim();
+        const key = detail.toLocaleLowerCase();
+        if (!detail || seen.has(key)) return;
+        seen.add(key);
+        details.push(detail);
+      });
+
+    return details.slice(0, 8);
+  }
+
+  function fillQuickDetail(detail) {
+    if (!quickDetailEl) return;
+    quickDetailEl.value = detail;
+    quickDetailEl.dispatchEvent(new Event("input", { bubbles: true }));
+    quickDetailEl.focus();
+    const end = quickDetailEl.value.length;
+    if (typeof quickDetailEl.setSelectionRange === "function") {
+      quickDetailEl.setSelectionRange(end, end);
+    }
+  }
+
+  function renderQuickDetailSuggestions() {
+    if (!quickDetailSuggestionsEl || !quickDetailSuggestionWrapEl || !quickDetailSuggestionListEl) return;
+
+    const suggestions = getRecentQuickDetails();
+    const typed = String(quickDetailEl?.value || "").trim().toLocaleLowerCase();
+    const visibleSuggestions = typed
+      ? suggestions.filter((detail) => detail.toLocaleLowerCase().includes(typed) && detail.toLocaleLowerCase() !== typed)
+      : suggestions;
+
+    quickDetailSuggestionsEl.innerHTML = suggestions
+      .map((detail) => `<option value="${escapeHtml(detail)}"></option>`)
+      .join("");
+
+    quickDetailSuggestionListEl.innerHTML = visibleSuggestions
+      .slice(0, 5)
+      .map(
+        (detail) =>
+          `<button type="button" class="quick-detail-chip" data-detail="${escapeHtml(detail)}">${escapeHtml(detail)}</button>`
+      )
+      .join("");
+
+    quickDetailSuggestionWrapEl.hidden = visibleSuggestions.length === 0;
+  }
+
   function sanitizeQuickCategories(value) {
     const valid = CATEGORIAS.Gasto;
     if (!Array.isArray(value)) return [...QUICK_CATEGORY_DEFAULTS];
@@ -159,15 +227,30 @@ export function createQuickActionsUi({
     quickAmountEl.value = "";
     quickDetailEl.value = "";
     quickAmountEl.dispatchEvent(new Event("input", { bubbles: true }));
+    renderQuickDetailSuggestions();
     animatePrimarySave(sourceBtn);
     flashSavedFeedback("Guardado");
     setStatus(`Carga rapida guardada: ${category} ${money(amount)}.`);
     showToast(`Guardado: ${category}`);
   }
 
+  if (quickDetailEl) {
+    quickDetailEl.addEventListener("input", renderQuickDetailSuggestions);
+  }
+
+  if (quickDetailSuggestionListEl) {
+    quickDetailSuggestionListEl.addEventListener("click", (event) => {
+      const button = event.target instanceof HTMLElement ? event.target.closest(".quick-detail-chip") : null;
+      if (!button) return;
+      const detail = button.dataset.detail || button.textContent || "";
+      fillQuickDetail(String(detail).trim());
+    });
+  }
+
   return {
     loadQuickCategories,
     quickAddExpense,
+    renderQuickDetailSuggestions,
     refreshQuickConfigValidation,
     renderQuickButtons,
     resetQuickCategories,
