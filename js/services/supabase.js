@@ -107,7 +107,9 @@ export function createSupabaseService({
 
   async function refreshAuthToken() {
     const authSession = getAuthSession();
-    if (!authSession?.refresh_token) return false;
+    if (!authSession?.refresh_token) {
+      return { ok: false, transient: false };
+    }
 
     const resp = await sbFetch("/auth/v1/token?grant_type=refresh_token", {
       method: "POST",
@@ -117,20 +119,28 @@ export function createSupabaseService({
 
     const data = await resp.json().catch(() => null);
     if (!resp.ok || !data?.access_token) {
-      clearSession();
-      return false;
+      const isTransient = resp.status >= 500 || resp.status === 429 || resp.status === 504 || resp.status === 599;
+      if (!isTransient) {
+        clearSession();
+      }
+      return { ok: false, transient: isTransient };
     }
 
     saveSession(data);
-    return true;
+    return { ok: true, transient: false };
   }
 
   async function sbAuthFetch(path, options = {}, retry = true) {
     let resp = await sbFetch(path, { ...options, auth: true });
     if (resp.status !== 401 || !retry) return resp;
 
-    const ok = await refreshAuthToken();
-    if (!ok) return resp;
+    const refreshState = await refreshAuthToken();
+    if (!refreshState.ok) {
+      if (refreshState.transient) {
+        return buildErrorResponse("No se pudo revalidar la sesion. Se reintentara automaticamente.", 599);
+      }
+      return resp;
+    }
 
     resp = await sbFetch(path, { ...options, auth: true });
     return resp;
