@@ -253,17 +253,22 @@ function insertTextAtCursor(inputEl, text) {
 
 function bindAmountPlusButton(buttonEl, inputEl) {
   if (!(buttonEl instanceof HTMLButtonElement) || !(inputEl instanceof HTMLInputElement)) return;
+  let handledByTouch = false;
 
-  const preserveFocus = (event) => {
+  buttonEl.addEventListener("mousedown", (event) => {
     event.preventDefault();
-    inputEl.focus();
-  };
-
-  buttonEl.addEventListener("pointerdown", preserveFocus);
-  buttonEl.addEventListener("mousedown", preserveFocus);
-  buttonEl.addEventListener("touchstart", preserveFocus, { passive: false });
+  });
+  buttonEl.addEventListener("touchend", (event) => {
+    event.preventDefault();
+    handledByTouch = true;
+    insertTextAtCursor(inputEl, "+");
+  }, { passive: false });
   buttonEl.addEventListener("click", (event) => {
     event.preventDefault();
+    if (handledByTouch) {
+      handledByTouch = false;
+      return;
+    }
     insertTextAtCursor(inputEl, "+");
   });
 }
@@ -465,7 +470,6 @@ function getLocalTransactionStore() {
 
 function requireCloudSession(actionLabel = "usar la app") {
   if (state.currentUser || isLocalDevelopment()) return true;
-  setActiveTab("opciones");
   updateEntryGate();
   setStatus(`Inicia sesión para ${actionLabel}.`);
   return false;

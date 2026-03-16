@@ -159,8 +159,9 @@ export function createAuthService({
 
     const authState = await fetchCurrentUserState();
     if (!authState.ok) {
-      if (authState.status >= 500 || authState.status === 504 || authState.status === 599) {
-        setCurrentUser(getAuthSession()?.user || null);
+      const savedUser = getAuthSession()?.user || null;
+      if (savedUser && (authState.status === 401 || authState.status === 403 || authState.status >= 500 || authState.status === 504 || authState.status === 599)) {
+        setCurrentUser(savedUser);
         setAuthButtons();
         setStatus("Sesion restaurada. La nube se reintentara al reconectar.", "info");
         setTxData(getLocalTransactionStore());
