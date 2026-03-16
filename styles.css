@@ -48,6 +48,10 @@ body {
   color: var(--ink);
 }
 
+body.app-boot [data-panel]:not([data-panel="cargar"]) {
+  display: none !important;
+}
+
 .entry-gate {
   position: fixed;
   inset: 0;
@@ -315,15 +319,22 @@ body {
   color: #b91c1c;
 }
 
-.calculator-grid {
+.calculator-actions-row {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 4px;
 }
 
 .calculator-slot {
-  display: block;
+  display: flex;
+  justify-content: center;
   margin-top: 4px;
+}
+
+.calculator-numpad {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
 }
 
 .calc-btn {
@@ -351,9 +362,8 @@ body {
   grid-column: span 2;
 }
 
-.calc-placeholder {
-  visibility: hidden;
-  pointer-events: none;
+.calc-eq-wide {
+  grid-column: span 3;
 }
 
 :root[data-theme="dark"] .calculator-display-error,

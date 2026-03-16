@@ -1316,6 +1316,7 @@ bindAppEvents({
     if (rememberEl) rememberEl.checked = loadRememberMe();
     applyTheme(state.selectedTheme);
     setActiveTab("cargar");
+    document.body.classList.remove("app-boot");
     updateArsConvertVisibility();
     refresh();
     await initAuth();
