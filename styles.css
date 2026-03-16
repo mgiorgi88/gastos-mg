@@ -1827,6 +1827,14 @@ button:focus {
   margin-top: 14px;
 }
 
+#movimientos-section .detail-filters {
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
 .item {
   border: 1px solid rgba(148, 163, 184, 0.14);
   border-radius: 16px;
