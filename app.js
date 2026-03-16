@@ -236,7 +236,8 @@ const state = createAppState({
   authActionInFlight: false,
   appReady: false,
   syncUiReady: false,
-  initialDataReady: false
+  initialDataReady: false,
+  panelAnimationsReady: false
 });
 
 if (fechaEl) fechaEl.valueAsDate = new Date();
@@ -318,7 +319,7 @@ function setActiveTab(tab) {
     const show = panel.getAttribute("data-panel") === tab;
     panel.hidden = !show;
     panel.classList.remove("panel-enter");
-    if (show) {
+    if (show && state.panelAnimationsReady) {
       void panel.offsetWidth;
       panel.classList.add("panel-enter");
     }
@@ -1201,6 +1202,9 @@ bindAppEvents({
     state.syncUiReady = true;
     updateEntryGate();
     refreshSyncIndicator();
+    requestAnimationFrame(() => {
+      state.panelAnimationsReady = true;
+    });
   } catch (err) {
     state.initialDataReady = true;
     refresh();
