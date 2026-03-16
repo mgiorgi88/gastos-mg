@@ -158,6 +158,7 @@ export function createQuickActionsUi({
     });
     quickAmountEl.value = "";
     quickDetailEl.value = "";
+    quickAmountEl.dispatchEvent(new Event("input", { bubbles: true }));
     animatePrimarySave(sourceBtn);
     flashSavedFeedback("Guardado");
     setStatus(`Carga rapida guardada: ${category} ${money(amount)}.`);

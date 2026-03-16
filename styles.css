@@ -362,6 +362,21 @@ body.app-boot #sync-badge {
   transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.card-cargar {
+  background:
+    linear-gradient(180deg, rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0.01)),
+    var(--card);
+  border: 1px solid rgba(59, 130, 246, 0.14);
+  border-radius: 22px;
+  padding: 20px;
+  margin-top: 14px;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+}
+
+.card-cargar + .card-cargar {
+  margin-top: 18px;
+}
+
 .card h2 {
   margin-top: 0;
   margin-bottom: var(--space-sm);
@@ -396,6 +411,19 @@ body.app-boot #sync-badge {
   line-height: 1.15;
   font-weight: 700;
   color: var(--ink);
+}
+
+.card-cargar h2 {
+  margin-bottom: 6px;
+  font-size: 1.7rem;
+}
+
+.section-lead {
+  margin: 0 0 16px;
+  max-width: 62ch;
+  color: var(--muted);
+  font-size: 0.97rem;
+  line-height: 1.5;
 }
 
 .panel-group-copy {
@@ -491,6 +519,36 @@ label {
 
 .amount-input-row input {
   width: 100%;
+  min-height: 52px;
+  border-radius: 14px;
+  font-size: 1.08rem;
+}
+
+#quick-amount,
+#monto {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.amount-live-total {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  margin-top: 2px;
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.08);
+  color: var(--primary);
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.amount-live-total.is-error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
 }
 
 .field-hint {
@@ -1528,19 +1586,33 @@ button:focus {
 
 .category-btn {
   border-radius: 20px;
-  padding: 11px 17px;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  padding: 13px 17px;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  font-weight: 600;
 }
 
 .category-btn:hover {
   background: #273748;
   transform: scale(1.03);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.16);
 }
 
 :root[data-theme="dark"] .quick-actions .btn-tertiary {
   background: #1f2937;
   color: #e5e7eb;
   border-color: #374151;
+}
+
+:root[data-theme="dark"] .card-cargar {
+  background:
+    linear-gradient(180deg, rgba(59, 130, 246, 0.09), rgba(59, 130, 246, 0.03)),
+    var(--card);
+  border-color: rgba(96, 165, 250, 0.18);
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.24);
+}
+
+:root[data-theme="dark"] .amount-live-total.is-error {
+  color: #fda4af;
 }
 
 .budget-list {

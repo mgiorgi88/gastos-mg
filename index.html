@@ -210,7 +210,7 @@
       <p id="clear-my-data-status" class="muted"></p>
     </section>
 
-    <section class="card" data-panel="cargar">
+    <section class="card card-cargar card-cargar-quick" data-panel="cargar">
       <div id="cargar-empty-state" class="empty-state" hidden>
         <p class="empty-state-kicker">Primer paso</p>
         <h3>Aun no tienes movimientos</h3>
@@ -218,12 +218,14 @@
         <button id="btn-empty-start" type="button" class="btn-primary">Cargar primer movimiento</button>
       </div>
       <h2>Carga rapida</h2>
+      <p class="section-lead">Anota un gasto en segundos y, si necesitas sumar dos tickets, escribe la cuenta directamente en el importe.</p>
       <div class="grid">
         <label>Importe rapido
           <div class="amount-input-row">
             <input type="text" id="quick-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00 o 12.50+8.20">
             <button type="button" id="quick-amount-plus" class="amount-plus-btn" aria-label="Agregar signo mas al importe rapido">+</button>
           </div>
+          <small id="quick-amount-total" class="amount-live-total" hidden></small>
           <small class="muted">Puedes escribir una suma como 12.50+8.20.</small>
         </label>
         <label>Detalle rapido (opcional)
@@ -238,8 +240,9 @@
       </div>
     </section>
 
-    <section class="card" data-panel="cargar">
+    <section class="card card-cargar card-cargar-main" data-panel="cargar">
       <h2>Nueva transaccion</h2>
+      <p class="section-lead">Completa el movimiento con más detalle. El monto también acepta sumas para juntar varios importes en una sola carga.</p>
       <form id="tx-form">
         <div class="grid">
           <label>Fecha
@@ -256,6 +259,7 @@
               <input type="text" id="monto" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00 o 45+18.90" required>
               <button type="button" id="monto-plus" class="amount-plus-btn" aria-label="Agregar signo mas al monto">+</button>
             </div>
+            <small id="monto-total" class="amount-live-total" hidden></small>
             <small class="muted">Puedes escribir una suma como 45+18.90.</small>
           </label>
           <label>Categoria

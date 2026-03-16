@@ -191,6 +191,7 @@ import {
   toDateKeyLocal
 } from "./js/utils/date.js";
 import { escapeHtml, formatMoney } from "./js/utils/formatters.js";
+import { parseDecimalExpression } from "./js/utils/number-input.js";
 import { buildInitialQuickCategories, createAppState } from "./js/core/state.js";
 
 /**
@@ -206,6 +207,8 @@ import { buildInitialQuickCategories, createAppState } from "./js/core/state.js"
 const sessionData = loadSessionData();
 const quickAmountPlusBtn = document.getElementById("quick-amount-plus");
 const montoPlusBtn = document.getElementById("monto-plus");
+const quickAmountTotalEl = document.getElementById("quick-amount-total");
+const montoTotalEl = document.getElementById("monto-total");
 const state = createAppState({
   currentUser: null,
   txData: [],
@@ -279,9 +282,58 @@ function bindAmountPlusButton(buttonEl, inputEl) {
 bindAmountPlusButton(quickAmountPlusBtn, quickAmountEl);
 bindAmountPlusButton(montoPlusBtn, montoEl);
 
+function updateAmountPreview(inputEl, outputEl) {
+  if (!(inputEl instanceof HTMLInputElement) || !(outputEl instanceof HTMLElement)) return;
+  const rawValue = String(inputEl.value || "").trim();
+
+  if (!rawValue) {
+    outputEl.hidden = true;
+    outputEl.textContent = "";
+    outputEl.classList.remove("is-error");
+    return;
+  }
+
+  const parsedValue = parseDecimalExpression(rawValue);
+  outputEl.hidden = false;
+
+  if (Number.isFinite(parsedValue)) {
+    outputEl.textContent = `Total: ${money(parsedValue)}`;
+    outputEl.classList.remove("is-error");
+    return;
+  }
+
+  outputEl.textContent = "Revisa la cuenta";
+  outputEl.classList.add("is-error");
+}
+
+function refreshAmountPreviews() {
+  updateAmountPreview(quickAmountEl, quickAmountTotalEl);
+  updateAmountPreview(montoEl, montoTotalEl);
+}
+
+[quickAmountEl, montoEl].forEach((inputEl) => {
+  if (!(inputEl instanceof HTMLInputElement)) return;
+  inputEl.addEventListener("input", refreshAmountPreviews);
+  inputEl.addEventListener("blur", refreshAmountPreviews);
+});
+
+if (form) {
+  form.addEventListener("reset", () => {
+    requestAnimationFrame(refreshAmountPreviews);
+  });
+}
+
+if (currencyEl) {
+  currencyEl.addEventListener("change", () => {
+    requestAnimationFrame(refreshAmountPreviews);
+  });
+}
+
 function money(value) {
   return formatMoney(value, state.selectedCurrency);
 }
+
+refreshAmountPreviews();
 
 function loadActiveTab() {
   return "cargar";
