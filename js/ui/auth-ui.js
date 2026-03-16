@@ -89,7 +89,7 @@ export function createAuthUi({
 
   function updateEntryGate() {
     if (!entryGateEl) return;
-    entryGateEl.hidden = Boolean(getCurrentUser());
+    entryGateEl.hidden = true;
   }
 
   function setAuthActionBusy(activeButton = null, loadingText = "Procesando...") {
