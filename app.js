@@ -611,7 +611,6 @@ const {
 });
 
 const calculatorKeypadEl = document.getElementById("calculator-keypad");
-const calculatorTargetEl = document.getElementById("calculator-target");
 const calculatorDisplayEl = document.getElementById("calculator-display");
 const calculatorLiveTotalEl = document.getElementById("calculator-live-total");
 const calculatorCloseBtn = document.getElementById("calculator-close");
@@ -628,10 +627,6 @@ const isTouchCalculatorDevice =
 function updateCalculatorScreen() {
   if (!calculatorDisplayEl || !calculatorLiveTotalEl || !activeCalculatorInput) return;
   const raw = String(activeCalculatorInput.value || "").trim();
-  if (calculatorTargetEl) {
-    calculatorTargetEl.textContent =
-      activeCalculatorInput === quickAmountEl ? "Calculadora de importe rapido" : "Calculadora de monto";
-  }
   calculatorDisplayEl.textContent = raw || "0";
   calculatorDisplayEl.classList.remove("calculator-display-error");
   calculatorLiveTotalEl.classList.remove("calculator-live-total-error");
@@ -672,14 +667,9 @@ function showCalculatorFor(element, options = {}) {
   if (isTouchCalculatorDevice && document.activeElement instanceof HTMLElement) {
     document.activeElement.blur();
   }
-  if (isTouchCalculatorDevice) {
-    calculatorKeypadEl.classList.add("calculator-keypad-inline");
-    const slotEl = resolveCalculatorSlot(element);
-    if (slotEl && calculatorKeypadEl.parentElement !== slotEl) {
-      slotEl.appendChild(calculatorKeypadEl);
-    }
-  } else {
-    calculatorKeypadEl.classList.remove("calculator-keypad-inline");
+  const slotEl = resolveCalculatorSlot(element);
+  if (slotEl && calculatorKeypadEl.parentElement !== slotEl) {
+    slotEl.appendChild(calculatorKeypadEl);
   }
   activeCalculatorInput = element;
   calculatorKeypadEl.hidden = false;
@@ -741,9 +731,7 @@ function bindCalculatorTrigger(inputEl) {
     inputEl.setAttribute("inputmode", "none");
   }
 
-  if (!isTouchCalculatorDevice) {
-    inputEl.addEventListener("focus", () => showCalculatorFor(inputEl));
-  }
+  inputEl.addEventListener("focus", () => showCalculatorFor(inputEl));
   inputEl.addEventListener("click", (event) => {
     if (isTouchCalculatorDevice) event.preventDefault();
     showCalculatorFor(inputEl, { focusInput: !isTouchCalculatorDevice });
@@ -1338,4 +1326,3 @@ bindAppEvents({
     setStatus(`Error al iniciar app: ${err?.message || String(err)}`);
   }
 })();
-

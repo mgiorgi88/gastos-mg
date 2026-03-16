@@ -259,16 +259,6 @@ body {
 }
 
 .calculator-keypad {
-  position: fixed;
-  inset: 0;
-  z-index: 110;
-  display: grid;
-  place-items: center;
-  background: rgba(0, 0, 0, 0.35);
-  padding: 16px;
-}
-
-.calculator-keypad-inline {
   position: static;
   inset: auto;
   z-index: auto;
@@ -277,7 +267,7 @@ body {
   padding: 6px 0 0;
 }
 
-.calculator-keypad-inline .calculator-paper {
+.calculator-keypad .calculator-paper {
   width: 100%;
   max-height: none;
   border-radius: 14px;
@@ -295,15 +285,6 @@ body {
   gap: 4px;
   overflow: auto;
   box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-}
-
-.calculator-target {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 2px;
 }
 
 .calculator-display {
