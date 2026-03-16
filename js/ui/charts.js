@@ -152,8 +152,9 @@ export function createChartsUi({
     });
 
     const maxVal = Math.max(1, ...rows.flatMap((r) => [r.ingresos, r.gastos]));
-    const left = 36;
-    const right = width - 10;
+    const horizontalPad = 18;
+    const left = horizontalPad;
+    const right = width - horizontalPad;
     const top = 16;
     const bottom = height - 26;
     const chartW = right - left;
