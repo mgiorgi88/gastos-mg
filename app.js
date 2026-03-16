@@ -725,21 +725,21 @@ function setCalculatorValue(value) {
 function bindCalculatorTrigger(inputEl) {
   if (!inputEl) return;
 
-  if (isTouchCalculatorDevice) {
-    inputEl.readOnly = true;
-    inputEl.setAttribute("readonly", "readonly");
-    inputEl.setAttribute("inputmode", "none");
-  }
+  if (!isTouchCalculatorDevice) return;
 
-  inputEl.addEventListener("focus", () => showCalculatorFor(inputEl));
+  inputEl.readOnly = true;
+  inputEl.setAttribute("readonly", "readonly");
+  inputEl.setAttribute("inputmode", "none");
+
+  inputEl.addEventListener("focus", () => showCalculatorFor(inputEl, { focusInput: false }));
   inputEl.addEventListener("click", (event) => {
-    if (isTouchCalculatorDevice) event.preventDefault();
-    showCalculatorFor(inputEl, { focusInput: !isTouchCalculatorDevice });
+    event.preventDefault();
+    showCalculatorFor(inputEl, { focusInput: false });
   });
   inputEl.addEventListener(
     "touchstart",
     (event) => {
-      if (isTouchCalculatorDevice) event.preventDefault();
+      event.preventDefault();
       showCalculatorFor(inputEl, { focusInput: false });
     },
     { passive: false }
