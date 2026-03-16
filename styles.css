@@ -173,9 +173,10 @@ body.app-boot #sync-badge {
 
 .hero h1 {
   margin: 0;
-  font-size: 1.9rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  line-height: 0.98;
 }
 
 .hero-head {
@@ -183,6 +184,25 @@ body.app-boot #sync-badge {
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
+}
+
+.hero {
+  padding: 18px 0 6px;
+}
+
+.hero-kicker {
+  margin: 0 0 10px;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--primary);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .sync-badge {
@@ -248,8 +268,14 @@ body.app-boot #sync-badge {
 }
 
 .hero p {
-  margin-top: 6px;
+  margin-top: 8px;
   color: var(--muted);
+}
+
+.hero-copy {
+  max-width: 62ch;
+  font-size: 1rem;
+  line-height: 1.55;
 }
 
 .build-version {
@@ -343,28 +369,36 @@ body.app-boot #sync-badge {
 }
 
 .tab-nav {
-  margin-top: var(--space-sm);
+  margin-top: 18px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-xs);
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(148, 163, 184, 0.08), rgba(148, 163, 184, 0.03)),
+    var(--soft);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .tab-btn {
   position: relative;
   margin-top: 0;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--soft);
+  min-height: 50px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: transparent;
   color: var(--ink);
-  opacity: 0.86;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  opacity: 0.76;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
 }
 
 .tab-btn.active {
   background: var(--primary);
   color: var(--on-primary);
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.55), 0 8px 18px rgba(59, 130, 246, 0.35);
+  box-shadow: 0 10px 24px rgba(59, 130, 246, 0.28);
   transform: translateY(-1px);
   font-weight: 700;
   opacity: 1;
@@ -394,6 +428,25 @@ body.app-boot #sync-badge {
 
 .card-cargar + .card-cargar {
   margin-top: 18px;
+}
+
+.card-resumen {
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.015), rgba(15, 23, 42, 0)),
+    var(--card);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 22px;
+  padding: 20px;
+  margin-top: 16px;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.05);
+}
+
+.card-resumen-principal {
+  background:
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0.015)),
+    var(--card);
+  border-color: rgba(59, 130, 246, 0.15);
 }
 
 .card h2 {
@@ -835,42 +888,41 @@ button:focus {
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-sm);
   margin-top: var(--space-sm);
 }
 
 .stats article {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 12px;
-  background: var(--soft);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(248, 250, 252, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .stats span {
   color: var(--muted);
   display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
 }
 
 .stats strong {
-  font-size: 1.1rem;
-}
-
-.stats article:last-child {
-  order: -1;
-  grid-column: 1 / -1;
-}
-
-.stats article:last-child strong {
-  font-size: 1.45rem;
+  margin-top: 10px;
+  display: block;
+  font-size: clamp(1.35rem, 2.5vw, 2rem);
+  line-height: 1.05;
 }
 
 .top-expenses {
   margin-top: var(--space-sm);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--soft);
-  padding: 10px 12px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 16px;
+  background: rgba(248, 250, 252, 0.85);
+  padding: 14px 16px;
 }
 
 .top-expenses-title {
@@ -1132,11 +1184,11 @@ button:focus {
 }
 
 .chart-wrap {
-  margin: 8px auto 0;
-  border: 0;
-  border-radius: 10px;
-  background: transparent;
-  padding: 2px;
+  margin: 12px auto 0;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  background: rgba(248, 250, 252, 0.78);
+  padding: 10px;
   width: min(100%, 740px);
   aspect-ratio: 16 / 8;
   max-height: 300px;
@@ -1221,10 +1273,10 @@ button:focus {
 }
 
 .trend-item {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 12px;
-  background: var(--soft);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(248, 250, 252, 0.9);
   display: grid;
   gap: 6px;
 }
@@ -1638,6 +1690,39 @@ button:focus {
 
 :root[data-theme="dark"] .amount-live-total.is-error {
   color: #fda4af;
+}
+
+:root[data-theme="dark"] .hero-kicker {
+  background: rgba(59, 130, 246, 0.16);
+}
+
+:root[data-theme="dark"] .tab-nav {
+  background:
+    linear-gradient(180deg, rgba(30, 41, 59, 0.65), rgba(15, 23, 42, 0.42)),
+    var(--soft);
+}
+
+:root[data-theme="dark"] .card-resumen {
+  background:
+    linear-gradient(180deg, rgba(30, 41, 59, 0.46), rgba(15, 23, 42, 0.2)),
+    var(--card);
+  border-color: rgba(71, 85, 105, 0.42);
+  box-shadow: 0 18px 38px rgba(2, 6, 23, 0.22);
+}
+
+:root[data-theme="dark"] .card-resumen-principal {
+  background:
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(59, 130, 246, 0.14), rgba(59, 130, 246, 0.04)),
+    var(--card);
+}
+
+:root[data-theme="dark"] .stats article,
+:root[data-theme="dark"] .top-expenses,
+:root[data-theme="dark"] .chart-wrap,
+:root[data-theme="dark"] .trend-item {
+  background: rgba(15, 23, 42, 0.48);
+  border-color: rgba(71, 85, 105, 0.42);
 }
 
 .budget-list {
