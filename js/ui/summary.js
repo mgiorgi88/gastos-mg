@@ -419,6 +419,8 @@ export function createSummaryUi({
     const { ingresos, gastos, balanceValue } = summary;
     ingresosEl.textContent = money(ingresos);
     gastosEl.textContent = money(gastos);
+    gastosEl.classList.remove("saldo-pos", "saldo-neu");
+    gastosEl.classList.add("saldo-neg");
     balanceEl.textContent = money(balanceValue);
     balanceEl.classList.remove("saldo-pos", "saldo-neg", "saldo-neu");
     balanceEl.classList.add(balanceValue > 0 ? "saldo-pos" : balanceValue < 0 ? "saldo-neg" : "saldo-neu");
