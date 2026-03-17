@@ -118,7 +118,7 @@ export function createCalendarUi({
           </div>
           <div class="tx-actions">
             <strong class="monto ${String(item.tipo).toLowerCase()}">${item.tipo === "Gasto" ? "-" : "+"}${money(Number(item.monto))}</strong>
-            <button class="danger action-btn" data-action="duplicate" data-id="${item.id}" type="button"><span class="action-icon">\u29C9</span><span class="action-label">Duplicar</span></button>
+            <button class="danger action-btn" data-action="duplicate" data-id="${item.id}" type="button"><span class="action-icon">\u29C9</span><span class="action-label">Repetir</span></button>
             <button class="danger action-btn" data-action="edit" data-id="${item.id}" type="button"><span class="action-icon">\u270E</span><span class="action-label">Editar</span></button>
             <button class="danger action-btn" data-action="delete" data-id="${item.id}" type="button"><span class="action-icon">\u{1F5D1}</span><span class="action-label">Eliminar</span></button>
           </div>

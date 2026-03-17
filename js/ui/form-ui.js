@@ -26,7 +26,8 @@ export function createFormUi({
   parseDecimalInputValue,
   setStatus,
   money,
-  onEditingChange
+  onEditingChange,
+  setActiveTab
 }) {
   function updateCategoryOptions(tipo, selected = "") {
     const categorias = CATEGORIAS[tipo] || [];
@@ -57,11 +58,33 @@ export function createFormUi({
     }
   }
 
-  function setEditingState(tx = null) {
-    onEditingChange(tx ? String(tx.id) : null);
-    if (btnSubmitTx) btnSubmitTx.textContent = tx ? "Guardar cambios" : "Guardar";
-    if (btnCancelEdit) btnCancelEdit.hidden = !tx;
-    if (txFormModeEl) txFormModeEl.hidden = !tx;
+  function setEditingState(tx = null, mode = "new") {
+    const isEdit = mode === "edit" && tx;
+    const isRepeat = mode === "repeat";
+    onEditingChange(isEdit ? String(tx.id) : null);
+    if (btnSubmitTx) btnSubmitTx.textContent = isEdit ? "Guardar cambios" : isRepeat ? "Guardar copia" : "Guardar";
+    if (btnCancelEdit) btnCancelEdit.hidden = !(isEdit || isRepeat);
+    if (txFormModeEl) {
+      txFormModeEl.hidden = !(isEdit || isRepeat);
+      txFormModeEl.textContent = isEdit ? "Editando movimiento" : "Nueva carga basada en un movimiento anterior";
+    }
+  }
+
+  function focusTransactionForm() {
+    if (typeof setActiveTab === "function") setActiveTab("cargar");
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
+    requestAnimationFrame(() => {
+      if (detalleEl && detalleEl.value) {
+        detalleEl.focus();
+        const end = detalleEl.value.length;
+        if (typeof detalleEl.setSelectionRange === "function") detalleEl.setSelectionRange(end, end);
+        return;
+      }
+      if (montoEl) {
+        montoEl.focus();
+        if (typeof montoEl.select === "function") montoEl.select();
+      }
+    });
   }
 
   function updateArsResultPreview() {
@@ -154,9 +177,27 @@ export function createFormUi({
     if (montoEl) montoEl.value = Number(tx.monto).toFixed(2);
     if (detalleEl) detalleEl.value = tx.detalle || "";
     updateArsConvertVisibility();
-    setEditingState(tx);
-    form.scrollIntoView({ behavior: "smooth", block: "start" });
+    setEditingState(tx, "edit");
+    focusTransactionForm();
     setStatus(`Editando: ${tx.categoria} del ${tx.fecha}.`);
+  }
+
+  function startDuplicateDraftTransaction(id) {
+    const tx = getTxData().find((x) => String(x.id) === String(id));
+    if (!tx) {
+      setStatus("No se encontro el movimiento para reutilizar.");
+      return;
+    }
+
+    if (fechaEl) fechaEl.valueAsDate = new Date();
+    tipoEl.value = tx.tipo === "Ingreso" ? "Ingreso" : "Gasto";
+    updateCategoryOptions(tipoEl.value, tx.categoria);
+    if (montoEl) montoEl.value = Number(tx.monto).toFixed(2);
+    if (detalleEl) detalleEl.value = tx.detalle || "";
+    updateArsConvertVisibility();
+    setEditingState(null, "repeat");
+    focusTransactionForm();
+    setStatus(`Carga preparada con base en ${tx.categoria}. Ajustala y guarda cuando quieras.`);
   }
 
   function resetTransactionForm() {
@@ -165,7 +206,7 @@ export function createFormUi({
     tipoEl.value = "Gasto";
     updateCategoryOptions("Gasto");
     updateArsConvertVisibility();
-    setEditingState(null);
+    setEditingState(null, "new");
   }
 
   function animatePrimarySave(target = btnSubmitTx) {
@@ -195,6 +236,7 @@ export function createFormUi({
     setEditingState,
     setupBudgetCategoryOptions,
     setupYoyCategoryOptions,
+    startDuplicateDraftTransaction,
     startEditTransaction,
     updateArsConvertVisibility,
     updateArsResultPreview,

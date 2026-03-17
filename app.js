@@ -718,6 +718,7 @@ const {
   setEditingState,
   setupBudgetCategoryOptions,
   setupYoyCategoryOptions,
+  startDuplicateDraftTransaction,
   startEditTransaction,
   updateArsConvertVisibility,
   updateArsResultPreview,
@@ -751,7 +752,8 @@ const {
   money,
   onEditingChange: (id) => {
     state.editingTxId = id;
-  }
+  },
+  setActiveTab
 });
 
 const {
@@ -1141,7 +1143,7 @@ bindAppEvents({
   setActiveTab,
   lista,
   startEditTransaction,
-  duplicateTransaction,
+  startDuplicateDraftTransaction,
   deleteTransaction,
   calPrevEl,
   calNextEl,

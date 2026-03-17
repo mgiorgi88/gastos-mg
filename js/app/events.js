@@ -33,7 +33,7 @@ export function bindAppEvents({
   setActiveTab,
   lista,
   startEditTransaction,
-  duplicateTransaction,
+  startDuplicateDraftTransaction,
   deleteTransaction,
   calPrevEl,
   calNextEl,
@@ -202,7 +202,7 @@ export function bindAppEvents({
       return;
     }
     if (action === "duplicate") {
-      await duplicateTransaction(id);
+      startDuplicateDraftTransaction(id);
       return;
     }
     if (action === "delete") {

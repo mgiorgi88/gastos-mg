@@ -1613,6 +1613,24 @@ button:focus {
   font-weight: 700;
 }
 
+#tx-form-mode {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 4px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(47, 111, 237, 0.08);
+  color: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+:root[data-theme="dark"] #tx-form-mode {
+  background: rgba(77, 134, 255, 0.16);
+  color: #bfdbfe;
+}
+
 .calendar-panel {
   border: 1px solid rgba(148, 163, 184, 0.16);
   border-radius: 18px;
