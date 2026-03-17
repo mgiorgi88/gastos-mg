@@ -112,6 +112,7 @@ export const btnLogout = document.getElementById("btn-logout");
 export const authStatusEl = document.getElementById("auth-status");
 export const cloudIndicatorEl = document.getElementById("cloud-indicator");
 export const syncIndicatorEl = document.getElementById("sync-indicator");
+export const heroSessionIndicatorEl = document.getElementById("hero-session-indicator");
 export const authCardEl = document.getElementById("auth-card");
 export const accountMiniEl = document.getElementById("account-mini");
 export const accountMiniEmailEl = document.getElementById("account-mini-email");

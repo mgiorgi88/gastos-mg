@@ -9,6 +9,7 @@ export function createAuthUi({
   accountMiniEl,
   accountMiniEmailEl,
   cloudIndicatorEl,
+  heroSessionIndicatorEl,
   btnSignup,
   btnLogin,
   btnRecover,
@@ -69,8 +70,12 @@ export function createAuthUi({
     if (accountMiniEl) accountMiniEl.hidden = !logged || activeTab !== "opciones";
     if (accountMiniEmailEl) accountMiniEmailEl.textContent = logged ? currentUser.email : "";
     if (cloudIndicatorEl) {
-      cloudIndicatorEl.textContent = logged ? "Nube: Conectado" : "Nube: Local";
+      cloudIndicatorEl.textContent = logged ? `Cuenta: ${currentUser.email}` : "Cuenta: sin sesion";
       cloudIndicatorEl.classList.toggle("ok", logged);
+    }
+    if (heroSessionIndicatorEl) {
+      heroSessionIndicatorEl.textContent = logged ? `Cuenta conectada: ${currentUser.email}` : "Cuenta: sin sesion";
+      heroSessionIndicatorEl.classList.toggle("ok", logged);
     }
     if (btnSignup) btnSignup.disabled = logged || getAuthActionInFlight();
     if (btnLogin) btnLogin.disabled = logged || getAuthActionInFlight();

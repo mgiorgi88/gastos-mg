@@ -68,6 +68,7 @@ import {
   chartMonthlyLegendEl,
   clearMyDataStatusEl,
   cloudIndicatorEl,
+  heroSessionIndicatorEl,
   cmpBalanceEl,
   cmpGastosEl,
   cmpIngresosEl,
@@ -413,7 +414,7 @@ function refreshSyncIndicator() {
   syncIndicatorEl.classList.remove("sync-local", "sync-online", "sync-syncing", "sync-error");
   if (!state.currentUser) {
     syncIndicatorEl.classList.add("sync-local");
-    syncIndicatorEl.textContent = "Sincronizacion: Local";
+    syncIndicatorEl.textContent = "Guardado: inicia sesion para usar la nube";
     hideSyncBadge();
     return;
   }
@@ -530,7 +531,7 @@ function getLocalTransactionStore() {
 function requireCloudSession(actionLabel = "usar la app") {
   if (state.currentUser || isLocalDevelopment()) return true;
   updateEntryGate();
-  setStatus(`Inicia sesión para ${actionLabel}.`);
+  setStatus(`No hay una sesion activa. Inicia sesion para ${actionLabel}.`, "error");
   return false;
 }
 
@@ -968,6 +969,7 @@ const {
   accountMiniEl,
   accountMiniEmailEl,
   cloudIndicatorEl,
+  heroSessionIndicatorEl,
   btnSignup,
   btnLogin,
   btnRecover,
