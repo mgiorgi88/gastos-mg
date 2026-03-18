@@ -183,6 +183,7 @@ import {
   saveBudgetsValue,
   saveCurrencyValue,
   saveQuickCategoriesValue,
+  saveRecurrentesCache,
   saveRecurrentOmissions,
   saveRememberMe,
   saveSavingsGoalValue,
