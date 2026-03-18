@@ -62,6 +62,16 @@ function countOccurrencesUntilEnd(startDate, endDate, frequency) {
   return count;
 }
 
+function scheduledMatchSignature(item) {
+  if (!item) return "";
+  return [
+    item.tipo === "Ingreso" ? "Ingreso" : "Gasto",
+    String(item.categoria || "").trim(),
+    Number(item.monto || 0).toFixed(2),
+    String(item.detalle || "").trim()
+  ].join("|");
+}
+
 export function createRecurrentesUi({
   CATEGORIAS,
   CATEGORY_ICONS,
@@ -277,7 +287,15 @@ export function createRecurrentesUi({
       const result = await saveRecurrent(payload, editingId);
       if (!result.ok) return;
       setRecurrentes(result.rows || []);
-      if (previousItem && previousItem.auto_generate !== false) {
+      const nextSignature = scheduledMatchSignature(payload);
+      const previousSignature = scheduledMatchSignature(previousItem);
+      const shouldClearPreviousGenerated = Boolean(
+        previousItem
+        && previousItem.auto_generate !== false
+        && previousSignature
+        && previousSignature !== nextSignature
+      );
+      if (shouldClearPreviousGenerated) {
         await removeGeneratedTransactionsForSchedule?.(previousItem);
       }
       await refreshSuggestions?.();
