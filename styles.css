@@ -586,6 +586,91 @@ body.app-boot #sync-badge {
   margin-top: 18px;
 }
 
+.load-summary-card {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 20px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  background:
+    radial-gradient(circle at top right, rgba(47, 111, 237, 0.08), transparent 36%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 250, 253, 0.92)),
+    var(--soft);
+  box-shadow:
+    0 12px 26px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.load-summary-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(47, 111, 237, 0.22);
+  box-shadow:
+    0 16px 28px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.load-summary-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.load-summary-head h3 {
+  margin: 2px 0 0;
+  font-size: 1.05rem;
+}
+
+.load-summary-kicker {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.load-summary-month {
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.load-summary-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.load-summary-stat {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 16px;
+  padding: 14px;
+  min-width: 0;
+}
+
+.load-summary-stat span {
+  color: var(--muted);
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.load-summary-stat strong {
+  margin-top: 8px;
+  display: block;
+  font-size: clamp(1.05rem, 2.2vw, 1.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
 .card-resumen {
   background:
     linear-gradient(180deg, rgba(15, 23, 42, 0.015), rgba(15, 23, 42, 0)),
@@ -2168,6 +2253,17 @@ button:focus {
     linear-gradient(180deg, rgba(30, 41, 59, 0.46), rgba(15, 23, 42, 0.2)),
     var(--card);
   border-color: rgba(96, 165, 250, 0.18);
+}
+
+:root[data-theme="dark"] .load-summary-card {
+  background:
+    radial-gradient(circle at top right, rgba(96, 165, 250, 0.12), transparent 38%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(15, 23, 42, 0.9)),
+    var(--soft);
+  border-color: rgba(96, 165, 250, 0.16);
+  box-shadow:
+    0 14px 30px rgba(2, 6, 23, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 :root[data-theme="dark"] .amount-live-total.is-error {

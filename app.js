@@ -65,6 +65,12 @@ import {
   calPrevEl,
   calTitleEl,
   cargarEmptyStateEl,
+  cargarMonthSummaryBtnEl,
+  cargarSummaryMonthLabelEl,
+  cargarSummaryIngresosEl,
+  cargarSummaryGastosEl,
+  cargarSummaryBalanceEl,
+  cargarSummaryBalanceCardEl,
   categoriaEl,
   chartCategoryEl,
   chartCategoryInsightEl,
@@ -1019,6 +1025,7 @@ const {
   startPrefilledTransactionDraft,
   startDuplicateDraftTransaction,
   startEditTransaction,
+  updateLoadMonthlySummaryUI,
   updateArsConvertVisibility,
   updateArsResultPreview,
   updateCategoryOptions
@@ -1026,6 +1033,12 @@ const {
   CATEGORIAS,
   CATEGORY_ICONS,
   form,
+  cargarMonthSummaryBtnEl,
+  cargarSummaryMonthLabelEl,
+  cargarSummaryIngresosEl,
+  cargarSummaryGastosEl,
+  cargarSummaryBalanceEl,
+  cargarSummaryBalanceCardEl,
   fechaEl,
   montoEl,
   detalleEl,
@@ -1052,7 +1065,9 @@ const {
   onEditingChange: (id) => {
     state.editingTxId = id;
   },
-  setActiveTab
+  setActiveTab,
+  monthLabel,
+  CURRENT_MONTH
 });
 
 const { renderSuggestions, bindEvents: bindRecurrentSuggestionEvents } = createRecurrentSuggestionsUi({
@@ -1293,6 +1308,7 @@ const { refresh } = createRefreshController({
   getAllSortedTransactions,
   computeMonthlySummary,
   updateMonthlySummaryUI,
+  updateLoadMonthlySummaryUI,
   renderSavingsGoalSummary,
   renderTopExpensesCurrentMonth,
   drawBalanceSparkline,

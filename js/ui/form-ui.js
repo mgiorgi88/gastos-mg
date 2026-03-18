@@ -2,6 +2,12 @@ export function createFormUi({
   CATEGORIAS,
   CATEGORY_ICONS,
   form,
+  cargarMonthSummaryBtnEl,
+  cargarSummaryMonthLabelEl,
+  cargarSummaryIngresosEl,
+  cargarSummaryGastosEl,
+  cargarSummaryBalanceEl,
+  cargarSummaryBalanceCardEl,
   fechaEl,
   montoEl,
   detalleEl,
@@ -27,8 +33,29 @@ export function createFormUi({
   setStatus,
   money,
   onEditingChange,
-  setActiveTab
+  setActiveTab,
+  monthLabel,
+  CURRENT_MONTH
 }) {
+  function updateLoadMonthlySummaryUI(summary) {
+    if (!cargarSummaryIngresosEl || !cargarSummaryGastosEl || !cargarSummaryBalanceEl) return;
+    const { ingresos = 0, gastos = 0, balanceValue = 0 } = summary || {};
+    if (cargarSummaryMonthLabelEl) cargarSummaryMonthLabelEl.textContent = monthLabel(CURRENT_MONTH);
+    cargarSummaryIngresosEl.textContent = money(ingresos);
+    cargarSummaryGastosEl.textContent = money(gastos);
+    cargarSummaryBalanceEl.textContent = money(balanceValue);
+    if (cargarSummaryBalanceCardEl) {
+      cargarSummaryBalanceCardEl.classList.remove("is-positive", "is-negative", "is-neutral");
+      cargarSummaryBalanceCardEl.classList.add(balanceValue > 0 ? "is-positive" : balanceValue < 0 ? "is-negative" : "is-neutral");
+    }
+  }
+
+  function bindLoadSummaryCard() {
+    cargarMonthSummaryBtnEl?.addEventListener("click", () => {
+      if (typeof setActiveTab === "function") setActiveTab("resumen");
+    });
+  }
+
   function updateCategoryOptions(tipo, selected = "") {
     const categorias = CATEGORIAS[tipo] || [];
     categoriaEl.innerHTML = categorias
@@ -259,6 +286,8 @@ export function createFormUi({
     }, 1100);
   }
 
+  bindLoadSummaryCard();
+
   return {
     animatePrimarySave,
     convertArsToSelectedCurrency,
@@ -271,6 +300,7 @@ export function createFormUi({
     startPrefilledTransactionDraft,
     startDuplicateDraftTransaction,
     startEditTransaction,
+    updateLoadMonthlySummaryUI,
     updateArsConvertVisibility,
     updateArsResultPreview,
     updateCategoryOptions

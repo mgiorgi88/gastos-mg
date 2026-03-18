@@ -90,7 +90,7 @@
         <button id="btn-sync-retry" type="button" class="btn-secondary" hidden>Reintentar sincronizacion</button>
         <p id="sync-help" class="muted sync-help">Sin sesion, la app no puede recuperar movimientos de la nube.</p>
       </div>
-      <p class="build-version build-version-options">Version visible: v199</p>
+      <p class="build-version build-version-options">Version visible: v200</p>
     </section>
 
     <section id="account-mini" class="card card-opciones card-opciones-compact card-opciones-account-mini" data-panel="opciones" hidden>
@@ -282,6 +282,29 @@
         <p>Empieza cargando tu primer gasto o ingreso para activar el resumen y las comparativas.</p>
         <button id="btn-empty-start" type="button" class="btn-primary">Cargar primer movimiento</button>
       </div>
+      <button id="cargar-month-summary-btn" type="button" class="load-summary-card" aria-label="Abrir resumen del mes actual">
+        <div class="load-summary-head">
+          <div>
+            <p class="load-summary-kicker">Mes actual</p>
+            <h3>Resumen rápido</h3>
+          </div>
+          <span id="cargar-summary-month-label" class="load-summary-month">-</span>
+        </div>
+        <div class="load-summary-stats">
+          <article class="load-summary-stat stats-card-income">
+            <span>Ingresos</span>
+            <strong id="cargar-summary-ingresos">$0.00</strong>
+          </article>
+          <article class="load-summary-stat stats-card-expense">
+            <span>Gastos</span>
+            <strong id="cargar-summary-gastos">$0.00</strong>
+          </article>
+          <article id="cargar-summary-balance-card" class="load-summary-stat stats-card-balance is-neutral">
+            <span>Balance</span>
+            <strong id="cargar-summary-balance">$0.00</strong>
+          </article>
+        </div>
+      </button>
       <div id="recurrent-suggestions-card" class="recurrent-suggestions-card" hidden>
         <div class="recurrent-suggestions-head">
           <div>

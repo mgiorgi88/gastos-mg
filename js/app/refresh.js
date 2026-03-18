@@ -16,6 +16,7 @@ export function createRefreshController({
   getAllSortedTransactions,
   computeMonthlySummary,
   updateMonthlySummaryUI,
+  updateLoadMonthlySummaryUI,
   renderSavingsGoalSummary,
   renderTopExpensesCurrentMonth,
   drawBalanceSparkline,
@@ -123,6 +124,7 @@ export function createRefreshController({
 
     const summary = computeMonthlySummary(all, CURRENT_MONTH);
     updateMonthlySummaryUI(summary);
+    updateLoadMonthlySummaryUI(summary);
     renderSavingsGoalSummary(summary.balanceValue);
     renderTopExpensesCurrentMonth(all);
     if (currentMonthLabelEl) currentMonthLabelEl.textContent = `Mes actual: ${monthLabel(CURRENT_MONTH)}`;
