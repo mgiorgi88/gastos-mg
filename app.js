@@ -55,6 +55,7 @@ import {
   btnSavingsGoalSave,
   btnSignup,
   btnSubmitTx,
+  btnSyncRetryEl,
   calGridEl,
   calNextEl,
   calPrevEl,
@@ -120,6 +121,7 @@ import {
   spendingAlertEl,
   spreadPctEl,
   syncBadgeEl,
+  syncHelpEl,
   syncIndicatorEl,
   tabBtns,
   tabPanels,
@@ -405,9 +407,14 @@ function hideSyncBadge() {
 
 function refreshSyncIndicator() {
   if (!syncIndicatorEl) return;
+  if (btnSyncRetryEl) {
+    btnSyncRetryEl.hidden = true;
+    btnSyncRetryEl.disabled = false;
+  }
   if (!state.appReady || !state.syncUiReady) {
     syncIndicatorEl.classList.remove("sync-local", "sync-online", "sync-syncing", "sync-error");
     syncIndicatorEl.textContent = "";
+    if (syncHelpEl) syncHelpEl.textContent = "";
     hideSyncBadge();
     return;
   }
@@ -416,23 +423,30 @@ function refreshSyncIndicator() {
   if (!state.currentUser) {
     syncIndicatorEl.classList.add("sync-local");
     syncIndicatorEl.textContent = "Guardado: inicia sesion para usar la nube";
+    if (syncHelpEl) syncHelpEl.textContent = "Estas usando la app sin sesion. Solo veras o guardaras datos locales segun el entorno.";
     hideSyncBadge();
     return;
   }
   if (state.syncOpsInFlight > 0) {
     syncIndicatorEl.classList.add("sync-syncing");
     syncIndicatorEl.textContent = "Sincronizacion: Sincronizando...";
+    if (btnSyncRetryEl) btnSyncRetryEl.disabled = true;
+    if (syncHelpEl) syncHelpEl.textContent = "La app esta consultando la nube en este momento.";
     showSyncBadge("Sincronizando...", "syncing");
     return;
   }
   if (state.hadRecentSyncError) {
     syncIndicatorEl.classList.add("sync-error");
     syncIndicatorEl.textContent = "Sincronizacion: Error";
+    if (btnSyncRetryEl) btnSyncRetryEl.hidden = false;
+    if (syncHelpEl) syncHelpEl.textContent = "Hubo un problema al traer tus movimientos de la nube. Puedes reintentar ahora.";
     showSyncBadge("Error de sync", "error");
     return;
   }
   syncIndicatorEl.classList.add("sync-online");
   syncIndicatorEl.textContent = "Sincronizacion: OK";
+  if (btnSyncRetryEl) btnSyncRetryEl.hidden = false;
+  if (syncHelpEl) syncHelpEl.textContent = "Tu cuenta esta conectada y los movimientos mostrados vienen de la nube.";
   hideSyncBadge();
 }
 
@@ -1043,6 +1057,20 @@ async function clearMyData() {
   showToast("Datos eliminados");
 }
 
+async function retrySyncFromUi() {
+  if (!state.currentUser) {
+    setStatus("No hay una sesion activa para reintentar la sincronizacion.", "error");
+    refreshSyncIndicator();
+    return;
+  }
+
+  setStatus("Reintentando sincronizacion...", "info");
+  await loadCloudData();
+  if (!state.hadRecentSyncError) {
+    showToast("Sincronizacion actualizada");
+  }
+}
+
 async function duplicateTransaction(id) {
   const ok = await duplicateTransactionService(id);
   if (!ok) return;
@@ -1234,6 +1262,12 @@ bindAppEvents({
   getBudgets: () => state.budgets,
   saveBudgets
 });
+
+if (btnSyncRetryEl) {
+  btnSyncRetryEl.addEventListener("click", () => {
+    retrySyncFromUi();
+  });
+}
 
 (async () => {
   try {

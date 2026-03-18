@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon.svg">
-  <link rel="stylesheet" href="styles.css?v=177">
+  <link rel="stylesheet" href="styles.css?v=178">
 </head>
 <body class="app-boot">
   <section id="entry-gate" class="entry-gate" hidden>
@@ -86,7 +86,11 @@
         <p id="cloud-indicator" class="cloud-indicator">Cuenta: sin sesion</p>
         <p id="sync-indicator" class="sync-indicator sync-local">Guardado: inicia sesion para usar la nube</p>
       </div>
-      <p class="build-version build-version-options">Version visible: v177</p>
+      <div class="sync-actions">
+        <button id="btn-sync-retry" type="button" class="btn-secondary" hidden>Reintentar sincronizacion</button>
+        <p id="sync-help" class="muted sync-help">Sin sesion, la app no puede recuperar movimientos de la nube.</p>
+      </div>
+      <p class="build-version build-version-options">Version visible: v178</p>
     </section>
 
     <section id="account-mini" class="card card-opciones card-opciones-compact card-opciones-account-mini" data-panel="opciones" hidden>
@@ -481,8 +485,8 @@
 
   <div id="toast" class="toast" hidden></div>
 
-  <script src="stats-utils.js?v=177"></script>
+  <script src="stats-utils.js?v=178"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script type="module" src="app.js?v=177"></script>
+  <script type="module" src="app.js?v=178"></script>
 </body>
 </html>
