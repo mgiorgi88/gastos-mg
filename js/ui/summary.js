@@ -5,6 +5,7 @@ export function createSummaryUi({
   ingresosEl,
   gastosEl,
   balanceEl,
+  balanceCardEl,
   cmpTitleEl,
   cmpIngresosEl,
   cmpGastosEl,
@@ -418,12 +419,18 @@ export function createSummaryUi({
   function updateMonthlySummaryUI(summary) {
     const { ingresos, gastos, balanceValue } = summary;
     ingresosEl.textContent = money(ingresos);
+    ingresosEl.classList.remove("saldo-neg", "saldo-neu");
+    ingresosEl.classList.add("saldo-pos");
     gastosEl.textContent = money(gastos);
     gastosEl.classList.remove("saldo-pos", "saldo-neu");
     gastosEl.classList.add("saldo-neg");
     balanceEl.textContent = money(balanceValue);
     balanceEl.classList.remove("saldo-pos", "saldo-neg", "saldo-neu");
     balanceEl.classList.add(balanceValue > 0 ? "saldo-pos" : balanceValue < 0 ? "saldo-neg" : "saldo-neu");
+    if (balanceCardEl) {
+      balanceCardEl.classList.remove("is-positive", "is-negative", "is-neutral");
+      balanceCardEl.classList.add(balanceValue > 0 ? "is-positive" : balanceValue < 0 ? "is-negative" : "is-neutral");
+    }
   }
 
   function renderTopExpensesCurrentMonth(all) {

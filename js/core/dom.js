@@ -81,6 +81,7 @@ export const categoriaEl = document.getElementById("categoria");
 export const ingresosEl = document.getElementById("ingresos");
 export const gastosEl = document.getElementById("gastos");
 export const balanceEl = document.getElementById("balance");
+export const balanceCardEl = document.getElementById("balance-card");
 export const currentMonthLabelEl = document.getElementById("current-month-label");
 export const balanceSparklineEl = document.getElementById("balance-sparkline");
 export const balanceTrendEl = document.getElementById("balance-trend");
