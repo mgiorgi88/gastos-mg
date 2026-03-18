@@ -151,6 +151,15 @@ export function createRecurrentesUi({
       refreshSuggestions();
       resetForm();
       setStatus(editingId ? "Recurrente actualizado." : "Recurrente guardado.", "ok");
+    } catch (error) {
+      const message = error?.message || "Error inesperado al guardar el recurrente.";
+      setStatus(message, "error");
+      showToast?.("No se pudo completar el guardado");
+      try {
+        console.error("[GastosMG] recurrent save failed", error);
+      } catch {
+        // Ignore console issues.
+      }
     } finally {
       setButtonLoadingState?.(btnRecurrentSaveEl, false);
     }
