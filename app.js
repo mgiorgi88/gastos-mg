@@ -908,6 +908,12 @@ const {
   setFeatureAvailability: (value) => {
     state.recurrentesAvailable = value !== false;
   },
+  onRowsSynced: (rows) => {
+    setRecurrentes(rows);
+    saveRecurrentesState(rows);
+    renderRecurrentList();
+    processScheduledMovements();
+  },
   loadRecurrentesCache,
   saveRecurrentesCache: saveRecurrentesState,
   clearRecurrentesCache: () => {

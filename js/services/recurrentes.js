@@ -23,6 +23,7 @@ export function createRecurrentesService({
   setFeatureStatus,
   showToast,
   setFeatureAvailability,
+  onRowsSynced,
   loadRecurrentesCache,
   saveRecurrentesCache,
   clearRecurrentesCache,
@@ -52,7 +53,27 @@ export function createRecurrentesService({
     ].join("|");
   }
 
+  function recurrentBaseSignature(item) {
+    return [
+      item.tipo === "Ingreso" ? "Ingreso" : "Gasto",
+      String(item.categoria || "").trim(),
+      Number(item.monto || 0).toFixed(2),
+      String(item.detalle || "").trim(),
+      String(item.frecuencia || "monthly"),
+      String(item.end_date || ""),
+      item.repeat_count ? String(item.repeat_count) : "",
+      item.auto_generate !== false ? "1" : "0",
+      item.activo !== false ? "1" : "0"
+    ].join("|");
+  }
+
+  function stripMeta(item) {
+    const { __derivedStartDate, ...clean } = item;
+    return clean;
+  }
+
   function normalizeRecurrent(item) {
+    const hasExplicitStartDate = isIsoDate(item?.start_date);
     const startDate = deriveStartDate(item);
     return {
       id: String(item.id),
@@ -73,7 +94,8 @@ export function createRecurrentesService({
       activo: item.activo !== false,
       auto_generate: item.auto_generate !== false,
       created_at: item.created_at || null,
-      updated_at: item.updated_at || null
+      updated_at: item.updated_at || null,
+      __derivedStartDate: !hasExplicitStartDate
     };
   }
 
@@ -91,7 +113,32 @@ export function createRecurrentesService({
       const currentTs = Date.parse(item.updated_at || item.created_at || 0) || 0;
       if (currentTs >= existingTs) map.set(signature, item);
     }
-    return [...map.values()];
+
+    const grouped = new Map();
+    for (const item of map.values()) {
+      const baseSignature = recurrentBaseSignature(item);
+      const bucket = grouped.get(baseSignature) || [];
+      bucket.push(item);
+      grouped.set(baseSignature, bucket);
+    }
+
+    const deduped = [];
+    grouped.forEach((bucket) => {
+      if (bucket.length === 1) {
+        deduped.push(bucket[0]);
+        return;
+      }
+      const explicitRows = bucket.filter((item) => item.__derivedStartDate !== true);
+      const candidates = explicitRows.length > 0 ? explicitRows : bucket;
+      candidates.sort((a, b) => {
+        const aTs = Date.parse(a.updated_at || a.created_at || 0) || 0;
+        const bTs = Date.parse(b.updated_at || b.created_at || 0) || 0;
+        return bTs - aTs;
+      });
+      deduped.push(candidates[0]);
+    });
+
+    return deduped.map(stripMeta);
   }
 
   function persistLocalRows(items) {
@@ -167,7 +214,10 @@ export function createRecurrentesService({
 
   async function syncRowsFromCloud() {
     const rows = await loadRecurrentes();
-    if (Array.isArray(rows)) saveRecurrentesCache(rows);
+    if (Array.isArray(rows)) {
+      saveRecurrentesCache(rows);
+      onRowsSynced?.(rows);
+    }
     return rows;
   }
 
