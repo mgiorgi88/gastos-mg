@@ -141,6 +141,55 @@ export function createRecurrentesService({
     return deduped.map(stripMeta);
   }
 
+  function pickNewest(items) {
+    return [...items].sort((a, b) => {
+      const aTs = Date.parse(a.updated_at || a.created_at || 0) || 0;
+      const bTs = Date.parse(b.updated_at || b.created_at || 0) || 0;
+      return bTs - aTs;
+    })[0] || null;
+  }
+
+  function identifyObsoleteDuplicateIds(items) {
+    const normalized = (Array.isArray(items) ? items : []).map(normalizeRecurrent);
+    const obsoleteIds = new Set();
+
+    const exactGroups = new Map();
+    normalized.forEach((item) => {
+      const key = recurrentSignature(item);
+      const bucket = exactGroups.get(key) || [];
+      bucket.push(item);
+      exactGroups.set(key, bucket);
+    });
+
+    exactGroups.forEach((bucket) => {
+      if (bucket.length <= 1) return;
+      const keep = pickNewest(bucket);
+      bucket.forEach((item) => {
+        if (item.id !== keep?.id) obsoleteIds.add(item.id);
+      });
+    });
+
+    const baseGroups = new Map();
+    normalized.forEach((item) => {
+      if (obsoleteIds.has(item.id)) return;
+      const key = recurrentBaseSignature(item);
+      const bucket = baseGroups.get(key) || [];
+      bucket.push(item);
+      baseGroups.set(key, bucket);
+    });
+
+    baseGroups.forEach((bucket) => {
+      if (bucket.length <= 1) return;
+      const explicitRows = bucket.filter((item) => item.__derivedStartDate !== true);
+      const derivedRows = bucket.filter((item) => item.__derivedStartDate === true);
+      if (explicitRows.length > 0 && derivedRows.length > 0) {
+        derivedRows.forEach((item) => obsoleteIds.add(item.id));
+      }
+    });
+
+    return [...obsoleteIds];
+  }
+
   function persistLocalRows(items) {
     const normalized = sortRecurrentes(dedupeRecurrentes(items));
     saveRecurrentesCache(normalized);
@@ -221,6 +270,20 @@ export function createRecurrentesService({
     return rows;
   }
 
+  async function cleanupCloudDuplicates(ids) {
+    const currentUser = getCurrentUser();
+    if (!currentUser || !Array.isArray(ids) || ids.length === 0) return;
+    const encodedIds = ids.map((id) => `"${String(id).replace(/"/g, "")}"`).join(",");
+    try {
+      await withDeadline(() => sbAuthFetch(`/rest/v1/recurrentes?id=in.(${encodedIds})`, {
+        method: "DELETE",
+        trackSync: false
+      }), 5000);
+    } catch {
+      // Silent cleanup; keep UI usable even if this fails.
+    }
+  }
+
   function isMissingTableMessage(message) {
     const text = String(message || "").toLowerCase();
     return text.includes("recurrentes") && (text.includes("does not exist") || text.includes("could not find") || text.includes("relation"));
@@ -288,9 +351,13 @@ export function createRecurrentesService({
     }
 
     const data = await resp.json().catch(() => []);
+    const obsoleteIds = identifyObsoleteDuplicateIds(data || []);
     const normalized = sortRecurrentes(dedupeRecurrentes(data || []));
     setFeatureAvailability?.(true);
     saveRecurrentesCache(normalized);
+    if (obsoleteIds.length > 0) {
+      void cleanupCloudDuplicates(obsoleteIds);
+    }
     return normalized;
   }
 
