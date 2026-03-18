@@ -81,6 +81,14 @@ export function createRecurrentesService({
     }
   }
 
+  async function syncRowsFromCloud() {
+    const rows = await loadRecurrentes();
+    if (Array.isArray(rows) && rows.length >= 0) {
+      saveRecurrentesCache(rows);
+    }
+    return rows;
+  }
+
   function isMissingTableMessage(message) {
     const text = String(message || "").toLowerCase();
     return text.includes("recurrentes") && (text.includes("does not exist") || text.includes("could not find") || text.includes("relation"));
@@ -166,6 +174,8 @@ export function createRecurrentesService({
       return { ok: false };
     }
 
+    const localRows = upsertLocalFallback(payload, currentUser, editingId);
+
     const body = {
       user_id: currentUser.id,
       tipo: payload.tipo === "Ingreso" ? "Ingreso" : "Gasto",
@@ -177,38 +187,33 @@ export function createRecurrentesService({
       activo: payload.activo !== false
     };
 
-    let resp;
-    try {
-      resp = editingId
-        ? await withDeadline(() => sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(editingId)}`, { method: "PATCH", body, trackSync: false }))
-        : await withDeadline(() => sbAuthFetch("/rest/v1/recurrentes", { method: "POST", body, trackSync: false }));
-    } catch {
-      const rows = upsertLocalFallback(payload, currentUser, editingId);
-      showToast(editingId ? "Recurrente actualizado en este dispositivo" : "Recurrente guardado en este dispositivo");
-      setFeatureStatus?.(editingId ? "Recurrente actualizado en este dispositivo." : "Recurrente guardado en este dispositivo.", "ok");
-      return { ok: true, rows };
-    }
-
-    if (!resp.ok) {
-      const msg = await getResponseErrorMessage(resp);
-      if (isMissingTableMessage(msg)) {
-        const rows = upsertLocalFallback(payload, currentUser, editingId);
-        setFeatureAvailability?.(true);
-        showToast(editingId ? "Recurrente actualizado en este dispositivo" : "Recurrente guardado en este dispositivo");
-        setFeatureStatus?.(editingId ? "Recurrente actualizado en este dispositivo." : "Recurrente guardado en este dispositivo.", "ok");
-        return { ok: true, rows };
-      }
-      showToast("No se pudo guardar el recurrente");
-      setFeatureStatus?.(`No se pudo guardar el recurrente: ${msg}`, "error");
-      setStatus(`No se pudo guardar el recurrente: ${msg}`, "error");
-      return { ok: false };
-    }
-
-    const rows = await loadRecurrentes();
     showToast(editingId ? "Recurrente actualizado" : "Recurrente guardado");
     setFeatureStatus?.(editingId ? "Recurrente actualizado." : "Recurrente guardado.", "ok");
     setStatus(editingId ? "Recurrente actualizado." : "Recurrente guardado.", "success");
-    return { ok: true, rows };
+
+    void (async () => {
+      try {
+        const resp = editingId
+          ? await withDeadline(() => sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(editingId)}`, { method: "PATCH", body, trackSync: false }))
+          : await withDeadline(() => sbAuthFetch("/rest/v1/recurrentes", { method: "POST", body, trackSync: false }));
+
+        if (!resp.ok) {
+          const msg = await getResponseErrorMessage(resp);
+          if (isMissingTableMessage(msg)) {
+            setFeatureAvailability?.(true);
+            return;
+          }
+          setFeatureStatus?.(`Guardado local. La nube no respondió: ${msg}`, "error");
+          return;
+        }
+
+        await syncRowsFromCloud();
+      } catch {
+        setFeatureStatus?.("Guardado en este dispositivo. La nube se reintentará después.", "ok");
+      }
+    })();
+
+    return { ok: true, rows: localRows };
   }
 
   async function deleteRecurrent(id) {
@@ -220,35 +225,28 @@ export function createRecurrentesService({
       return { ok: false };
     }
 
-    let resp;
-    try {
-      resp = await withDeadline(() => sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", trackSync: false }));
-    } catch {
-      const rows = deleteLocalFallback(id);
-      showToast("Recurrente eliminado en este dispositivo");
-      setFeatureStatus?.("Recurrente eliminado en este dispositivo.", "ok");
-      return { ok: true, rows };
-    }
-    if (!resp.ok) {
-      const msg = await getResponseErrorMessage(resp);
-      if (isMissingTableMessage(msg)) {
-        const rows = deleteLocalFallback(id);
-        setFeatureAvailability?.(true);
-        showToast("Recurrente eliminado en este dispositivo");
-        setFeatureStatus?.("Recurrente eliminado en este dispositivo.", "ok");
-        return { ok: true, rows };
-      }
-      showToast("No se pudo borrar el recurrente");
-      setFeatureStatus?.(`No se pudo borrar el recurrente: ${msg}`, "error");
-      setStatus(`No se pudo borrar el recurrente: ${msg}`, "error");
-      return { ok: false };
-    }
-
-    const rows = await loadRecurrentes();
+    const localRows = deleteLocalFallback(id);
     showToast("Recurrente eliminado");
     setFeatureStatus?.("Recurrente eliminado.", "ok");
     setStatus("Recurrente eliminado.", "success");
-    return { ok: true, rows };
+
+    void (async () => {
+      try {
+        const resp = await withDeadline(() => sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", trackSync: false }));
+        if (!resp.ok) {
+          const msg = await getResponseErrorMessage(resp);
+          if (!isMissingTableMessage(msg)) {
+            setFeatureStatus?.(`Eliminado local. La nube no respondió: ${msg}`, "error");
+          }
+          return;
+        }
+        await syncRowsFromCloud();
+      } catch {
+        setFeatureStatus?.("Eliminado en este dispositivo. La nube se reintentará después.", "ok");
+      }
+    })();
+
+    return { ok: true, rows: localRows };
   }
 
   async function toggleRecurrent(id, nextActive) {
@@ -260,38 +258,31 @@ export function createRecurrentesService({
       return { ok: false };
     }
 
-    let resp;
-    try {
-      resp = await withDeadline(() => sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(id)}`, {
-        method: "PATCH",
-        body: { activo: Boolean(nextActive) },
-        trackSync: false
-      }));
-    } catch {
-      const rows = toggleLocalFallback(id, nextActive);
-      showToast(nextActive ? "Recurrente activado en este dispositivo" : "Recurrente pausado en este dispositivo");
-      setFeatureStatus?.(nextActive ? "Recurrente activado en este dispositivo." : "Recurrente pausado en este dispositivo.", "ok");
-      return { ok: true, rows };
-    }
-    if (!resp.ok) {
-      const msg = await getResponseErrorMessage(resp);
-      if (isMissingTableMessage(msg)) {
-        const rows = toggleLocalFallback(id, nextActive);
-        setFeatureAvailability?.(true);
-        showToast(nextActive ? "Recurrente activado en este dispositivo" : "Recurrente pausado en este dispositivo");
-        setFeatureStatus?.(nextActive ? "Recurrente activado en este dispositivo." : "Recurrente pausado en este dispositivo.", "ok");
-        return { ok: true, rows };
-      }
-      showToast("No se pudo actualizar el recurrente");
-      setFeatureStatus?.(`No se pudo actualizar el recurrente: ${msg}`, "error");
-      setStatus(`No se pudo actualizar el recurrente: ${msg}`, "error");
-      return { ok: false };
-    }
-
-    const rows = await loadRecurrentes();
+    const localRows = toggleLocalFallback(id, nextActive);
     showToast(nextActive ? "Recurrente activado" : "Recurrente pausado");
     setFeatureStatus?.(nextActive ? "Recurrente activado." : "Recurrente pausado.", "ok");
-    return { ok: true, rows };
+
+    void (async () => {
+      try {
+        const resp = await withDeadline(() => sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(id)}`, {
+          method: "PATCH",
+          body: { activo: Boolean(nextActive) },
+          trackSync: false
+        }));
+        if (!resp.ok) {
+          const msg = await getResponseErrorMessage(resp);
+          if (!isMissingTableMessage(msg)) {
+            setFeatureStatus?.(`Cambio local. La nube no respondió: ${msg}`, "error");
+          }
+          return;
+        }
+        await syncRowsFromCloud();
+      } catch {
+        setFeatureStatus?.("Cambio guardado en este dispositivo. La nube se reintentará después.", "ok");
+      }
+    })();
+
+    return { ok: true, rows: localRows };
   }
 
   return {
