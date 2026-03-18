@@ -64,7 +64,6 @@ export function createRecurrentesService({
       const msg = await getResponseErrorMessage(resp);
       if (isMissingTableMessage(msg)) {
         setFeatureAvailability?.(false);
-        showToast("Recurrentes no disponibles por ahora");
         clearRecurrentesCache();
         return [];
       }
@@ -108,8 +107,6 @@ export function createRecurrentesService({
       const msg = await getResponseErrorMessage(resp);
       if (isMissingTableMessage(msg)) {
         setFeatureAvailability?.(false);
-        showToast("Recurrentes no disponibles por ahora");
-        setStatus("Recurrentes no disponibles por ahora.", "error");
         return { ok: false };
       }
       showToast("No se pudo guardar el recurrente");
@@ -136,8 +133,6 @@ export function createRecurrentesService({
       const msg = await getResponseErrorMessage(resp);
       if (isMissingTableMessage(msg)) {
         setFeatureAvailability?.(false);
-        showToast("Recurrentes no disponibles por ahora");
-        setStatus("Recurrentes no disponibles por ahora.", "error");
         return { ok: false };
       }
       showToast("No se pudo borrar el recurrente");
@@ -168,8 +163,6 @@ export function createRecurrentesService({
       const msg = await getResponseErrorMessage(resp);
       if (isMissingTableMessage(msg)) {
         setFeatureAvailability?.(false);
-        showToast("Recurrentes no disponibles por ahora");
-        setStatus("Recurrentes no disponibles por ahora.", "error");
         return { ok: false };
       }
       showToast("No se pudo actualizar el recurrente");
