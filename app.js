@@ -654,11 +654,18 @@ function advanceScheduledDate(date, frequency) {
   return addMonthsClamped(date, 1);
 }
 
+function defaultScheduledHorizon(date, frequency) {
+  if (frequency === "daily") return addDays(date, 30);
+  if (frequency === "weekly") return addDays(date, 7 * 16);
+  if (frequency === "yearly") return addYearsClamped(date, 3);
+  return addMonthsClamped(date, 12);
+}
+
 function buildScheduledOccurrences(item, now = new Date()) {
   if (!item || item.activo === false || item.auto_generate === false) return [];
   const startDate = parseIsoDate(item.start_date);
   if (!startDate) return [];
-  const throughDate = parseIsoDate(item.end_date) || now;
+  const throughDate = parseIsoDate(item.end_date) || defaultScheduledHorizon(now, item.frecuencia || "monthly");
   if (startDate > throughDate) return [];
 
   const occurrences = [];
@@ -675,7 +682,7 @@ function buildScheduledOccurrences(item, now = new Date()) {
     pointer = advanceScheduledDate(pointer, item.frecuencia || "monthly");
   }
 
-  return occurrences.filter((dateKey) => dateKey <= toIsoDate(now));
+  return occurrences;
 }
 
 function isLocalDevelopment() {
