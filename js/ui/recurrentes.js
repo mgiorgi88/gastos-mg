@@ -18,6 +18,50 @@ function formatScheduleSummary(item) {
   return parts.join(" · ");
 }
 
+function parseDateParts(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ""));
+  if (!match) return null;
+  return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12, 0, 0, 0);
+}
+
+function addScheduledStep(date, frequency) {
+  const next = new Date(date);
+  if (frequency === "daily") {
+    next.setDate(next.getDate() + 1);
+    return next;
+  }
+  if (frequency === "weekly") {
+    next.setDate(next.getDate() + 7);
+    return next;
+  }
+  if (frequency === "yearly") {
+    const month = next.getMonth();
+    next.setFullYear(next.getFullYear() + 1);
+    if (next.getMonth() !== month) next.setDate(0);
+    return next;
+  }
+  const day = next.getDate();
+  next.setDate(1);
+  next.setMonth(next.getMonth() + 1);
+  const maxDay = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
+  next.setDate(Math.min(day, maxDay));
+  return next;
+}
+
+function countOccurrencesUntilEnd(startDate, endDate, frequency) {
+  const start = parseDateParts(startDate);
+  const end = parseDateParts(endDate);
+  if (!start || !end || start > end) return 0;
+
+  let count = 0;
+  let pointer = start;
+  while (pointer <= end && count < 500) {
+    count += 1;
+    pointer = addScheduledStep(pointer, frequency);
+  }
+  return count;
+}
+
 export function createRecurrentesUi({
   CATEGORIAS,
   CATEGORY_ICONS,
@@ -144,6 +188,7 @@ export function createRecurrentesUi({
     const endDate = String(recurrentEndDateEl?.value || "").trim();
     const repeatCountRaw = String(recurrentRepeatCountEl?.value || "").trim();
     const repeatCount = repeatCountRaw ? Number(repeatCountRaw) : null;
+    const frequency = recurrentFrequencyEl?.value || "monthly";
 
     if (!(monto > 0)) {
       setStatus("Ingresa un monto válido para el movimiento programado.", "error");
@@ -170,12 +215,23 @@ export function createRecurrentesUi({
       return null;
     }
 
+    if (endDate && repeatCount) {
+      const maxOccurrences = countOccurrencesUntilEnd(startDate, endDate, frequency);
+      if (maxOccurrences > 0 && repeatCount > maxOccurrences) {
+        const label = maxOccurrences === 1 ? "1 repeticion" : `${maxOccurrences} repeticiones`;
+        setStatus(`Con esa fecha fin solo caben ${label}. Amplia la fecha fin o dejala vacia.`, "error");
+        showToast?.("La fecha fin limita las repeticiones");
+        recurrentEndDateEl?.focus();
+        return null;
+      }
+    }
+
     return {
       tipo: recurrentTypeEl?.value || "Gasto",
       categoria: recurrentCategoryEl?.value || "",
       monto,
       detalle: recurrentDetailEl?.value?.trim() || "",
-      frecuencia: recurrentFrequencyEl?.value || "monthly",
+      frecuencia: frequency,
       start_date: startDate,
       end_date: endDate || null,
       repeat_count: repeatCount,
