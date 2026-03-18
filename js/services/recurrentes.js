@@ -12,6 +12,75 @@ export function createRecurrentesService({
   loadRecurrentOmissions,
   saveRecurrentOmissions
 }) {
+  function sortRecurrentes(items) {
+    return [...(Array.isArray(items) ? items : [])].sort((a, b) => {
+      const dayDiff = Number(a.anchor_day || 0) - Number(b.anchor_day || 0);
+      if (dayDiff !== 0) return dayDiff;
+      return String(a.categoria || "").localeCompare(String(b.categoria || ""));
+    });
+  }
+
+  function persistLocalRows(items) {
+    const normalized = sortRecurrentes((items || []).map(normalizeRecurrent));
+    saveRecurrentesCache(normalized);
+    return normalized;
+  }
+
+  function buildLocalRow(payload, currentUser, editingId = null, previous = null) {
+    const nowIso = new Date().toISOString();
+    return normalizeRecurrent({
+      id: editingId || previous?.id || crypto.randomUUID(),
+      user_id: currentUser?.id || previous?.user_id || "",
+      tipo: payload.tipo,
+      categoria: payload.categoria,
+      monto: Number(payload.monto),
+      detalle: payload.detalle || "",
+      frecuencia: "monthly",
+      anchor_day: Number(payload.anchor_day),
+      activo: payload.activo !== false,
+      created_at: previous?.created_at || nowIso,
+      updated_at: nowIso
+    });
+  }
+
+  function upsertLocalFallback(payload, currentUser, editingId = null) {
+    const current = Array.isArray(loadRecurrentesCache()) ? loadRecurrentesCache() : [];
+    const previous = editingId ? current.find((item) => item.id === editingId) : null;
+    const nextRow = buildLocalRow(payload, currentUser, editingId, previous);
+    const next = editingId
+      ? current.map((item) => (item.id === editingId ? nextRow : item))
+      : [...current, nextRow];
+    return persistLocalRows(next);
+  }
+
+  function deleteLocalFallback(id) {
+    const current = Array.isArray(loadRecurrentesCache()) ? loadRecurrentesCache() : [];
+    return persistLocalRows(current.filter((item) => item.id !== id));
+  }
+
+  function toggleLocalFallback(id, nextActive) {
+    const current = Array.isArray(loadRecurrentesCache()) ? loadRecurrentesCache() : [];
+    return persistLocalRows(current.map((item) => (
+      item.id === id
+        ? { ...item, activo: Boolean(nextActive), updated_at: new Date().toISOString() }
+        : item
+    )));
+  }
+
+  async function withDeadline(factory, ms = 6000) {
+    let timer = null;
+    try {
+      return await Promise.race([
+        factory(),
+        new Promise((_, reject) => {
+          timer = setTimeout(() => reject(new Error("timeout")), ms);
+        })
+      ]);
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  }
+
   function isMissingTableMessage(message) {
     const text = String(message || "").toLowerCase();
     return text.includes("recurrentes") && (text.includes("does not exist") || text.includes("could not find") || text.includes("relation"));
@@ -56,10 +125,16 @@ export function createRecurrentesService({
     }
 
     const encodedUserId = encodeURIComponent(currentUser.id);
-    const resp = await sbAuthFetch(
-      `/rest/v1/recurrentes?select=id,user_id,tipo,categoria,monto,detalle,frecuencia,anchor_day,activo,created_at,updated_at&user_id=eq.${encodedUserId}&order=anchor_day.asc,categoria.asc`,
-      { method: "GET", trackSync: false }
-    );
+    let resp;
+    try {
+      resp = await withDeadline(() => sbAuthFetch(
+        `/rest/v1/recurrentes?select=id,user_id,tipo,categoria,monto,detalle,frecuencia,anchor_day,activo,created_at,updated_at&user_id=eq.${encodedUserId}&order=anchor_day.asc,categoria.asc`,
+        { method: "GET", trackSync: false }
+      ));
+    } catch {
+      showToast("Usando recurrentes guardados en este dispositivo");
+      return sortRecurrentes(loadRecurrentesCache());
+    }
 
     if (!resp.ok) {
       const msg = await getResponseErrorMessage(resp);
@@ -102,15 +177,26 @@ export function createRecurrentesService({
       activo: payload.activo !== false
     };
 
-    const resp = editingId
-      ? await sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(editingId)}`, { method: "PATCH", body, trackSync: false })
-      : await sbAuthFetch("/rest/v1/recurrentes", { method: "POST", body, trackSync: false });
+    let resp;
+    try {
+      resp = editingId
+        ? await withDeadline(() => sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(editingId)}`, { method: "PATCH", body, trackSync: false }))
+        : await withDeadline(() => sbAuthFetch("/rest/v1/recurrentes", { method: "POST", body, trackSync: false }));
+    } catch {
+      const rows = upsertLocalFallback(payload, currentUser, editingId);
+      showToast(editingId ? "Recurrente actualizado en este dispositivo" : "Recurrente guardado en este dispositivo");
+      setFeatureStatus?.(editingId ? "Recurrente actualizado en este dispositivo." : "Recurrente guardado en este dispositivo.", "ok");
+      return { ok: true, rows };
+    }
 
     if (!resp.ok) {
       const msg = await getResponseErrorMessage(resp);
       if (isMissingTableMessage(msg)) {
-        setFeatureAvailability?.(false);
-        return { ok: false };
+        const rows = upsertLocalFallback(payload, currentUser, editingId);
+        setFeatureAvailability?.(true);
+        showToast(editingId ? "Recurrente actualizado en este dispositivo" : "Recurrente guardado en este dispositivo");
+        setFeatureStatus?.(editingId ? "Recurrente actualizado en este dispositivo." : "Recurrente guardado en este dispositivo.", "ok");
+        return { ok: true, rows };
       }
       showToast("No se pudo guardar el recurrente");
       setFeatureStatus?.(`No se pudo guardar el recurrente: ${msg}`, "error");
@@ -134,12 +220,23 @@ export function createRecurrentesService({
       return { ok: false };
     }
 
-    const resp = await sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", trackSync: false });
+    let resp;
+    try {
+      resp = await withDeadline(() => sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", trackSync: false }));
+    } catch {
+      const rows = deleteLocalFallback(id);
+      showToast("Recurrente eliminado en este dispositivo");
+      setFeatureStatus?.("Recurrente eliminado en este dispositivo.", "ok");
+      return { ok: true, rows };
+    }
     if (!resp.ok) {
       const msg = await getResponseErrorMessage(resp);
       if (isMissingTableMessage(msg)) {
-        setFeatureAvailability?.(false);
-        return { ok: false };
+        const rows = deleteLocalFallback(id);
+        setFeatureAvailability?.(true);
+        showToast("Recurrente eliminado en este dispositivo");
+        setFeatureStatus?.("Recurrente eliminado en este dispositivo.", "ok");
+        return { ok: true, rows };
       }
       showToast("No se pudo borrar el recurrente");
       setFeatureStatus?.(`No se pudo borrar el recurrente: ${msg}`, "error");
@@ -163,16 +260,27 @@ export function createRecurrentesService({
       return { ok: false };
     }
 
-    const resp = await sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(id)}`, {
-      method: "PATCH",
-      body: { activo: Boolean(nextActive) },
-      trackSync: false
-    });
+    let resp;
+    try {
+      resp = await withDeadline(() => sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(id)}`, {
+        method: "PATCH",
+        body: { activo: Boolean(nextActive) },
+        trackSync: false
+      }));
+    } catch {
+      const rows = toggleLocalFallback(id, nextActive);
+      showToast(nextActive ? "Recurrente activado en este dispositivo" : "Recurrente pausado en este dispositivo");
+      setFeatureStatus?.(nextActive ? "Recurrente activado en este dispositivo." : "Recurrente pausado en este dispositivo.", "ok");
+      return { ok: true, rows };
+    }
     if (!resp.ok) {
       const msg = await getResponseErrorMessage(resp);
       if (isMissingTableMessage(msg)) {
-        setFeatureAvailability?.(false);
-        return { ok: false };
+        const rows = toggleLocalFallback(id, nextActive);
+        setFeatureAvailability?.(true);
+        showToast(nextActive ? "Recurrente activado en este dispositivo" : "Recurrente pausado en este dispositivo");
+        setFeatureStatus?.(nextActive ? "Recurrente activado en este dispositivo." : "Recurrente pausado en este dispositivo.", "ok");
+        return { ok: true, rows };
       }
       showToast("No se pudo actualizar el recurrente");
       setFeatureStatus?.(`No se pudo actualizar el recurrente: ${msg}`, "error");
