@@ -398,6 +398,7 @@ function getCurrentTab() {
 }
 
 function setActiveTab(tab) {
+  const previousTab = getCurrentTab();
   if (tab !== "mas" && state.topExpenseTempFilterActive) {
     state.topExpenseTempFilterActive = false;
     state.showAllFilteredRows = false;
@@ -431,6 +432,11 @@ function setActiveTab(tab) {
   if (accountMiniEl) {
     const logged = Boolean(state.currentUser);
     accountMiniEl.hidden = !logged || tab !== "opciones";
+  }
+  if (tab !== previousTab) {
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    });
   }
 }
 
