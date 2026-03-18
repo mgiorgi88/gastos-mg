@@ -194,6 +194,7 @@ import {
 } from "./js/services/storage.js";
 import {
   hideSyncBadgeState,
+  setButtonLoadingState,
   setStatusMessage,
   showSyncBadgeState,
   showToastMessage
@@ -917,6 +918,7 @@ const {
   recurrentStatusEl,
   recurrentListEl,
   parseDecimalInputValue,
+  setButtonLoadingState,
   showToast,
   getCurrentUser: () => state.currentUser,
   isFeatureAvailable: () => state.recurrentesAvailable,

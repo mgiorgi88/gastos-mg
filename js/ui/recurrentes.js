@@ -15,6 +15,7 @@ export function createRecurrentesUi({
   recurrentStatusEl,
   recurrentListEl,
   parseDecimalInputValue,
+  setButtonLoadingState,
   showToast,
   getCurrentUser,
   isFeatureAvailable,
@@ -134,12 +135,19 @@ export function createRecurrentesUi({
   async function handleSave() {
     const payload = getPayloadFromForm();
     if (!payload) return;
-    const result = await saveRecurrent(payload, editingId);
-    if (!result.ok) return;
-    setRecurrentes(result.rows || []);
-    renderList();
-    refreshSuggestions();
-    resetForm();
+    setButtonLoadingState?.(btnRecurrentSaveEl, true, editingId ? "Guardando cambios..." : "Guardando...");
+    setStatus(editingId ? "Guardando cambios..." : "Guardando recurrente...");
+    try {
+      const result = await saveRecurrent(payload, editingId);
+      if (!result.ok) return;
+      setRecurrentes(result.rows || []);
+      renderList();
+      refreshSuggestions();
+      resetForm();
+      setStatus(editingId ? "Recurrente actualizado." : "Recurrente guardado.", "ok");
+    } finally {
+      setButtonLoadingState?.(btnRecurrentSaveEl, false);
+    }
   }
 
   function bindEvents() {
