@@ -50,14 +50,15 @@ export function createSupabaseService({
   }
 
   async function sbFetch(path, options = {}) {
-    const { method = "GET", body, auth = false, retry = true, timeoutMs = NETWORK_TIMEOUT_MS } = options;
+    const { method = "GET", body, auth = false, retry = true, timeoutMs = NETWORK_TIMEOUT_MS, headers: extraHeaders = {} } = options;
     const upperMethod = String(method || "GET").toUpperCase();
     const canRetry = retry && (upperMethod === "GET" || upperMethod === "HEAD");
     const attempts = canRetry ? NETWORK_RETRY_ATTEMPTS : 1;
     const trackSync = options.trackSync ?? Boolean(getCurrentUser());
     const headers = {
       apikey: SUPABASE_ANON_KEY,
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      ...extraHeaders
     };
     const authSession = getAuthSession();
 

@@ -224,13 +224,13 @@ export function createRecurrentesService({
     if (!editingId) {
       const duplicate = current.find((item) => recurrentSignature(item) === recurrentSignature(nextRow));
       if (duplicate) {
-        return { rows: persistLocalRows(current), duplicate: true };
+        return { rows: persistLocalRows(current), duplicate: true, row: duplicate };
       }
     }
     const next = editingId
       ? current.map((item) => (item.id === editingId ? nextRow : item))
       : [...current, nextRow];
-    return { rows: persistLocalRows(next), duplicate: false };
+    return { rows: persistLocalRows(next), duplicate: false, row: nextRow };
   }
 
   function deleteLocalFallback(id) {
@@ -381,6 +381,7 @@ export function createRecurrentesService({
     }
 
     const body = {
+      id: localResult.row?.id,
       user_id: currentUser.id,
       tipo: payload.tipo === "Ingreso" ? "Ingreso" : "Gasto",
       categoria: payload.categoria,
@@ -401,9 +402,32 @@ export function createRecurrentesService({
 
     void (async () => {
       try {
-        const resp = editingId
-          ? await withDeadline(() => sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(editingId)}`, { method: "PATCH", body, trackSync: false }))
-          : await withDeadline(() => sbAuthFetch("/rest/v1/recurrentes", { method: "POST", body, trackSync: false }));
+        let resp;
+        if (editingId) {
+          resp = await withDeadline(() => sbAuthFetch(
+            `/rest/v1/recurrentes?id=eq.${encodeURIComponent(editingId)}&select=id`,
+            {
+              method: "PATCH",
+              body,
+              trackSync: false,
+              headers: { Prefer: "return=representation" }
+            }
+          ));
+
+          if (resp.ok) {
+            const patchedRows = await resp.clone().json().catch(() => []);
+            if (!Array.isArray(patchedRows) || patchedRows.length === 0) {
+              resp = await withDeadline(() => sbAuthFetch("/rest/v1/recurrentes?on_conflict=id&select=id", {
+                method: "POST",
+                body,
+                trackSync: false,
+                headers: { Prefer: "resolution=merge-duplicates,return=representation" }
+              }));
+            }
+          }
+        } else {
+          resp = await withDeadline(() => sbAuthFetch("/rest/v1/recurrentes", { method: "POST", body, trackSync: false }));
+        }
 
         if (!resp.ok) {
           const msg = await getResponseErrorMessage(resp);
