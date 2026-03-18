@@ -90,7 +90,7 @@
         <button id="btn-sync-retry" type="button" class="btn-secondary" hidden>Reintentar sincronizacion</button>
         <p id="sync-help" class="muted sync-help">Sin sesion, la app no puede recuperar movimientos de la nube.</p>
       </div>
-      <p class="build-version build-version-options">Version visible: v202</p>
+      <p class="build-version build-version-options">Version visible: v203</p>
     </section>
 
     <section id="account-mini" class="card card-opciones card-opciones-compact card-opciones-account-mini" data-panel="opciones" hidden>
@@ -153,7 +153,7 @@
     <section class="panel-group-intro" data-panel="opciones">
       <p class="panel-group-kicker">Finanzas</p>
       <h2 class="panel-group-title">Objetivos y control mensual</h2>
-      <p class="panel-group-copy">Define tu ahorro objetivo, tus límites y tus movimientos programados sin mezclarlo con la cuenta o la importación.</p>
+      <p class="panel-group-copy">Define tu ahorro objetivo y tus límites del mes sin mezclarlo con la cuenta o la importación.</p>
     </section>
 
     <section id="options-planning-card" class="card card-opciones" data-panel="opciones">
@@ -188,59 +188,6 @@
         <ul id="budget-list" class="budget-list"></ul>
         <p class="muted">Si pones 0, se elimina el presupuesto de esa categoría.</p>
       </details>
-    </section>
-
-    <section id="options-recurrent-card" class="card card-opciones" data-panel="opciones">
-      <h2>Movimientos programados</h2>
-      <p id="recurrent-auth-hint" class="muted">Necesitas iniciar sesión para gestionar movimientos programados.</p>
-      <div id="recurrent-manager" hidden>
-        <div class="grid">
-          <label>Tipo
-            <select id="recurrent-type">
-              <option value="Gasto">Gasto</option>
-              <option value="Ingreso">Ingreso</option>
-            </select>
-          </label>
-          <label>Categoría
-            <select id="recurrent-category"></select>
-          </label>
-          <label>Monto
-            <input type="text" id="recurrent-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00">
-          </label>
-          <label>Detalle (opcional)
-            <input type="text" id="recurrent-detail" placeholder="Ej: sueldo empresa">
-          </label>
-          <label>Frecuencia
-            <select id="recurrent-frequency">
-              <option value="monthly">Mensual</option>
-              <option value="weekly">Semanal</option>
-              <option value="daily">Diaria</option>
-              <option value="yearly">Anual</option>
-            </select>
-          </label>
-          <label>Fecha de inicio
-            <input type="date" id="recurrent-start-date">
-          </label>
-          <label>Fecha fin (opcional)
-            <input type="date" id="recurrent-end-date">
-          </label>
-          <label>Repeticiones (opcional)
-            <input type="number" id="recurrent-repeat-count" min="1" step="1" placeholder="Ej: 12">
-          </label>
-          <label class="toggle-field">Activo
-            <input type="checkbox" id="recurrent-active" checked>
-          </label>
-          <label class="toggle-field">Generar automáticamente
-            <input type="checkbox" id="recurrent-auto-generate" checked>
-          </label>
-        </div>
-        <div class="auth-actions">
-          <button id="btn-recurrent-save" type="button" class="btn-primary">Guardar movimiento programado</button>
-          <button id="btn-recurrent-cancel" type="button" class="btn-tertiary" hidden>Cancelar edición</button>
-        </div>
-        <p id="recurrent-status" class="muted">Define una frecuencia, fecha de inicio y opcionalmente fecha fin o cantidad. Ideal para alquileres, cuotas y suscripciones.</p>
-        <ul id="recurrent-list" class="budget-list recurrent-list"></ul>
-      </div>
     </section>
 
     <section class="panel-group-intro" data-panel="opciones">
@@ -570,12 +517,66 @@
         </div>
       </div>
     </section>
+
+    <section id="options-recurrent-card" class="card card-movimientos" data-panel="mas">
+      <h2>Movimientos programados</h2>
+      <p class="section-lead">Programa gastos o ingresos futuros para que se generen dentro de Movimientos, calendario y resumen sin dejarlos escondidos en Opciones.</p>
+      <p id="recurrent-auth-hint" class="muted">Necesitas iniciar sesión para gestionar movimientos programados.</p>
+      <div id="recurrent-manager" hidden>
+        <div class="grid">
+          <label>Tipo
+            <select id="recurrent-type">
+              <option value="Gasto">Gasto</option>
+              <option value="Ingreso">Ingreso</option>
+            </select>
+          </label>
+          <label>Categoría
+            <select id="recurrent-category"></select>
+          </label>
+          <label>Monto
+            <input type="text" id="recurrent-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00">
+          </label>
+          <label>Detalle (opcional)
+            <input type="text" id="recurrent-detail" placeholder="Ej: sueldo empresa">
+          </label>
+          <label>Frecuencia
+            <select id="recurrent-frequency">
+              <option value="monthly">Mensual</option>
+              <option value="weekly">Semanal</option>
+              <option value="daily">Diaria</option>
+              <option value="yearly">Anual</option>
+            </select>
+          </label>
+          <label>Fecha de inicio
+            <input type="date" id="recurrent-start-date">
+          </label>
+          <label>Fecha fin (opcional)
+            <input type="date" id="recurrent-end-date">
+          </label>
+          <label>Repeticiones (opcional)
+            <input type="number" id="recurrent-repeat-count" min="1" step="1" placeholder="Ej: 12">
+          </label>
+          <label class="toggle-field">Activo
+            <input type="checkbox" id="recurrent-active" checked>
+          </label>
+          <label class="toggle-field">Generar automáticamente
+            <input type="checkbox" id="recurrent-auto-generate" checked>
+          </label>
+        </div>
+        <div class="auth-actions">
+          <button id="btn-recurrent-save" type="button" class="btn-primary">Guardar movimiento programado</button>
+          <button id="btn-recurrent-cancel" type="button" class="btn-tertiary" hidden>Cancelar edición</button>
+        </div>
+        <p id="recurrent-status" class="muted">Define una frecuencia, fecha de inicio y opcionalmente fecha fin o cantidad. Ideal para alquileres, cuotas y suscripciones.</p>
+        <ul id="recurrent-list" class="budget-list recurrent-list"></ul>
+      </div>
+    </section>
   </main>
 
   <div id="toast" class="toast" hidden></div>
 
-  <script src="stats-utils.js?v=195"></script>
+  <script src="stats-utils.js?v=203"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script type="module" src="app.js?v=195"></script>
+  <script type="module" src="app.js?v=203"></script>
 </body>
 </html>
