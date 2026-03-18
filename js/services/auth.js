@@ -168,11 +168,18 @@ export function createAuthService({
     const authState = await fetchCurrentUserState();
     if (!authState.ok) {
       const savedUser = getAuthSession()?.user || null;
-      if (savedUser && (authState.status >= 500 || authState.status === 504 || authState.status === 599)) {
+      const hasRefreshToken = Boolean(getAuthSession()?.refresh_token);
+      if (savedUser && hasRefreshToken) {
         setCurrentUser(savedUser);
         markSyncPending?.(true);
         setAuthButtons();
-        setStatus("Sesion restaurada. La nube se reintentara al reconectar.", "info");
+        const isTransient = authState.status >= 500 || authState.status === 504 || authState.status === 599 || authState.status === 429;
+        setStatus(
+          isTransient
+            ? "Sesion restaurada. La nube se reintentara al reconectar."
+            : "Sesion restaurada en este dispositivo. Reintentaremos validar la cuenta automaticamente.",
+          "info"
+        );
         setTxData(getLocalTransactionStore());
         await loadRecurrentesData?.();
         refresh();

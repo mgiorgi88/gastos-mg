@@ -121,9 +121,6 @@ export function createSupabaseService({
     const data = await resp.json().catch(() => null);
     if (!resp.ok || !data?.access_token) {
       const isTransient = resp.status >= 500 || resp.status === 429 || resp.status === 504 || resp.status === 599;
-      if (!isTransient) {
-        clearSession();
-      }
       return { ok: false, transient: isTransient };
     }
 
