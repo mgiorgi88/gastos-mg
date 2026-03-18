@@ -4,6 +4,7 @@ export function createRecurrentSuggestionsUi({
   btnRecurrentToggleEl,
   recurrentSuggestionsListEl,
   getCurrentUser,
+  isFeatureAvailable,
   getRecurrentes,
   getTxData,
   getOmittedIds,
@@ -16,7 +17,7 @@ export function createRecurrentSuggestionsUi({
   let expanded = false;
 
   function buildSuggestions(now = new Date()) {
-    if (!getCurrentUser()) return [];
+    if (!getCurrentUser() || isFeatureAvailable?.() === false) return [];
     const monthKey = currentMonthKey(now);
     const day = now.getDate();
     const omittedIds = new Set(getOmittedIds(monthKey));

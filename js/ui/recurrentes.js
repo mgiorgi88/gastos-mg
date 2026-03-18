@@ -17,6 +17,7 @@ export function createRecurrentesUi({
   parseDecimalInputValue,
   showToast,
   getCurrentUser,
+  isFeatureAvailable,
   getRecurrentes,
   setRecurrentes,
   saveRecurrent,
@@ -36,7 +37,8 @@ export function createRecurrentesUi({
 
   function updateAuthVisibility() {
     const logged = Boolean(getCurrentUser());
-    if (optionsRecurrentCardEl) optionsRecurrentCardEl.hidden = !logged;
+    const enabled = isFeatureAvailable?.() !== false;
+    if (optionsRecurrentCardEl) optionsRecurrentCardEl.hidden = !logged || !enabled;
     if (recurrentAuthHintEl) recurrentAuthHintEl.hidden = logged;
     if (recurrentManagerEl) recurrentManagerEl.hidden = !logged;
   }

@@ -263,6 +263,7 @@ const state = createAppState({
   syncPending: false,
   lastSuccessfulSyncAt: null,
   recurrentes: loadRecurrentesCache(),
+  recurrentesAvailable: true,
   quickCategories: buildInitialQuickCategories(
     CATEGORIAS.Gasto,
     QUICK_CATEGORY_DEFAULTS,
@@ -780,6 +781,9 @@ const {
   getResponseErrorMessage,
   setStatus,
   showToast,
+  setFeatureAvailability: (value) => {
+    state.recurrentesAvailable = value !== false;
+  },
   loadRecurrentesCache,
   saveRecurrentesCache: saveRecurrentesState,
   clearRecurrentesCache: () => {
@@ -873,6 +877,7 @@ const { renderSuggestions, bindEvents: bindRecurrentSuggestionEvents } = createR
   btnRecurrentToggleEl,
   recurrentSuggestionsListEl,
   getCurrentUser: () => state.currentUser,
+  isFeatureAvailable: () => state.recurrentesAvailable,
   getRecurrentes: () => state.recurrentes,
   getTxData: () => state.txData,
   getOmittedIds,
@@ -908,6 +913,7 @@ const {
   parseDecimalInputValue,
   showToast,
   getCurrentUser: () => state.currentUser,
+  isFeatureAvailable: () => state.recurrentesAvailable,
   getRecurrentes: () => state.recurrentes,
   setRecurrentes,
   saveRecurrent,
@@ -1186,12 +1192,15 @@ const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
     const rows = await loadRecurrentes();
     setRecurrentes(rows);
     renderRecurrentList();
+    updateRecurrentAuthVisibility();
     renderSuggestions();
   },
   clearRecurrentesState: () => {
+    state.recurrentesAvailable = true;
     clearRecurrentesCache();
     setRecurrentes([]);
     renderRecurrentList();
+    updateRecurrentAuthVisibility();
     renderSuggestions();
     resetRecurrentForm();
   },
