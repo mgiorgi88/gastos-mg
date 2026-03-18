@@ -28,6 +28,9 @@ import {
   budgetCategoryEl,
   budgetListEl,
   budgetSummaryListEl,
+  optionsRecurrentCardEl,
+  btnRecurrentCancelEl,
+  btnRecurrentSaveEl,
   btnBudgetSave,
   btnCancelEdit,
   btnClearMyData,
@@ -49,6 +52,7 @@ import {
   btnQuickGas,
   btnQuickSal,
   btnQuickSuper,
+  btnRecurrentToggleEl,
   btnRecover,
   btnRefreshRate,
   btnSavingsGoalClear,
@@ -112,6 +116,19 @@ import {
   quickCategorySelects,
   quickConfigStatusEl,
   quickDetailEl,
+  recurrentActiveEl,
+  recurrentAnchorDayEl,
+  recurrentAmountEl,
+  recurrentAuthHintEl,
+  recurrentCategoryEl,
+  recurrentDetailEl,
+  recurrentListEl,
+  recurrentManagerEl,
+  recurrentStatusEl,
+  recurrentSuggestionsCardEl,
+  recurrentSuggestionsListEl,
+  recurrentSuggestionsTitleEl,
+  recurrentTypeEl,
   rememberEl,
   resumenContentCards,
   resumenEmptyCardEl,
@@ -146,11 +163,14 @@ import {
   yoyTitleEl
 } from "./js/core/dom.js";
 import {
+  clearRecurrentesCache,
   clearSessionStorage,
   loadArsRate,
   loadBudgets,
   loadCurrency,
   loadQuickCategoriesRaw,
+  loadRecurrentOmissions,
+  loadRecurrentesCache,
   loadRememberMe,
   loadSavingsGoal,
   loadSessionData,
@@ -163,6 +183,7 @@ import {
   saveBudgetsValue,
   saveCurrencyValue,
   saveQuickCategoriesValue,
+  saveRecurrentOmissions,
   saveRememberMe,
   saveSavingsGoalValue,
   saveSessionWithMode,
@@ -181,12 +202,15 @@ import { createSupabaseService } from "./js/services/supabase.js";
 import { createAuthService } from "./js/services/auth.js";
 import { createTransactionsService } from "./js/services/transactions.js";
 import { createImportExportService } from "./js/services/import-export.js";
+import { createRecurrentesService } from "./js/services/recurrentes.js";
 import { createFormUi } from "./js/ui/form-ui.js";
 import { createAuthUi } from "./js/ui/auth-ui.js";
 import { createQuickActionsUi } from "./js/ui/quick-actions.js";
 import { createCalendarUi } from "./js/ui/calendar.js";
 import { createChartsUi } from "./js/ui/charts.js";
 import { createSummaryUi } from "./js/ui/summary.js";
+import { createRecurrentesUi } from "./js/ui/recurrentes.js";
+import { createRecurrentSuggestionsUi } from "./js/ui/recurrent-suggestions.js";
 import { createRefreshController } from "./js/app/refresh.js";
 import { bindAppEvents } from "./js/app/events.js";
 import {
@@ -238,6 +262,7 @@ const state = createAppState({
   hadRecentSyncError: false,
   syncPending: false,
   lastSuccessfulSyncAt: null,
+  recurrentes: loadRecurrentesCache(),
   quickCategories: buildInitialQuickCategories(
     CATEGORIAS.Gasto,
     QUICK_CATEGORY_DEFAULTS,
@@ -514,6 +539,15 @@ function saveBudgets(data) {
   saveBudgetsValue(data);
 }
 
+function setRecurrentes(data) {
+  state.recurrentes = Array.isArray(data) ? data : [];
+}
+
+function saveRecurrentesState(data) {
+  state.recurrentes = Array.isArray(data) ? data : [];
+  saveRecurrentesCache(state.recurrentes);
+}
+
 function saveArsRate(v) {
   state.arsRate = v;
   saveArsRateValue(v);
@@ -733,6 +767,30 @@ const {
 });
 
 const {
+  currentMonthKey,
+  deleteRecurrent,
+  getOmittedIds,
+  loadRecurrentes,
+  omitForMonth,
+  saveRecurrent,
+  toggleRecurrent
+} = createRecurrentesService({
+  getCurrentUser: () => state.currentUser,
+  sbAuthFetch,
+  getResponseErrorMessage,
+  setStatus,
+  showToast,
+  loadRecurrentesCache,
+  saveRecurrentesCache: saveRecurrentesState,
+  clearRecurrentesCache: () => {
+    clearRecurrentesCache();
+    setRecurrentes([]);
+  },
+  loadRecurrentOmissions,
+  saveRecurrentOmissions
+});
+
+const {
   downloadImportTemplate,
   exportFilteredToExcel,
   handleImportFileClick,
@@ -770,6 +828,7 @@ const {
   setEditingState,
   setupBudgetCategoryOptions,
   setupYoyCategoryOptions,
+  startPrefilledTransactionDraft,
   startDuplicateDraftTransaction,
   startEditTransaction,
   updateArsConvertVisibility,
@@ -806,6 +865,54 @@ const {
     state.editingTxId = id;
   },
   setActiveTab
+});
+
+const { renderSuggestions, bindEvents: bindRecurrentSuggestionEvents } = createRecurrentSuggestionsUi({
+  recurrentSuggestionsCardEl,
+  recurrentSuggestionsTitleEl,
+  btnRecurrentToggleEl,
+  recurrentSuggestionsListEl,
+  getCurrentUser: () => state.currentUser,
+  getRecurrentes: () => state.recurrentes,
+  getTxData: () => state.txData,
+  getOmittedIds,
+  omitForMonth,
+  currentMonthKey,
+  money,
+  startPrefilledTransactionDraft,
+  showToast
+});
+
+const {
+  bindEvents: bindRecurrentEvents,
+  renderList: renderRecurrentList,
+  resetForm: resetRecurrentForm,
+  updateAuthVisibility: updateRecurrentAuthVisibility,
+  updateCategoryOptions: updateRecurrentCategoryOptions
+} = createRecurrentesUi({
+  CATEGORIAS,
+  CATEGORY_ICONS,
+  optionsRecurrentCardEl,
+  recurrentAuthHintEl,
+  recurrentManagerEl,
+  recurrentTypeEl,
+  recurrentCategoryEl,
+  recurrentAmountEl,
+  recurrentDetailEl,
+  recurrentAnchorDayEl,
+  recurrentActiveEl,
+  btnRecurrentSaveEl,
+  btnRecurrentCancelEl,
+  recurrentStatusEl,
+  recurrentListEl,
+  parseDecimalInputValue,
+  getCurrentUser: () => state.currentUser,
+  getRecurrentes: () => state.recurrentes,
+  setRecurrentes,
+  saveRecurrent,
+  deleteRecurrent,
+  toggleRecurrent,
+  refreshSuggestions: renderSuggestions
 });
 
 const {
@@ -989,6 +1096,7 @@ const { refresh } = createRefreshController({
   renderSavingsGoalSummary,
   renderTopExpensesCurrentMonth,
   drawBalanceSparkline,
+  renderRecurrentSuggestions: renderSuggestions,
   refreshDetailCategoryOptions,
   getFilteredDetailRows,
   setCurrentDetailRows: (rows) => {
@@ -1057,6 +1165,8 @@ const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
   saveSession,
   setCurrentUser: (user) => {
     state.currentUser = user;
+    updateRecurrentAuthVisibility();
+    renderSuggestions();
   },
   setAuthButtons,
   seedCloudIfEmpty,
@@ -1070,6 +1180,19 @@ const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
   getLocalTransactionStore,
   setTxData: (rows) => {
     state.txData = rows;
+  },
+  loadRecurrentesData: async () => {
+    const rows = await loadRecurrentes();
+    setRecurrentes(rows);
+    renderRecurrentList();
+    renderSuggestions();
+  },
+  clearRecurrentesState: () => {
+    clearRecurrentesCache();
+    setRecurrentes([]);
+    renderRecurrentList();
+    renderSuggestions();
+    resetRecurrentForm();
   },
   updateEntryGate,
   isLocalDevelopment,
@@ -1103,6 +1226,10 @@ async function retrySyncFromUi() {
 
   setStatus("Reintentando sincronizacion...", "info");
   await loadCloudData();
+  const recurrentRows = await loadRecurrentes();
+  setRecurrentes(recurrentRows);
+  renderRecurrentList();
+  renderSuggestions();
   if (!state.hadRecentSyncError) {
     showToast("Sincronizacion actualizada");
   }
@@ -1300,6 +1427,9 @@ bindAppEvents({
   saveBudgets
 });
 
+bindRecurrentEvents();
+bindRecurrentSuggestionEvents();
+
 if (btnSyncRetryEl) {
   btnSyncRetryEl.addEventListener("click", () => {
     retrySyncFromUi();
@@ -1325,6 +1455,10 @@ if (syncBadgeEl) {
     setupBudgetCategoryOptions();
     setupYoyCategoryOptions();
     setupQuickCategoryOptions();
+    updateRecurrentCategoryOptions();
+    updateRecurrentAuthVisibility();
+    renderRecurrentList();
+    resetRecurrentForm();
     renderQuickButtons();
     refreshSavingsGoalEditor();
     updateCategoryOptions(tipoEl.value);

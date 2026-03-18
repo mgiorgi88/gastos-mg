@@ -200,6 +200,38 @@ export function createFormUi({
     setStatus(`Carga preparada con base en ${tx.categoria}. Ajustala y guarda cuando quieras.`);
   }
 
+  function startPrefilledTransactionDraft(tx, options = {}) {
+    const {
+      focusField = "detail",
+      modeLabel = "Nueva carga sugerida",
+      statusMessage = "Revisa los datos y guarda cuando quieras."
+    } = options;
+
+    if (fechaEl) fechaEl.valueAsDate = new Date();
+    tipoEl.value = tx.tipo === "Ingreso" ? "Ingreso" : "Gasto";
+    updateCategoryOptions(tipoEl.value, tx.categoria);
+    if (montoEl) montoEl.value = Number(tx.monto || 0).toFixed(2);
+    if (detalleEl) detalleEl.value = tx.detalle || "";
+    updateArsConvertVisibility();
+    setEditingState(null, "repeat");
+    if (txFormModeEl) txFormModeEl.textContent = modeLabel;
+    if (typeof setActiveTab === "function") setActiveTab("cargar");
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
+    requestAnimationFrame(() => {
+      if (focusField === "amount" && montoEl) {
+        montoEl.focus();
+        if (typeof montoEl.select === "function") montoEl.select();
+        return;
+      }
+      if (detalleEl) {
+        detalleEl.focus();
+        const end = detalleEl.value.length;
+        if (typeof detalleEl.setSelectionRange === "function") detalleEl.setSelectionRange(end, end);
+      }
+    });
+    setStatus(statusMessage);
+  }
+
   function resetTransactionForm() {
     form.reset();
     if (fechaEl) fechaEl.valueAsDate = new Date();
@@ -236,6 +268,7 @@ export function createFormUi({
     setEditingState,
     setupBudgetCategoryOptions,
     setupYoyCategoryOptions,
+    startPrefilledTransactionDraft,
     startDuplicateDraftTransaction,
     startEditTransaction,
     updateArsConvertVisibility,

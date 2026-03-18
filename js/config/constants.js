@@ -11,6 +11,8 @@ export const ACTIVE_TAB_KEY = "mis_gastos_active_tab_v1";
 export const REMEMBER_ME_KEY = "mis_gastos_remember_me_v1";
 export const QUICK_CATS_KEY = "mis_gastos_quick_cats_v1";
 export const SAVINGS_GOAL_KEY = "mis_gastos_savings_goal_v1";
+export const RECURRENTS_CACHE_KEY = "mis_gastos_recurrentes_cache_v1";
+export const RECURRENTS_OMIT_KEY_PREFIX = "mis_gastos_recurrentes_omitidos_";
 export const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
 
 export const SUPABASE_URL = "https://gwtioxerklmzjssweqgm.supabase.co";

@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon.svg">
-  <link rel="stylesheet" href="styles.css?v=180">
+  <link rel="stylesheet" href="styles.css?v=181">
 </head>
 <body class="app-boot">
   <section id="entry-gate" class="entry-gate" hidden>
@@ -90,7 +90,7 @@
         <button id="btn-sync-retry" type="button" class="btn-secondary" hidden>Reintentar sincronizacion</button>
         <p id="sync-help" class="muted sync-help">Sin sesion, la app no puede recuperar movimientos de la nube.</p>
       </div>
-      <p class="build-version build-version-options">Version visible: v180</p>
+      <p class="build-version build-version-options">Version visible: v181</p>
     </section>
 
     <section id="account-mini" class="card card-opciones card-opciones-compact card-opciones-account-mini" data-panel="opciones" hidden>
@@ -190,6 +190,42 @@
       </details>
     </section>
 
+    <section id="options-recurrent-card" class="card card-opciones" data-panel="opciones">
+      <h2>Recurrentes</h2>
+      <p id="recurrent-auth-hint" class="muted">Necesitas iniciar sesion para gestionar recurrentes.</p>
+      <div id="recurrent-manager" hidden>
+        <div class="grid">
+          <label>Tipo
+            <select id="recurrent-type">
+              <option value="Gasto">Gasto</option>
+              <option value="Ingreso">Ingreso</option>
+            </select>
+          </label>
+          <label>Categoría
+            <select id="recurrent-category"></select>
+          </label>
+          <label>Monto
+            <input type="text" id="recurrent-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00">
+          </label>
+          <label>Detalle (opcional)
+            <input type="text" id="recurrent-detail" placeholder="Ej: sueldo empresa">
+          </label>
+          <label>Día del mes
+            <input type="number" id="recurrent-anchor-day" min="1" max="28" step="1" placeholder="1-28">
+          </label>
+          <label class="toggle-field">Activo
+            <input type="checkbox" id="recurrent-active" checked>
+          </label>
+        </div>
+        <div class="auth-actions">
+          <button id="btn-recurrent-save" type="button" class="btn-primary">Guardar recurrente</button>
+          <button id="btn-recurrent-cancel" type="button" class="btn-tertiary" hidden>Cancelar edición</button>
+        </div>
+        <p id="recurrent-status" class="muted">Crea plantillas mensuales que luego podrás registrar desde Cargar.</p>
+        <ul id="recurrent-list" class="budget-list recurrent-list"></ul>
+      </div>
+    </section>
+
     <section class="panel-group-intro" data-panel="opciones">
       <p class="panel-group-kicker">Datos</p>
       <h2 class="panel-group-title">Importacion y mantenimiento</h2>
@@ -228,6 +264,16 @@
         <h3>Aun no tienes movimientos</h3>
         <p>Empieza cargando tu primer gasto o ingreso para activar el resumen y las comparativas.</p>
         <button id="btn-empty-start" type="button" class="btn-primary">Cargar primer movimiento</button>
+      </div>
+      <div id="recurrent-suggestions-card" class="recurrent-suggestions-card" hidden>
+        <div class="recurrent-suggestions-head">
+          <div>
+            <p class="recurrent-suggestions-kicker">Sugerencias mensuales</p>
+            <h3 id="recurrent-suggestions-title">Tenés 0 recurrentes para registrar este mes</h3>
+          </div>
+          <button id="btn-recurrent-toggle" type="button" class="btn-secondary">Ver sugerencias</button>
+        </div>
+        <div id="recurrent-suggestions-list" class="recurrent-suggestions-list" hidden></div>
       </div>
       <h2>Carga rapida</h2>
       <p class="section-lead">Anota un gasto en segundos y, si necesitas sumar dos tickets, escribe la cuenta directamente en el importe.</p>
@@ -485,8 +531,8 @@
 
   <div id="toast" class="toast" hidden></div>
 
-  <script src="stats-utils.js?v=180"></script>
+  <script src="stats-utils.js?v=181"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script type="module" src="app.js?v=180"></script>
+  <script type="module" src="app.js?v=181"></script>
 </body>
 </html>

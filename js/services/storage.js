@@ -8,7 +8,9 @@ import {
   SAVINGS_GOAL_KEY,
   QUICK_CATS_KEY,
   SESSION_KEY,
-  REMEMBER_ME_KEY
+  REMEMBER_ME_KEY,
+  RECURRENTS_CACHE_KEY,
+  RECURRENTS_OMIT_KEY_PREFIX
 } from "../config/constants.js";
 
 export function readJsonStorage(store, key, fallback) {
@@ -99,6 +101,26 @@ export function loadQuickCategoriesRaw() {
 
 export function saveQuickCategoriesValue(categories) {
   writeJsonStorage(localStorage, QUICK_CATS_KEY, categories);
+}
+
+export function loadRecurrentesCache() {
+  return readJsonStorage(localStorage, RECURRENTS_CACHE_KEY, []);
+}
+
+export function saveRecurrentesCache(items) {
+  writeJsonStorage(localStorage, RECURRENTS_CACHE_KEY, items);
+}
+
+export function clearRecurrentesCache() {
+  localStorage.removeItem(RECURRENTS_CACHE_KEY);
+}
+
+export function loadRecurrentOmissions(monthKey) {
+  return readJsonStorage(localStorage, `${RECURRENTS_OMIT_KEY_PREFIX}${monthKey}`, []);
+}
+
+export function saveRecurrentOmissions(monthKey, ids) {
+  writeJsonStorage(localStorage, `${RECURRENTS_OMIT_KEY_PREFIX}${monthKey}`, ids);
 }
 
 export function loadSessionData() {

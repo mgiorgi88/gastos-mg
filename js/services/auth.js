@@ -18,6 +18,8 @@ export function createAuthService({
   clearSession,
   getLocalTransactionStore,
   setTxData,
+  loadRecurrentesData,
+  clearRecurrentesState,
   updateEntryGate,
   isLocalDevelopment,
   fetchCurrentUserState,
@@ -62,6 +64,7 @@ export function createAuthService({
       setStatus(`Conectado como ${data.user?.email || email}`, "success");
       await seedCloudIfEmpty();
       await loadCloudData();
+      await loadRecurrentesData?.();
       setActiveTab("cargar");
       refresh();
     } else {
@@ -106,6 +109,7 @@ export function createAuthService({
     setStatus(`Conectado como ${data.user?.email || email}`, "success");
     await seedCloudIfEmpty();
     await loadCloudData();
+    await loadRecurrentesData?.();
     setActiveTab("cargar");
     refresh();
   }
@@ -142,6 +146,7 @@ export function createAuthService({
     clearSession();
     setCurrentUser(null);
     setTxData(getLocalTransactionStore());
+    clearRecurrentesState?.();
     setAuthButtons();
     updateEntryGate();
     refresh();
@@ -155,6 +160,7 @@ export function createAuthService({
       setStatus(isLocalDevelopment() ? "Sin sesión. Puedes iniciar sesión para guardar en la nube." : "Inicia sesión para usar la app.", "info");
       setAuthButtons();
       setTxData(getLocalTransactionStore());
+      clearRecurrentesState?.();
       refresh();
       return;
     }
@@ -168,6 +174,7 @@ export function createAuthService({
         setAuthButtons();
         setStatus("Sesion restaurada. La nube se reintentara al reconectar.", "info");
         setTxData(getLocalTransactionStore());
+        await loadRecurrentesData?.();
         refresh();
         return;
       }
@@ -178,6 +185,7 @@ export function createAuthService({
       setStatus("Sesión expirada. Inicia sesión nuevamente.", "error");
       setAuthButtons();
       setTxData(getLocalTransactionStore());
+      clearRecurrentesState?.();
       refresh();
       return;
     }
@@ -188,6 +196,7 @@ export function createAuthService({
     setStatus(`Conectado como ${authState.user.email}`, "success");
     await seedCloudIfEmpty();
     await loadCloudData();
+    await loadRecurrentesData?.();
   }
 
   return {
