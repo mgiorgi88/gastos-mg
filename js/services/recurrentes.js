@@ -3,6 +3,7 @@ export function createRecurrentesService({
   sbAuthFetch,
   getResponseErrorMessage,
   setStatus,
+  setFeatureStatus,
   showToast,
   setFeatureAvailability,
   loadRecurrentesCache,
@@ -69,6 +70,7 @@ export function createRecurrentesService({
       }
       setFeatureAvailability?.(true);
       showToast("No se pudieron cargar los recurrentes");
+      setFeatureStatus?.(`Error cargando recurrentes: ${msg}`, "error");
       setStatus(`Error cargando recurrentes: ${msg}`, "error");
       return loadRecurrentesCache();
     }
@@ -84,6 +86,7 @@ export function createRecurrentesService({
     const currentUser = getCurrentUser();
     if (!currentUser) {
       showToast("Inicia sesión para guardar recurrentes");
+      setFeatureStatus?.("Necesitas iniciar sesión para guardar recurrentes.", "error");
       setStatus("Necesitas iniciar sesion para guardar recurrentes.", "error");
       return { ok: false };
     }
@@ -110,12 +113,14 @@ export function createRecurrentesService({
         return { ok: false };
       }
       showToast("No se pudo guardar el recurrente");
+      setFeatureStatus?.(`No se pudo guardar el recurrente: ${msg}`, "error");
       setStatus(`No se pudo guardar el recurrente: ${msg}`, "error");
       return { ok: false };
     }
 
     const rows = await loadRecurrentes();
     showToast(editingId ? "Recurrente actualizado" : "Recurrente guardado");
+    setFeatureStatus?.(editingId ? "Recurrente actualizado." : "Recurrente guardado.", "ok");
     setStatus(editingId ? "Recurrente actualizado." : "Recurrente guardado.", "success");
     return { ok: true, rows };
   }
@@ -124,6 +129,7 @@ export function createRecurrentesService({
     const currentUser = getCurrentUser();
     if (!currentUser) {
       showToast("Inicia sesión para borrar recurrentes");
+      setFeatureStatus?.("Necesitas iniciar sesión para borrar recurrentes.", "error");
       setStatus("Necesitas iniciar sesion para borrar recurrentes.", "error");
       return { ok: false };
     }
@@ -136,12 +142,14 @@ export function createRecurrentesService({
         return { ok: false };
       }
       showToast("No se pudo borrar el recurrente");
+      setFeatureStatus?.(`No se pudo borrar el recurrente: ${msg}`, "error");
       setStatus(`No se pudo borrar el recurrente: ${msg}`, "error");
       return { ok: false };
     }
 
     const rows = await loadRecurrentes();
     showToast("Recurrente eliminado");
+    setFeatureStatus?.("Recurrente eliminado.", "ok");
     setStatus("Recurrente eliminado.", "success");
     return { ok: true, rows };
   }
@@ -150,6 +158,7 @@ export function createRecurrentesService({
     const currentUser = getCurrentUser();
     if (!currentUser) {
       showToast("Inicia sesión para actualizar recurrentes");
+      setFeatureStatus?.("Necesitas iniciar sesión para actualizar recurrentes.", "error");
       setStatus("Necesitas iniciar sesion para actualizar recurrentes.", "error");
       return { ok: false };
     }
@@ -166,12 +175,14 @@ export function createRecurrentesService({
         return { ok: false };
       }
       showToast("No se pudo actualizar el recurrente");
+      setFeatureStatus?.(`No se pudo actualizar el recurrente: ${msg}`, "error");
       setStatus(`No se pudo actualizar el recurrente: ${msg}`, "error");
       return { ok: false };
     }
 
     const rows = await loadRecurrentes();
     showToast(nextActive ? "Recurrente activado" : "Recurrente pausado");
+    setFeatureStatus?.(nextActive ? "Recurrente activado." : "Recurrente pausado.", "ok");
     return { ok: true, rows };
   }
 

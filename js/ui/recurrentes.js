@@ -192,6 +192,7 @@ export function createRecurrentesUi({
     bindEvents,
     renderList,
     resetForm,
+    setStatus,
     updateAuthVisibility,
     updateCategoryOptions
   };

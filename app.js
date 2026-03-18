@@ -767,6 +767,8 @@ const {
   markSyncPending: setSyncPending
 });
 
+let setRecurrentInlineStatus = () => {};
+
 const {
   currentMonthKey,
   deleteRecurrent,
@@ -780,6 +782,9 @@ const {
   sbAuthFetch,
   getResponseErrorMessage,
   setStatus,
+  setFeatureStatus: (message, tone) => {
+    setRecurrentInlineStatus(message, tone);
+  },
   showToast,
   setFeatureAvailability: (value) => {
     state.recurrentesAvailable = value !== false;
@@ -892,6 +897,7 @@ const {
   bindEvents: bindRecurrentEvents,
   renderList: renderRecurrentList,
   resetForm: resetRecurrentForm,
+  setStatus: setRecurrentStatus,
   updateAuthVisibility: updateRecurrentAuthVisibility,
   updateCategoryOptions: updateRecurrentCategoryOptions
 } = createRecurrentesUi({
@@ -921,6 +927,8 @@ const {
   toggleRecurrent,
   refreshSuggestions: renderSuggestions
 });
+
+setRecurrentInlineStatus = setRecurrentStatus;
 
 const {
   loadQuickCategories,
