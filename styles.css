@@ -275,6 +275,7 @@ body.app-boot #sync-badge {
   font-size: 0.8rem;
   font-weight: 600;
   line-height: 1;
+  cursor: pointer;
   opacity: 0;
   transform: translateY(-2px);
   transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
@@ -285,10 +286,23 @@ body.app-boot #sync-badge {
   transform: translateY(0);
 }
 
+.sync-badge.local {
+  color: var(--muted);
+  border-color: rgba(148, 163, 184, 0.32);
+  background: rgba(148, 163, 184, 0.1);
+}
+
 .sync-badge.syncing {
   color: var(--primary);
   border-color: rgba(59, 130, 246, 0.45);
   background: rgba(59, 130, 246, 0.1);
+  animation: syncPulse 1.2s ease-in-out infinite;
+}
+
+.sync-badge.pending {
+  color: #a16207;
+  border-color: rgba(245, 158, 11, 0.38);
+  background: rgba(245, 158, 11, 0.12);
 }
 
 .sync-badge.ok {
@@ -303,8 +317,21 @@ body.app-boot #sync-badge {
   background: rgba(239, 68, 68, 0.1);
 }
 
+@keyframes syncPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.18);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+  }
+}
+
 :root[data-theme="dark"] .sync-badge.ok {
   color: #86efac;
+}
+
+:root[data-theme="dark"] .sync-badge.pending {
+  color: #fcd34d;
 }
 
 :root[data-theme="dark"] .sync-badge.error {

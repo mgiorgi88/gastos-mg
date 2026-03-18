@@ -116,6 +116,7 @@ export const syncIndicatorEl = document.getElementById("sync-indicator");
 export const btnSyncRetryEl = document.getElementById("btn-sync-retry");
 export const syncHelpEl = document.getElementById("sync-help");
 export const heroSessionIndicatorEl = document.getElementById("hero-session-indicator");
+export const syncCardEl = document.getElementById("sync-card");
 export const authCardEl = document.getElementById("auth-card");
 export const accountMiniEl = document.getElementById("account-mini");
 export const accountMiniEmailEl = document.getElementById("account-mini-email");

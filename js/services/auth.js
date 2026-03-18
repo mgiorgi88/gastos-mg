@@ -21,7 +21,8 @@ export function createAuthService({
   updateEntryGate,
   isLocalDevelopment,
   fetchCurrentUserState,
-  getAuthSession
+  getAuthSession,
+  markSyncPending
 }) {
   async function signup() {
     const email = emailEl.value.trim();
@@ -149,6 +150,7 @@ export function createAuthService({
 
   async function initAuth() {
     if (!getAuthSession()?.access_token) {
+      markSyncPending?.(false);
       setCurrentUser(null);
       setStatus(isLocalDevelopment() ? "Sin sesión. Puedes iniciar sesión para guardar en la nube." : "Inicia sesión para usar la app.", "info");
       setAuthButtons();
@@ -162,6 +164,7 @@ export function createAuthService({
       const savedUser = getAuthSession()?.user || null;
       if (savedUser && (authState.status >= 500 || authState.status === 504 || authState.status === 599)) {
         setCurrentUser(savedUser);
+        markSyncPending?.(true);
         setAuthButtons();
         setStatus("Sesion restaurada. La nube se reintentara al reconectar.", "info");
         setTxData(getLocalTransactionStore());
@@ -170,6 +173,7 @@ export function createAuthService({
       }
 
       clearSession();
+      markSyncPending?.(false);
       setCurrentUser(null);
       setStatus("Sesión expirada. Inicia sesión nuevamente.", "error");
       setAuthButtons();
@@ -179,6 +183,7 @@ export function createAuthService({
     }
 
     setCurrentUser(authState.user);
+    markSyncPending?.(false);
     setAuthButtons();
     setStatus(`Conectado como ${authState.user.email}`, "success");
     await seedCloudIfEmpty();

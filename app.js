@@ -123,6 +123,7 @@ import {
   syncBadgeEl,
   syncHelpEl,
   syncIndicatorEl,
+  syncCardEl,
   tabBtns,
   tabPanels,
   themeEl,
@@ -235,6 +236,8 @@ const state = createAppState({
   toastTimer: null,
   syncOpsInFlight: 0,
   hadRecentSyncError: false,
+  syncPending: false,
+  lastSuccessfulSyncAt: null,
   quickCategories: buildInitialQuickCategories(
     CATEGORIAS.Gasto,
     QUICK_CATEGORY_DEFAULTS,
@@ -405,6 +408,29 @@ function hideSyncBadge() {
   state.syncBadgeTimer = hideSyncBadgeState(syncBadgeEl, state.syncBadgeTimer);
 }
 
+function formatLastSyncAge() {
+  if (!(state.lastSuccessfulSyncAt > 0)) return "ahora";
+  const elapsedMs = Math.max(0, Date.now() - state.lastSuccessfulSyncAt);
+  const minutes = Math.floor(elapsedMs / 60000);
+  if (minutes <= 0) return "ahora";
+  if (minutes === 1) return "hace 1 min";
+  if (minutes < 60) return `hace ${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  if (hours === 1) return "hace 1 h";
+  if (hours < 24) return `hace ${hours} h`;
+  const days = Math.floor(hours / 24);
+  return days === 1 ? "hace 1 d" : `hace ${days} d`;
+}
+
+function setSyncPending(value) {
+  state.syncPending = Boolean(value);
+}
+
+function markSyncSuccess() {
+  state.lastSuccessfulSyncAt = Date.now();
+  state.syncPending = false;
+}
+
 function refreshSyncIndicator() {
   if (!syncIndicatorEl) return;
   if (btnSyncRetryEl) {
@@ -424,7 +450,7 @@ function refreshSyncIndicator() {
     syncIndicatorEl.classList.add("sync-local");
     syncIndicatorEl.textContent = "Guardado: inicia sesion para usar la nube";
     if (syncHelpEl) syncHelpEl.textContent = "Estas usando la app sin sesion. Solo veras o guardaras datos locales segun el entorno.";
-    hideSyncBadge();
+    showSyncBadge("Sin sesion", "local");
     return;
   }
   if (state.syncOpsInFlight > 0) {
@@ -443,11 +469,19 @@ function refreshSyncIndicator() {
     showSyncBadge("Error de sync", "error");
     return;
   }
+  if (state.syncPending) {
+    syncIndicatorEl.classList.add("sync-online");
+    syncIndicatorEl.textContent = "Sincronizacion: Pendiente";
+    if (btnSyncRetryEl) btnSyncRetryEl.hidden = false;
+    if (syncHelpEl) syncHelpEl.textContent = "La sesion fue restaurada, pero por ahora estas viendo cache local hasta poder revalidar la nube.";
+    showSyncBadge("Pendiente", "pending");
+    return;
+  }
   syncIndicatorEl.classList.add("sync-online");
   syncIndicatorEl.textContent = "Sincronizacion: OK";
   if (btnSyncRetryEl) btnSyncRetryEl.hidden = false;
   if (syncHelpEl) syncHelpEl.textContent = "Tu cuenta esta conectada y los movimientos mostrados vienen de la nube.";
-  hideSyncBadge();
+  showSyncBadge(`Sincronizado · ${formatLastSyncAge()}`, "ok");
 }
 
 function beginSyncOperation() {
@@ -693,7 +727,9 @@ const {
   sbAuthFetch,
   getResponseErrorMessage,
   setStatus,
-  getLocalTransactionStore
+  getLocalTransactionStore,
+  markSyncSuccess,
+  markSyncPending: setSyncPending
 });
 
 const {
@@ -1038,7 +1074,8 @@ const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
   updateEntryGate,
   isLocalDevelopment,
   fetchCurrentUserState,
-  getAuthSession: () => state.authSession
+  getAuthSession: () => state.authSession,
+  markSyncPending: setSyncPending
 });
 
 async function clearMyData() {
@@ -1266,6 +1303,15 @@ bindAppEvents({
 if (btnSyncRetryEl) {
   btnSyncRetryEl.addEventListener("click", () => {
     retrySyncFromUi();
+  });
+}
+
+if (syncBadgeEl) {
+  syncBadgeEl.addEventListener("click", () => {
+    setActiveTab("opciones");
+    requestAnimationFrame(() => {
+      syncCardEl?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   });
 }
 

@@ -51,12 +51,12 @@ export function showSyncBadgeState(syncBadgeEl, message, tone = "ok", autoHideMs
   if (!syncBadgeEl) return currentTimer;
   syncBadgeEl.textContent = message;
   syncBadgeEl.hidden = false;
-  syncBadgeEl.classList.remove("syncing", "ok", "error", "show");
+  syncBadgeEl.classList.remove("local", "syncing", "pending", "ok", "error", "show");
   syncBadgeEl.classList.add(tone, "show");
   if (currentTimer) clearTimeout(currentTimer);
   if (autoHideMs <= 0) return null;
   return setTimeout(() => {
-    syncBadgeEl.classList.remove("show", "syncing", "ok", "error");
+    syncBadgeEl.classList.remove("show", "local", "syncing", "pending", "ok", "error");
     syncBadgeEl.hidden = true;
   }, autoHideMs);
 }
@@ -64,7 +64,7 @@ export function showSyncBadgeState(syncBadgeEl, message, tone = "ok", autoHideMs
 export function hideSyncBadgeState(syncBadgeEl, currentTimer = null) {
   if (!syncBadgeEl) return null;
   if (currentTimer) clearTimeout(currentTimer);
-  syncBadgeEl.classList.remove("show", "syncing", "ok", "error");
+  syncBadgeEl.classList.remove("show", "local", "syncing", "pending", "ok", "error");
   syncBadgeEl.hidden = true;
   return null;
 }

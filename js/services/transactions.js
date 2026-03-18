@@ -9,11 +9,14 @@ export function createTransactionsService({
   sbAuthFetch,
   getResponseErrorMessage,
   setStatus,
-  getLocalTransactionStore
+  getLocalTransactionStore,
+  markSyncSuccess,
+  markSyncPending
 }) {
   async function loadCloudData() {
     const currentUser = getCurrentUser();
     if (!currentUser) {
+      markSyncPending?.(false);
       setTxData(getLocalTransactionStore());
       getRefresh()?.();
       return;
@@ -43,6 +46,8 @@ export function createTransactionsService({
       detalle: r.detalle || ""
     })));
     saveTx(getTxData());
+    markSyncPending?.(false);
+    markSyncSuccess?.();
     getRefresh()?.();
   }
 
