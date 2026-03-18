@@ -1202,6 +1202,7 @@ const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
   loadRecurrentesData: async () => {
     const rows = await loadRecurrentes();
     setRecurrentes(rows);
+    saveRecurrentesState(rows);
     renderRecurrentList();
     updateRecurrentAuthVisibility();
     renderSuggestions();

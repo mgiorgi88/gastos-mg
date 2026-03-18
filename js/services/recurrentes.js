@@ -20,8 +20,38 @@ export function createRecurrentesService({
     });
   }
 
+  function recurrentSignature(item) {
+    return [
+      item.tipo === "Ingreso" ? "Ingreso" : "Gasto",
+      String(item.categoria || "").trim(),
+      Number(item.monto || 0).toFixed(2),
+      String(item.detalle || "").trim(),
+      Number(item.anchor_day || 0),
+      item.activo !== false ? "1" : "0"
+    ].join("|");
+  }
+
+  function dedupeRecurrentes(items) {
+    const map = new Map();
+    for (const rawItem of Array.isArray(items) ? items : []) {
+      const item = normalizeRecurrent(rawItem);
+      const signature = recurrentSignature(item);
+      const existing = map.get(signature);
+      if (!existing) {
+        map.set(signature, item);
+        continue;
+      }
+      const existingTs = Date.parse(existing.updated_at || existing.created_at || 0) || 0;
+      const currentTs = Date.parse(item.updated_at || item.created_at || 0) || 0;
+      if (currentTs >= existingTs) {
+        map.set(signature, item);
+      }
+    }
+    return [...map.values()];
+  }
+
   function persistLocalRows(items) {
-    const normalized = sortRecurrentes((items || []).map(normalizeRecurrent));
+    const normalized = sortRecurrentes(dedupeRecurrentes(items));
     saveRecurrentesCache(normalized);
     return normalized;
   }
@@ -47,10 +77,16 @@ export function createRecurrentesService({
     const current = Array.isArray(loadRecurrentesCache()) ? loadRecurrentesCache() : [];
     const previous = editingId ? current.find((item) => item.id === editingId) : null;
     const nextRow = buildLocalRow(payload, currentUser, editingId, previous);
+    if (!editingId) {
+      const duplicate = current.find((item) => recurrentSignature(item) === recurrentSignature(nextRow));
+      if (duplicate) {
+        return { rows: persistLocalRows(current), duplicate: true };
+      }
+    }
     const next = editingId
       ? current.map((item) => (item.id === editingId ? nextRow : item))
       : [...current, nextRow];
-    return persistLocalRows(next);
+    return { rows: persistLocalRows(next), duplicate: false };
   }
 
   function deleteLocalFallback(id) {
@@ -159,7 +195,7 @@ export function createRecurrentesService({
     }
 
     const data = await resp.json().catch(() => []);
-    const normalized = (data || []).map(normalizeRecurrent);
+    const normalized = dedupeRecurrentes(data || []);
     setFeatureAvailability?.(true);
     saveRecurrentesCache(normalized);
     return normalized;
@@ -174,7 +210,8 @@ export function createRecurrentesService({
       return { ok: false };
     }
 
-    const localRows = upsertLocalFallback(payload, currentUser, editingId);
+    const localResult = upsertLocalFallback(payload, currentUser, editingId);
+    const localRows = localResult.rows;
 
     const body = {
       user_id: currentUser.id,
@@ -186,6 +223,13 @@ export function createRecurrentesService({
       anchor_day: Number(payload.anchor_day),
       activo: payload.activo !== false
     };
+
+    if (localResult.duplicate && !editingId) {
+      showToast("Ese recurrente ya existía");
+      setFeatureStatus?.("Ese recurrente ya estaba guardado.", "ok");
+      setStatus("Ese recurrente ya estaba guardado.", "success");
+      return { ok: true, rows: localRows };
+    }
 
     showToast(editingId ? "Recurrente actualizado" : "Recurrente guardado");
     setFeatureStatus?.(editingId ? "Recurrente actualizado." : "Recurrente guardado.", "ok");
