@@ -214,14 +214,18 @@ export function createRecurrentesUi({
     const payload = getPayloadFromForm();
     if (!payload) return;
     const wasEditing = Boolean(editingId);
+    const previousItem = wasEditing ? (getRecurrentes() || []).find((item) => item.id === editingId) || null : null;
     setButtonLoadingState?.(btnRecurrentSaveEl, true, wasEditing ? "Guardando cambios..." : "Guardando...");
     setStatus(wasEditing ? "Guardando cambios..." : "Guardando movimiento programado...");
     try {
       const result = await saveRecurrent(payload, editingId);
       if (!result.ok) return;
       setRecurrentes(result.rows || []);
+      if (previousItem?.auto_generate !== false) {
+        await removeGeneratedTransactionsForSchedule?.(previousItem);
+      }
+      await refreshSuggestions?.();
       renderList();
-      refreshSuggestions?.();
       resetForm();
       setStatus(wasEditing ? "Movimiento programado actualizado." : "Movimiento programado guardado.", "ok");
     } catch (error) {

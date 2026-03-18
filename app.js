@@ -610,6 +610,15 @@ function txSignature(tx) {
   return [tx.fecha, tx.tipo, tx.categoria, Number(tx.monto).toFixed(2), tx.detalle || ""].join("|");
 }
 
+function scheduleMatchSignature(item) {
+  return [
+    item.tipo === "Ingreso" ? "Ingreso" : "Gasto",
+    String(item.categoria || "").trim(),
+    Number(item.monto || 0).toFixed(2),
+    String(item.detalle || "").trim()
+  ].join("|");
+}
+
 function parseIsoDate(value) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ""));
   if (!match) return null;
@@ -858,11 +867,18 @@ async function processScheduledMovements() {
   const scheduled = Array.isArray(state.recurrentes) ? state.recurrentes : [];
   if (scheduled.length === 0) return;
 
+  const desiredDatesBySignature = new Map();
   const existingSignatures = new Set((Array.isArray(state.txData) ? state.txData : []).map(txSignature));
   const generatedRows = [];
+  const extraIds = [];
 
   scheduled.forEach((item) => {
     const occurrences = buildScheduledOccurrences(item, new Date());
+    const matchSignature = scheduleMatchSignature(item);
+    const dateBucket = desiredDatesBySignature.get(matchSignature) || new Set();
+    occurrences.forEach((fecha) => dateBucket.add(fecha));
+    desiredDatesBySignature.set(matchSignature, dateBucket);
+
     occurrences.forEach((fecha) => {
       const tx = {
         id: crypto.randomUUID(),
@@ -879,10 +895,24 @@ async function processScheduledMovements() {
     });
   });
 
-  if (generatedRows.length === 0) return;
-
   state.scheduledGenerationInFlight = true;
   try {
+    const matchingRows = Array.isArray(state.txData) ? state.txData : [];
+    matchingRows.forEach((tx) => {
+      const matchSignature = scheduleMatchSignature(tx);
+      const desiredDates = desiredDatesBySignature.get(matchSignature);
+      if (!desiredDates) return;
+      if (!desiredDates.has(String(tx.fecha || ""))) {
+        extraIds.push(tx.id);
+      }
+    });
+
+    if (extraIds.length > 0) {
+      await deleteTransactionsBulk(extraIds, { quiet: true });
+    }
+
+    if (generatedRows.length === 0) return;
+
     const ok = await addTransactionsBulk(generatedRows, { quiet: true });
     if (ok) {
       const label = generatedRows.length === 1 ? "1 movimiento programado generado" : `${generatedRows.length} movimientos programados generados`;
@@ -895,9 +925,7 @@ async function processScheduledMovements() {
 }
 
 async function removeGeneratedTransactionsForSchedule(item) {
-  const nowKey = toIsoDate(new Date());
   const matchingIds = (Array.isArray(state.txData) ? state.txData : [])
-    .filter((tx) => String(tx.fecha || "") >= nowKey)
     .filter((tx) => tx.tipo === item.tipo)
     .filter((tx) => tx.categoria === item.categoria)
     .filter((tx) => Number(tx.monto || 0) === Number(item.monto || 0))
