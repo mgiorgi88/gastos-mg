@@ -620,6 +620,12 @@ body.app-boot #sync-badge {
   margin-bottom: 12px;
 }
 
+.load-summary-head-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .load-summary-head h3 {
   margin: 2px 0 0;
   font-size: 1.05rem;
@@ -639,6 +645,20 @@ body.app-boot #sync-badge {
   font-size: 0.88rem;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.load-summary-arrow {
+  color: var(--muted);
+  font-size: 1.35rem;
+  line-height: 1;
+  font-weight: 700;
+  opacity: 0.8;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.load-summary-card:hover .load-summary-arrow {
+  transform: translateX(2px);
+  opacity: 1;
 }
 
 .load-summary-stats {

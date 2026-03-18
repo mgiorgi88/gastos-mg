@@ -90,7 +90,7 @@
         <button id="btn-sync-retry" type="button" class="btn-secondary" hidden>Reintentar sincronizacion</button>
         <p id="sync-help" class="muted sync-help">Sin sesion, la app no puede recuperar movimientos de la nube.</p>
       </div>
-      <p class="build-version build-version-options">Version visible: v200</p>
+      <p class="build-version build-version-options">Version visible: v201</p>
     </section>
 
     <section id="account-mini" class="card card-opciones card-opciones-compact card-opciones-account-mini" data-panel="opciones" hidden>
@@ -288,7 +288,10 @@
             <p class="load-summary-kicker">Mes actual</p>
             <h3>Resumen rápido</h3>
           </div>
-          <span id="cargar-summary-month-label" class="load-summary-month">-</span>
+          <div class="load-summary-head-meta">
+            <span id="cargar-summary-month-label" class="load-summary-month">-</span>
+            <span class="load-summary-arrow" aria-hidden="true">&rsaquo;</span>
+          </div>
         </div>
         <div class="load-summary-stats">
           <article class="load-summary-stat stats-card-income">
