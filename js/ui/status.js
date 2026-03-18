@@ -21,6 +21,7 @@ export function setButtonLoadingState(button, isLoading, loadingText = "Procesan
     return;
   }
   button.classList.remove("is-loading");
+  button.disabled = false;
   if (button.dataset.originalText) button.textContent = button.dataset.originalText;
 }
 
