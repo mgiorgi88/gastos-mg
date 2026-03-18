@@ -90,7 +90,7 @@
         <button id="btn-sync-retry" type="button" class="btn-secondary" hidden>Reintentar sincronizacion</button>
         <p id="sync-help" class="muted sync-help">Sin sesion, la app no puede recuperar movimientos de la nube.</p>
       </div>
-      <p class="build-version build-version-options">Version visible: v204</p>
+      <p class="build-version build-version-options">Version visible: v205</p>
     </section>
 
     <section id="account-mini" class="card card-opciones card-opciones-compact card-opciones-account-mini" data-panel="opciones" hidden>
@@ -148,32 +148,6 @@
         <button id="btn-quick-config-reset" type="button" class="btn-tertiary">Restablecer</button>
       </div>
       <p id="quick-config-status" class="muted">Conviene usar 4 categorías distintas para tener accesos más útiles.</p>
-    </section>
-
-    <section class="panel-group-intro" data-panel="opciones">
-      <p class="panel-group-kicker">Finanzas</p>
-      <h2 class="panel-group-title">Control mensual</h2>
-      <p class="panel-group-copy">Define los límites del mes sin mezclarlo con la cuenta o la importación.</p>
-    </section>
-
-    <section id="options-budget-card" class="card card-opciones" data-panel="opciones">
-      <h2>Presupuestos</h2>
-      <details id="budget-panel">
-        <summary>Abrir presupuestos por categoría</summary>
-        <div class="grid">
-          <label>Categoria
-            <select id="budget-category"></select>
-          </label>
-          <label>Límite del mes actual
-            <input type="text" id="budget-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00">
-          </label>
-        </div>
-        <div class="auth-actions">
-          <button id="btn-budget-save" type="button" class="btn-primary">Guardar presupuesto</button>
-        </div>
-        <ul id="budget-list" class="budget-list"></ul>
-        <p class="muted">Si pones 0, se elimina el presupuesto de esa categoría.</p>
-      </details>
     </section>
 
     <section class="panel-group-intro" data-panel="opciones">
@@ -395,6 +369,27 @@
       <p id="savings-goal-status" class="muted">La verás reflejada en el resumen del mes actual como objetivo de ahorro.</p>
     </section>
 
+    <section id="options-budget-card" class="card card-resumen" data-panel="resumen">
+      <h2>Presupuestos</h2>
+      <p class="section-lead">Define los límites por categoría y revísalos junto al resto de tus números del mes.</p>
+      <details id="budget-panel">
+        <summary>Abrir presupuestos por categoría</summary>
+        <div class="grid">
+          <label>Categoria
+            <select id="budget-category"></select>
+          </label>
+          <label>Límite del mes actual
+            <input type="text" id="budget-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00">
+          </label>
+        </div>
+        <div class="auth-actions">
+          <button id="btn-budget-save" type="button" class="btn-primary">Guardar presupuesto</button>
+        </div>
+        <ul id="budget-list" class="budget-list"></ul>
+        <p class="muted">Si pones 0, se elimina el presupuesto de esa categoría.</p>
+      </details>
+    </section>
+
     <section id="summary-month-compare-card" class="card card-resumen" data-panel="resumen">
       <h2>Comparativa vs mes anterior</h2>
       <p id="cmp-title" class="muted section-subtitle"></p>
@@ -576,8 +571,8 @@
 
   <div id="toast" class="toast" hidden></div>
 
-  <script src="stats-utils.js?v=204"></script>
+  <script src="stats-utils.js?v=205"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script type="module" src="app.js?v=204"></script>
+  <script type="module" src="app.js?v=205"></script>
 </body>
 </html>
