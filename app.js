@@ -611,6 +611,7 @@ function txSignature(tx) {
 }
 
 function scheduleMatchSignature(item) {
+  if (!item) return "";
   return [
     item.tipo === "Ingreso" ? "Ingreso" : "Gasto",
     String(item.categoria || "").trim(),
@@ -925,6 +926,7 @@ async function processScheduledMovements() {
 }
 
 async function removeGeneratedTransactionsForSchedule(item) {
+  if (!item) return 0;
   const matchingIds = (Array.isArray(state.txData) ? state.txData : [])
     .filter((tx) => tx.tipo === item.tipo)
     .filter((tx) => tx.categoria === item.categoria)

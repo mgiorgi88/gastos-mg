@@ -221,7 +221,7 @@ export function createRecurrentesUi({
       const result = await saveRecurrent(payload, editingId);
       if (!result.ok) return;
       setRecurrentes(result.rows || []);
-      if (previousItem?.auto_generate !== false) {
+      if (previousItem && previousItem.auto_generate !== false) {
         await removeGeneratedTransactionsForSchedule?.(previousItem);
       }
       await refreshSuggestions?.();
