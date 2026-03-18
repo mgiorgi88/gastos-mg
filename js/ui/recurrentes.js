@@ -137,6 +137,12 @@ export function createRecurrentesUi({
     if (!payload) return;
     setButtonLoadingState?.(btnRecurrentSaveEl, true, editingId ? "Guardando cambios..." : "Guardando...");
     setStatus(editingId ? "Guardando cambios..." : "Guardando recurrente...");
+    showToast?.(editingId ? "Intentando actualizar recurrente..." : "Intentando guardar recurrente...");
+    try {
+      console.log("[GastosMG] save recurrent payload", payload, { editingId });
+    } catch {
+      // Ignore console issues.
+    }
     try {
       const result = await saveRecurrent(payload, editingId);
       if (!result.ok) return;
