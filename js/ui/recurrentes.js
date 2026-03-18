@@ -52,6 +52,29 @@ export function createRecurrentesUi({
 }) {
   let editingId = null;
 
+  function bindNativeDatePicker(inputEl) {
+    if (!(inputEl instanceof HTMLInputElement) || inputEl.type !== "date") return;
+    const openPicker = () => {
+      if (typeof inputEl.showPicker === "function") {
+        try {
+          inputEl.showPicker();
+          return;
+        } catch {
+          // Fall back to focus below.
+        }
+      }
+      inputEl.focus();
+    };
+
+    inputEl.addEventListener("click", openPicker);
+    inputEl.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openPicker();
+      }
+    });
+  }
+
   function setStatus(message, tone = "neutral") {
     if (!recurrentStatusEl) return;
     recurrentStatusEl.textContent = message;
@@ -211,6 +234,8 @@ export function createRecurrentesUi({
 
   function bindEvents() {
     recurrentTypeEl?.addEventListener("change", updateCategoryOptions);
+    bindNativeDatePicker(recurrentStartDateEl);
+    bindNativeDatePicker(recurrentEndDateEl);
     btnRecurrentSaveEl?.addEventListener("click", () => {
       handleSave();
     });
