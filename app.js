@@ -906,6 +906,7 @@ const {
   recurrentStatusEl,
   recurrentListEl,
   parseDecimalInputValue,
+  showToast,
   getCurrentUser: () => state.currentUser,
   getRecurrentes: () => state.recurrentes,
   setRecurrentes,

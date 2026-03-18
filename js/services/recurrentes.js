@@ -61,9 +61,11 @@ export function createRecurrentesService({
     if (!resp.ok) {
       const msg = await getResponseErrorMessage(resp);
       if (isMissingTableMessage(msg)) {
+        showToast("Falta activar Recurrentes en Supabase");
         clearRecurrentesCache();
         return [];
       }
+      showToast("No se pudieron cargar los recurrentes");
       setStatus(`Error cargando recurrentes: ${msg}`, "error");
       return loadRecurrentesCache();
     }
@@ -77,6 +79,7 @@ export function createRecurrentesService({
   async function saveRecurrent(payload, editingId = null) {
     const currentUser = getCurrentUser();
     if (!currentUser) {
+      showToast("Inicia sesión para guardar recurrentes");
       setStatus("Necesitas iniciar sesion para guardar recurrentes.", "error");
       return { ok: false };
     }
@@ -99,9 +102,11 @@ export function createRecurrentesService({
     if (!resp.ok) {
       const msg = await getResponseErrorMessage(resp);
       if (isMissingTableMessage(msg)) {
+        showToast("Ejecuta sql/recurrentes.sql en Supabase");
         setStatus("Activa la tabla de recurrentes en Supabase para usar esta función.", "error");
         return { ok: false };
       }
+      showToast("No se pudo guardar el recurrente");
       setStatus(`No se pudo guardar el recurrente: ${msg}`, "error");
       return { ok: false };
     }
@@ -115,6 +120,7 @@ export function createRecurrentesService({
   async function deleteRecurrent(id) {
     const currentUser = getCurrentUser();
     if (!currentUser) {
+      showToast("Inicia sesión para borrar recurrentes");
       setStatus("Necesitas iniciar sesion para borrar recurrentes.", "error");
       return { ok: false };
     }
@@ -123,9 +129,11 @@ export function createRecurrentesService({
     if (!resp.ok) {
       const msg = await getResponseErrorMessage(resp);
       if (isMissingTableMessage(msg)) {
+        showToast("Ejecuta sql/recurrentes.sql en Supabase");
         setStatus("Activa la tabla de recurrentes en Supabase para usar esta función.", "error");
         return { ok: false };
       }
+      showToast("No se pudo borrar el recurrente");
       setStatus(`No se pudo borrar el recurrente: ${msg}`, "error");
       return { ok: false };
     }
@@ -139,6 +147,7 @@ export function createRecurrentesService({
   async function toggleRecurrent(id, nextActive) {
     const currentUser = getCurrentUser();
     if (!currentUser) {
+      showToast("Inicia sesión para actualizar recurrentes");
       setStatus("Necesitas iniciar sesion para actualizar recurrentes.", "error");
       return { ok: false };
     }
@@ -151,9 +160,11 @@ export function createRecurrentesService({
     if (!resp.ok) {
       const msg = await getResponseErrorMessage(resp);
       if (isMissingTableMessage(msg)) {
+        showToast("Ejecuta sql/recurrentes.sql en Supabase");
         setStatus("Activa la tabla de recurrentes en Supabase para usar esta función.", "error");
         return { ok: false };
       }
+      showToast("No se pudo actualizar el recurrente");
       setStatus(`No se pudo actualizar el recurrente: ${msg}`, "error");
       return { ok: false };
     }

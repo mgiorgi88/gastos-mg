@@ -1,8 +1,15 @@
+function sanitizeNumericInput(value) {
+  return String(value || "")
+    .trim()
+    .replace(/\s+/g, "")
+    .replace(/€/g, "")
+    .replace(/\b(eur|usd|ars)\b/gi, "");
+}
+
 function parseLocalizedNumber(value) {
   if (typeof value === "number") return value;
-  let s = String(value || "").trim();
+  let s = sanitizeNumericInput(value);
   if (!s) return NaN;
-  s = s.replaceAll(" ", "");
   const comma = s.lastIndexOf(",");
   const dot = s.lastIndexOf(".");
   if (comma >= 0 && dot >= 0) {
@@ -18,9 +25,9 @@ function parseLocalizedNumber(value) {
 }
 
 function tokenizeExpression(value) {
-  const raw = String(value || "").trim();
+  const raw = sanitizeNumericInput(value);
   if (!raw) return [];
-  const compact = raw.replaceAll(" ", "");
+  const compact = raw;
   if (!/^[\d.,+\-*/()]+$/.test(compact)) return null;
   const tokens = [];
   let current = "";

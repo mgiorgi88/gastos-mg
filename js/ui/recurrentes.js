@@ -15,6 +15,7 @@ export function createRecurrentesUi({
   recurrentStatusEl,
   recurrentListEl,
   parseDecimalInputValue,
+  showToast,
   getCurrentUser,
   getRecurrentes,
   setRecurrentes,
@@ -82,11 +83,13 @@ export function createRecurrentesUi({
     const anchorDay = Number(recurrentAnchorDayEl?.value || 0);
     if (!(monto > 0)) {
       setStatus("Ingresa un monto válido para el recurrente.", "error");
+      showToast?.("Ingresa un monto válido");
       recurrentAmountEl?.focus();
       return null;
     }
     if (!(anchorDay >= 1 && anchorDay <= 28)) {
       setStatus("El día del mes debe estar entre 1 y 28.", "error");
+      showToast?.("Elige un día entre 1 y 28");
       recurrentAnchorDayEl?.focus();
       return null;
     }
