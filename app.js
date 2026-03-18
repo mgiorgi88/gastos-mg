@@ -471,10 +471,10 @@ function refreshSyncIndicator() {
   }
   if (state.syncPending) {
     syncIndicatorEl.classList.add("sync-online");
-    syncIndicatorEl.textContent = "Sincronizacion: Pendiente";
+    syncIndicatorEl.textContent = "Sincronizacion: Datos locales";
     if (btnSyncRetryEl) btnSyncRetryEl.hidden = false;
     if (syncHelpEl) syncHelpEl.textContent = "La sesion fue restaurada, pero por ahora estas viendo cache local hasta poder revalidar la nube.";
-    showSyncBadge("Pendiente", "pending");
+    showSyncBadge("Datos locales", "pending");
     return;
   }
   syncIndicatorEl.classList.add("sync-online");
