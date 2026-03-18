@@ -55,7 +55,7 @@ export function createRecurrentesService({
     const encodedUserId = encodeURIComponent(currentUser.id);
     const resp = await sbAuthFetch(
       `/rest/v1/recurrentes?select=id,user_id,tipo,categoria,monto,detalle,frecuencia,anchor_day,activo,created_at,updated_at&user_id=eq.${encodedUserId}&order=anchor_day.asc,categoria.asc`,
-      { method: "GET" }
+      { method: "GET", trackSync: false }
     );
 
     if (!resp.ok) {
@@ -93,8 +93,8 @@ export function createRecurrentesService({
     };
 
     const resp = editingId
-      ? await sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(editingId)}`, { method: "PATCH", body })
-      : await sbAuthFetch("/rest/v1/recurrentes", { method: "POST", body });
+      ? await sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(editingId)}`, { method: "PATCH", body, trackSync: false })
+      : await sbAuthFetch("/rest/v1/recurrentes", { method: "POST", body, trackSync: false });
 
     if (!resp.ok) {
       const msg = await getResponseErrorMessage(resp);
@@ -119,7 +119,7 @@ export function createRecurrentesService({
       return { ok: false };
     }
 
-    const resp = await sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
+    const resp = await sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", trackSync: false });
     if (!resp.ok) {
       const msg = await getResponseErrorMessage(resp);
       if (isMissingTableMessage(msg)) {
@@ -145,7 +145,8 @@ export function createRecurrentesService({
 
     const resp = await sbAuthFetch(`/rest/v1/recurrentes?id=eq.${encodeURIComponent(id)}`, {
       method: "PATCH",
-      body: { activo: Boolean(nextActive) }
+      body: { activo: Boolean(nextActive) },
+      trackSync: false
     });
     if (!resp.ok) {
       const msg = await getResponseErrorMessage(resp);
