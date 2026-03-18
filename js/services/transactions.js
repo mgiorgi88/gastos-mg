@@ -123,6 +123,56 @@ export function createTransactionsService({
     await loadCloudData();
   }
 
+  async function addTransactionsBulk(rows, options = {}) {
+    const items = (Array.isArray(rows) ? rows : [])
+      .filter((tx) => tx?.fecha && tx?.tipo && tx?.categoria && Number(tx?.monto) > 0)
+      .map((tx) => ({
+        id: tx.id || crypto.randomUUID(),
+        fecha: String(tx.fecha).slice(0, 10),
+        tipo: tx.tipo === "Ingreso" ? "Ingreso" : "Gasto",
+        categoria: String(tx.categoria || "").trim(),
+        monto: Number(tx.monto),
+        detalle: String(tx.detalle || "").trim()
+      }));
+
+    if (items.length === 0) return true;
+
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      if (!requireCloudSession("guardar movimientos")) return false;
+      const next = [...loadTx(), ...items];
+      saveTx(next);
+      setTxData(next);
+      getRefresh()?.();
+      return true;
+    }
+
+    const payload = items.map((tx) => ({
+      user_id: currentUser.id,
+      fecha: tx.fecha,
+      tipo: tx.tipo,
+      categoria: tx.categoria,
+      monto: tx.monto,
+      detalle: tx.detalle
+    }));
+
+    const resp = await sbAuthFetch("/rest/v1/movimientos", {
+      method: "POST",
+      body: payload
+    });
+
+    if (!resp.ok) {
+      const msg = await getResponseErrorMessage(resp);
+      if (!options.quiet) {
+        setStatus(`Error guardando en nube: ${msg}`, "error");
+      }
+      return false;
+    }
+
+    await loadCloudData();
+    return true;
+  }
+
   async function updateTransaction(id, tx) {
     const currentUser = getCurrentUser();
     if (!currentUser) {
@@ -228,6 +278,7 @@ export function createTransactionsService({
 
   return {
     addTransaction,
+    addTransactionsBulk,
     updateTransaction,
     deleteTransaction,
     clearAllTransactions,

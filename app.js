@@ -117,13 +117,17 @@ import {
   quickConfigStatusEl,
   quickDetailEl,
   recurrentActiveEl,
-  recurrentAnchorDayEl,
   recurrentAmountEl,
+  recurrentAutoGenerateEl,
   recurrentAuthHintEl,
   recurrentCategoryEl,
   recurrentDetailEl,
+  recurrentEndDateEl,
+  recurrentFrequencyEl,
   recurrentListEl,
   recurrentManagerEl,
+  recurrentRepeatCountEl,
+  recurrentStartDateEl,
   recurrentStatusEl,
   recurrentSuggestionsCardEl,
   recurrentSuggestionsListEl,
@@ -277,7 +281,8 @@ const state = createAppState({
   appReady: false,
   syncUiReady: false,
   initialDataReady: false,
-  panelAnimationsReady: false
+  panelAnimationsReady: false,
+  scheduledGenerationInFlight: false
 });
 
 if (fechaEl) fechaEl.valueAsDate = new Date();
@@ -605,6 +610,74 @@ function txSignature(tx) {
   return [tx.fecha, tx.tipo, tx.categoria, Number(tx.monto).toFixed(2), tx.detalle || ""].join("|");
 }
 
+function parseIsoDate(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ""));
+  if (!match) return null;
+  const [, year, month, day] = match;
+  return new Date(Number(year), Number(month) - 1, Number(day), 12, 0, 0, 0);
+}
+
+function toIsoDate(date) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0")
+  ].join("-");
+}
+
+function addDays(date, amount) {
+  const next = new Date(date.getTime());
+  next.setDate(next.getDate() + amount);
+  return next;
+}
+
+function addMonthsClamped(date, amount) {
+  const originalDay = date.getDate();
+  const next = new Date(date.getFullYear(), date.getMonth() + amount, 1, 12, 0, 0, 0);
+  const maxDay = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
+  next.setDate(Math.min(originalDay, maxDay));
+  return next;
+}
+
+function addYearsClamped(date, amount) {
+  const originalDay = date.getDate();
+  const next = new Date(date.getFullYear() + amount, date.getMonth(), 1, 12, 0, 0, 0);
+  const maxDay = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
+  next.setDate(Math.min(originalDay, maxDay));
+  return next;
+}
+
+function advanceScheduledDate(date, frequency) {
+  if (frequency === "daily") return addDays(date, 1);
+  if (frequency === "weekly") return addDays(date, 7);
+  if (frequency === "yearly") return addYearsClamped(date, 1);
+  return addMonthsClamped(date, 1);
+}
+
+function buildScheduledOccurrences(item, now = new Date()) {
+  if (!item || item.activo === false || item.auto_generate === false) return [];
+  const startDate = parseIsoDate(item.start_date);
+  if (!startDate) return [];
+  const throughDate = parseIsoDate(item.end_date) || now;
+  if (startDate > throughDate) return [];
+
+  const occurrences = [];
+  let pointer = startDate;
+  let generatedCount = 0;
+  const maxIterations = 400;
+
+  while (pointer <= throughDate && generatedCount < maxIterations) {
+    generatedCount += 1;
+    if (!item.repeat_count || occurrences.length < item.repeat_count) {
+      occurrences.push(toIsoDate(pointer));
+    }
+    if (item.repeat_count && occurrences.length >= item.repeat_count) break;
+    pointer = advanceScheduledDate(pointer, item.frecuencia || "monthly");
+  }
+
+  return occurrences.filter((dateKey) => dateKey <= toIsoDate(now));
+}
+
 function isLocalDevelopment() {
   const host = window.location.hostname;
   return host === "localhost" || host === "127.0.0.1";
@@ -745,6 +818,7 @@ const {
 
 const {
   addTransaction,
+  addTransactionsBulk,
   updateTransaction,
   deleteTransaction,
   clearAllTransactions,
@@ -768,6 +842,49 @@ const {
   markSyncSuccess,
   markSyncPending: setSyncPending
 });
+
+async function processScheduledMovements() {
+  if (state.scheduledGenerationInFlight) return;
+  if (!state.currentUser) return;
+
+  const scheduled = Array.isArray(state.recurrentes) ? state.recurrentes : [];
+  if (scheduled.length === 0) return;
+
+  const existingSignatures = new Set((Array.isArray(state.txData) ? state.txData : []).map(txSignature));
+  const generatedRows = [];
+
+  scheduled.forEach((item) => {
+    const occurrences = buildScheduledOccurrences(item, new Date());
+    occurrences.forEach((fecha) => {
+      const tx = {
+        id: crypto.randomUUID(),
+        fecha,
+        tipo: item.tipo,
+        categoria: item.categoria,
+        monto: Number(item.monto || 0),
+        detalle: item.detalle || ""
+      };
+      const signature = txSignature(tx);
+      if (existingSignatures.has(signature)) return;
+      existingSignatures.add(signature);
+      generatedRows.push(tx);
+    });
+  });
+
+  if (generatedRows.length === 0) return;
+
+  state.scheduledGenerationInFlight = true;
+  try {
+    const ok = await addTransactionsBulk(generatedRows, { quiet: true });
+    if (ok) {
+      const label = generatedRows.length === 1 ? "1 movimiento programado generado" : `${generatedRows.length} movimientos programados generados`;
+      showToast(label);
+      setStatus(label, "success");
+    }
+  } finally {
+    state.scheduledGenerationInFlight = false;
+  }
+}
 
 let setRecurrentInlineStatus = () => {};
 
@@ -912,8 +1029,12 @@ const {
   recurrentCategoryEl,
   recurrentAmountEl,
   recurrentDetailEl,
-  recurrentAnchorDayEl,
+  recurrentFrequencyEl,
+  recurrentStartDateEl,
+  recurrentEndDateEl,
+  recurrentRepeatCountEl,
   recurrentActiveEl,
+  recurrentAutoGenerateEl,
   btnRecurrentSaveEl,
   btnRecurrentCancelEl,
   recurrentStatusEl,
@@ -928,7 +1049,7 @@ const {
   saveRecurrent,
   deleteRecurrent,
   toggleRecurrent,
-  refreshSuggestions: renderSuggestions
+  refreshSuggestions: processScheduledMovements
 });
 
 setRecurrentInlineStatus = setRecurrentStatus;
@@ -1206,6 +1327,7 @@ const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
     renderRecurrentList();
     updateRecurrentAuthVisibility();
     renderSuggestions();
+    await processScheduledMovements();
   },
   clearRecurrentesState: () => {
     state.recurrentesAvailable = true;
@@ -1252,6 +1374,7 @@ async function retrySyncFromUi() {
   setRecurrentes(recurrentRows);
   renderRecurrentList();
   renderSuggestions();
+  await processScheduledMovements();
   if (!state.hadRecentSyncError) {
     showToast("Sincronizacion actualizada");
   }

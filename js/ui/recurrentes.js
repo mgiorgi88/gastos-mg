@@ -1,3 +1,23 @@
+function formatScheduleSummary(item) {
+  const frequencyLabels = {
+    daily: "Diario",
+    weekly: "Semanal",
+    monthly: "Mensual",
+    yearly: "Anual"
+  };
+
+  const parts = [
+    frequencyLabels[item.frecuencia] || "Mensual",
+    `desde ${item.start_date || "-"}`,
+    item.end_date ? `hasta ${item.end_date}` : null,
+    item.repeat_count ? `${item.repeat_count} rep.` : null,
+    item.auto_generate !== false ? "Auto" : "Manual",
+    item.activo ? "Activo" : "Pausado"
+  ].filter(Boolean);
+
+  return parts.join(" · ");
+}
+
 export function createRecurrentesUi({
   CATEGORIAS,
   CATEGORY_ICONS,
@@ -8,8 +28,12 @@ export function createRecurrentesUi({
   recurrentCategoryEl,
   recurrentAmountEl,
   recurrentDetailEl,
-  recurrentAnchorDayEl,
+  recurrentFrequencyEl,
+  recurrentStartDateEl,
+  recurrentEndDateEl,
+  recurrentRepeatCountEl,
   recurrentActiveEl,
+  recurrentAutoGenerateEl,
   btnRecurrentSaveEl,
   btnRecurrentCancelEl,
   recurrentStatusEl,
@@ -41,7 +65,7 @@ export function createRecurrentesUi({
     const enabled = isFeatureAvailable?.() !== false;
     if (optionsRecurrentCardEl) optionsRecurrentCardEl.hidden = !logged || !enabled;
     if (recurrentAuthHintEl) recurrentAuthHintEl.hidden = logged;
-    if (recurrentManagerEl) recurrentManagerEl.hidden = !logged;
+    if (recurrentManagerEl) recurrentManagerEl.hidden = !logged || !enabled;
   }
 
   function updateCategoryOptions() {
@@ -56,15 +80,20 @@ export function createRecurrentesUi({
 
   function resetForm() {
     editingId = null;
+    const today = new Date().toISOString().slice(0, 10);
     if (recurrentTypeEl) recurrentTypeEl.value = "Gasto";
     updateCategoryOptions();
     if (recurrentAmountEl) recurrentAmountEl.value = "";
     if (recurrentDetailEl) recurrentDetailEl.value = "";
-    if (recurrentAnchorDayEl) recurrentAnchorDayEl.value = String(Math.min(28, Math.max(1, new Date().getDate())));
+    if (recurrentFrequencyEl) recurrentFrequencyEl.value = "monthly";
+    if (recurrentStartDateEl) recurrentStartDateEl.value = today;
+    if (recurrentEndDateEl) recurrentEndDateEl.value = "";
+    if (recurrentRepeatCountEl) recurrentRepeatCountEl.value = "";
     if (recurrentActiveEl) recurrentActiveEl.checked = true;
+    if (recurrentAutoGenerateEl) recurrentAutoGenerateEl.checked = true;
     if (btnRecurrentSaveEl) btnRecurrentSaveEl.textContent = "Guardar movimiento programado";
     if (btnRecurrentCancelEl) btnRecurrentCancelEl.hidden = true;
-    setStatus("Crea movimientos mensuales programados.");
+    setStatus("Programa un gasto o ingreso con frecuencia, fecha de inicio y opcionalmente fin o cantidad de repeticiones.");
   }
 
   function fillForm(item) {
@@ -74,35 +103,60 @@ export function createRecurrentesUi({
     if (recurrentCategoryEl) recurrentCategoryEl.value = item.categoria;
     if (recurrentAmountEl) recurrentAmountEl.value = Number(item.monto || 0).toFixed(2);
     if (recurrentDetailEl) recurrentDetailEl.value = item.detalle || "";
-    if (recurrentAnchorDayEl) recurrentAnchorDayEl.value = String(item.anchor_day || 1);
+    if (recurrentFrequencyEl) recurrentFrequencyEl.value = item.frecuencia || "monthly";
+    if (recurrentStartDateEl) recurrentStartDateEl.value = item.start_date || "";
+    if (recurrentEndDateEl) recurrentEndDateEl.value = item.end_date || "";
+    if (recurrentRepeatCountEl) recurrentRepeatCountEl.value = item.repeat_count ? String(item.repeat_count) : "";
     if (recurrentActiveEl) recurrentActiveEl.checked = item.activo !== false;
+    if (recurrentAutoGenerateEl) recurrentAutoGenerateEl.checked = item.auto_generate !== false;
     if (btnRecurrentSaveEl) btnRecurrentSaveEl.textContent = "Guardar cambios";
     if (btnRecurrentCancelEl) btnRecurrentCancelEl.hidden = false;
-    setStatus(`Editando recurrente: ${item.categoria}.`);
+    setStatus(`Editando movimiento programado: ${item.categoria}.`);
   }
 
   function getPayloadFromForm() {
     const monto = parseDecimalInputValue(recurrentAmountEl?.value || 0);
-    const anchorDay = Number(recurrentAnchorDayEl?.value || 0);
+    const startDate = String(recurrentStartDateEl?.value || "").trim();
+    const endDate = String(recurrentEndDateEl?.value || "").trim();
+    const repeatCountRaw = String(recurrentRepeatCountEl?.value || "").trim();
+    const repeatCount = repeatCountRaw ? Number(repeatCountRaw) : null;
+
     if (!(monto > 0)) {
       setStatus("Ingresa un monto válido para el movimiento programado.", "error");
       showToast?.("Ingresa un monto válido");
       recurrentAmountEl?.focus();
       return null;
     }
-    if (!(anchorDay >= 1 && anchorDay <= 28)) {
-      setStatus("El día del mes debe estar entre 1 y 28.", "error");
-      showToast?.("Elige un día entre 1 y 28");
-      recurrentAnchorDayEl?.focus();
+    if (!startDate) {
+      setStatus("Elige una fecha de inicio para el movimiento programado.", "error");
+      showToast?.("Elige una fecha de inicio");
+      recurrentStartDateEl?.focus();
       return null;
     }
+    if (endDate && endDate < startDate) {
+      setStatus("La fecha fin no puede ser anterior al inicio.", "error");
+      showToast?.("Revisa la fecha fin");
+      recurrentEndDateEl?.focus();
+      return null;
+    }
+    if (repeatCountRaw && (!Number.isInteger(repeatCount) || repeatCount <= 0)) {
+      setStatus("La cantidad de repeticiones debe ser un número entero mayor que 0.", "error");
+      showToast?.("Revisa la cantidad de repeticiones");
+      recurrentRepeatCountEl?.focus();
+      return null;
+    }
+
     return {
       tipo: recurrentTypeEl?.value || "Gasto",
       categoria: recurrentCategoryEl?.value || "",
       monto,
       detalle: recurrentDetailEl?.value?.trim() || "",
-      anchor_day: anchorDay,
-      activo: recurrentActiveEl?.checked !== false
+      frecuencia: recurrentFrequencyEl?.value || "monthly",
+      start_date: startDate,
+      end_date: endDate || null,
+      repeat_count: repeatCount,
+      activo: recurrentActiveEl?.checked !== false,
+      auto_generate: recurrentAutoGenerateEl?.checked !== false
     };
   }
 
@@ -110,7 +164,7 @@ export function createRecurrentesUi({
     if (!recurrentListEl) return;
     const items = Array.isArray(getRecurrentes()) ? getRecurrentes() : [];
     if (items.length === 0) {
-      recurrentListEl.innerHTML = '<li class="muted">Aún no tienes recurrentes creados.</li>';
+      recurrentListEl.innerHTML = '<li class="muted">Aún no tienes movimientos programados creados.</li>';
       return;
     }
 
@@ -121,7 +175,7 @@ export function createRecurrentesUi({
             <span>${CATEGORY_ICONS[item.categoria] || "•"} ${item.categoria}</span>
             <strong class="${item.tipo === "Ingreso" ? "saldo-pos" : "saldo-neg"}">${item.tipo} · ${Number(item.monto).toFixed(2)}</strong>
           </div>
-          <small>Día ${item.anchor_day} · ${item.detalle || "Sin detalle"} · ${item.activo ? "Activo" : "Pausado"}</small>
+          <small>${formatScheduleSummary(item)}${item.detalle ? ` · ${item.detalle}` : ""}</small>
           <div class="auth-actions recurrent-actions">
             <button type="button" class="btn-secondary" data-recurrent-action="toggle" data-id="${item.id}" data-next-active="${item.activo ? "0" : "1"}">${item.activo ? "Pausar" : "Activar"}</button>
             <button type="button" class="btn-tertiary" data-recurrent-action="edit" data-id="${item.id}">Editar</button>
@@ -135,31 +189,21 @@ export function createRecurrentesUi({
   async function handleSave() {
     const payload = getPayloadFromForm();
     if (!payload) return;
-    setButtonLoadingState?.(btnRecurrentSaveEl, true, editingId ? "Guardando cambios..." : "Guardando...");
-    setStatus(editingId ? "Guardando cambios..." : "Guardando movimiento programado...");
-    showToast?.(editingId ? "Intentando actualizar movimiento programado..." : "Intentando guardar movimiento programado...");
-    try {
-      console.log("[GastosMG] save recurrent payload", payload, { editingId });
-    } catch {
-      // Ignore console issues.
-    }
+    const wasEditing = Boolean(editingId);
+    setButtonLoadingState?.(btnRecurrentSaveEl, true, wasEditing ? "Guardando cambios..." : "Guardando...");
+    setStatus(wasEditing ? "Guardando cambios..." : "Guardando movimiento programado...");
     try {
       const result = await saveRecurrent(payload, editingId);
       if (!result.ok) return;
       setRecurrentes(result.rows || []);
       renderList();
-      refreshSuggestions();
+      refreshSuggestions?.();
       resetForm();
-      setStatus(editingId ? "Recurrente actualizado." : "Recurrente guardado.", "ok");
+      setStatus(wasEditing ? "Movimiento programado actualizado." : "Movimiento programado guardado.", "ok");
     } catch (error) {
       const message = error?.message || "Error inesperado al guardar el movimiento programado.";
       setStatus(message, "error");
       showToast?.("No se pudo completar el guardado");
-      try {
-        console.error("[GastosMG] recurrent save failed", error);
-      } catch {
-        // Ignore console issues.
-      }
     } finally {
       setButtonLoadingState?.(btnRecurrentSaveEl, false);
     }
@@ -191,7 +235,7 @@ export function createRecurrentesUi({
         if (!result.ok) return;
         setRecurrentes(result.rows || []);
         renderList();
-        refreshSuggestions();
+        refreshSuggestions?.();
         if (editingId === id) {
           const updated = (result.rows || []).find((item) => item.id === id);
           if (updated) fillForm(updated);
@@ -199,13 +243,13 @@ export function createRecurrentesUi({
         return;
       }
       if (action === "delete") {
-        const confirmed = window.confirm("¿Eliminar este recurrente?");
+        const confirmed = window.confirm("¿Eliminar este movimiento programado?");
         if (!confirmed) return;
         const result = await deleteRecurrent(id);
         if (!result.ok) return;
         setRecurrentes(result.rows || []);
         renderList();
-        refreshSuggestions();
+        refreshSuggestions?.();
         if (editingId === id) resetForm();
       }
     });

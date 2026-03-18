@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon.svg">
-  <link rel="stylesheet" href="styles.css?v=187">
+  <link rel="stylesheet" href="styles.css?v=188">
 </head>
 <body class="app-boot">
   <section id="entry-gate" class="entry-gate" hidden>
@@ -90,7 +90,7 @@
         <button id="btn-sync-retry" type="button" class="btn-secondary" hidden>Reintentar sincronizacion</button>
         <p id="sync-help" class="muted sync-help">Sin sesion, la app no puede recuperar movimientos de la nube.</p>
       </div>
-      <p class="build-version build-version-options">Version visible: v187</p>
+      <p class="build-version build-version-options">Version visible: v188</p>
     </section>
 
     <section id="account-mini" class="card card-opciones card-opciones-compact card-opciones-account-mini" data-panel="opciones" hidden>
@@ -210,18 +210,35 @@
           <label>Detalle (opcional)
             <input type="text" id="recurrent-detail" placeholder="Ej: sueldo empresa">
           </label>
-          <label>Día del mes
-            <input type="number" id="recurrent-anchor-day" min="1" max="28" step="1" placeholder="1-28">
+          <label>Frecuencia
+            <select id="recurrent-frequency">
+              <option value="monthly">Mensual</option>
+              <option value="weekly">Semanal</option>
+              <option value="daily">Diaria</option>
+              <option value="yearly">Anual</option>
+            </select>
+          </label>
+          <label>Fecha de inicio
+            <input type="date" id="recurrent-start-date">
+          </label>
+          <label>Fecha fin (opcional)
+            <input type="date" id="recurrent-end-date">
+          </label>
+          <label>Repeticiones (opcional)
+            <input type="number" id="recurrent-repeat-count" min="1" step="1" placeholder="Ej: 12">
           </label>
           <label class="toggle-field">Activo
             <input type="checkbox" id="recurrent-active" checked>
+          </label>
+          <label class="toggle-field">Generar automáticamente
+            <input type="checkbox" id="recurrent-auto-generate" checked>
           </label>
         </div>
         <div class="auth-actions">
           <button id="btn-recurrent-save" type="button" class="btn-primary">Guardar movimiento programado</button>
           <button id="btn-recurrent-cancel" type="button" class="btn-tertiary" hidden>Cancelar edición</button>
         </div>
-        <p id="recurrent-status" class="muted">Crea movimientos mensuales programados. Más adelante podrás definir periodicidad, fecha fin y cuotas.</p>
+        <p id="recurrent-status" class="muted">Define una frecuencia, fecha de inicio y opcionalmente fecha fin o cantidad. Ideal para alquileres, cuotas y suscripciones.</p>
         <ul id="recurrent-list" class="budget-list recurrent-list"></ul>
       </div>
     </section>
@@ -531,8 +548,8 @@
 
   <div id="toast" class="toast" hidden></div>
 
-  <script src="stats-utils.js?v=187"></script>
+  <script src="stats-utils.js?v=188"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script type="module" src="app.js?v=187"></script>
+  <script type="module" src="app.js?v=188"></script>
 </body>
 </html>
