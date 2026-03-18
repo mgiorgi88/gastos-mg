@@ -828,6 +828,7 @@ const {
   addTransactionsBulk,
   updateTransaction,
   deleteTransaction,
+  deleteTransactionsBulk,
   clearAllTransactions,
   duplicateTransaction: duplicateTransactionService,
   loadCloudData,
@@ -891,6 +892,26 @@ async function processScheduledMovements() {
   } finally {
     state.scheduledGenerationInFlight = false;
   }
+}
+
+async function removeGeneratedTransactionsForSchedule(item) {
+  const nowKey = toIsoDate(new Date());
+  const occurrenceKeys = new Set(buildScheduledOccurrences(item, new Date()));
+  if (occurrenceKeys.size === 0) return 0;
+
+  const matchingIds = (Array.isArray(state.txData) ? state.txData : [])
+    .filter((tx) => String(tx.fecha || "") >= nowKey)
+    .filter((tx) => occurrenceKeys.has(String(tx.fecha || "")))
+    .filter((tx) => tx.tipo === item.tipo)
+    .filter((tx) => tx.categoria === item.categoria)
+    .filter((tx) => Number(tx.monto || 0) === Number(item.monto || 0))
+    .filter((tx) => String(tx.detalle || "").trim() === String(item.detalle || "").trim())
+    .map((tx) => tx.id);
+
+  if (matchingIds.length === 0) return 0;
+
+  const ok = await deleteTransactionsBulk(matchingIds, { quiet: true });
+  return ok ? matchingIds.length : 0;
 }
 
 let setRecurrentInlineStatus = () => {};
@@ -1062,6 +1083,7 @@ const {
   saveRecurrent,
   deleteRecurrent,
   toggleRecurrent,
+  removeGeneratedTransactionsForSchedule,
   refreshSuggestions: processScheduledMovements
 });
 

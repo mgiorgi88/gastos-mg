@@ -48,6 +48,7 @@ export function createRecurrentesUi({
   saveRecurrent,
   deleteRecurrent,
   toggleRecurrent,
+  removeGeneratedTransactionsForSchedule,
   refreshSuggestions
 }) {
   let editingId = null;
@@ -268,13 +269,17 @@ export function createRecurrentesUi({
         return;
       }
       if (action === "delete") {
-        const confirmed = window.confirm("¿Eliminar este movimiento programado?");
+        const confirmed = window.confirm("¿Eliminar este movimiento programado y quitar los movimientos futuros que generó?");
         if (!confirmed) return;
+        const removedCount = await removeGeneratedTransactionsForSchedule?.(current);
         const result = await deleteRecurrent(id);
         if (!result.ok) return;
         setRecurrentes(result.rows || []);
         renderList();
         refreshSuggestions?.();
+        if (removedCount > 0) {
+          showToast?.(removedCount === 1 ? "Se quitó 1 movimiento futuro generado" : `Se quitaron ${removedCount} movimientos futuros generados`);
+        }
         if (editingId === id) resetForm();
       }
     });

@@ -231,6 +231,37 @@ export function createTransactionsService({
     await loadCloudData();
   }
 
+  async function deleteTransactionsBulk(ids, options = {}) {
+    const cleanIds = [...new Set((Array.isArray(ids) ? ids : []).map((id) => String(id || "").trim()).filter(Boolean))];
+    if (cleanIds.length === 0) return true;
+
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      if (!requireCloudSession("eliminar movimientos")) return false;
+      const next = loadTx().filter((x) => !cleanIds.includes(String(x.id)));
+      saveTx(next);
+      setTxData(next);
+      getRefresh()?.();
+      return true;
+    }
+
+    const encodedIds = cleanIds.map((id) => `"${id.replace(/"/g, "")}"`).join(",");
+    const resp = await sbAuthFetch(`/rest/v1/movimientos?id=in.(${encodedIds})`, {
+      method: "DELETE"
+    });
+
+    if (!resp.ok) {
+      const msg = await getResponseErrorMessage(resp);
+      if (!options.quiet) {
+        setStatus(`Error eliminando en nube: ${msg}`, "error");
+      }
+      return false;
+    }
+
+    await loadCloudData();
+    return true;
+  }
+
   async function clearAllTransactions() {
     const currentUser = getCurrentUser();
     if (!currentUser) {
@@ -281,6 +312,7 @@ export function createTransactionsService({
     addTransactionsBulk,
     updateTransaction,
     deleteTransaction,
+    deleteTransactionsBulk,
     clearAllTransactions,
     duplicateTransaction,
     loadCloudData,
