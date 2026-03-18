@@ -62,9 +62,9 @@ export function createRecurrentesUi({
     if (recurrentDetailEl) recurrentDetailEl.value = "";
     if (recurrentAnchorDayEl) recurrentAnchorDayEl.value = String(Math.min(28, Math.max(1, new Date().getDate())));
     if (recurrentActiveEl) recurrentActiveEl.checked = true;
-    if (btnRecurrentSaveEl) btnRecurrentSaveEl.textContent = "Guardar recurrente";
+    if (btnRecurrentSaveEl) btnRecurrentSaveEl.textContent = "Guardar movimiento programado";
     if (btnRecurrentCancelEl) btnRecurrentCancelEl.hidden = true;
-    setStatus("Crea plantillas mensuales que luego podrás registrar desde Cargar.");
+    setStatus("Crea movimientos mensuales programados.");
   }
 
   function fillForm(item) {
@@ -85,7 +85,7 @@ export function createRecurrentesUi({
     const monto = parseDecimalInputValue(recurrentAmountEl?.value || 0);
     const anchorDay = Number(recurrentAnchorDayEl?.value || 0);
     if (!(monto > 0)) {
-      setStatus("Ingresa un monto válido para el recurrente.", "error");
+      setStatus("Ingresa un monto válido para el movimiento programado.", "error");
       showToast?.("Ingresa un monto válido");
       recurrentAmountEl?.focus();
       return null;
@@ -136,8 +136,8 @@ export function createRecurrentesUi({
     const payload = getPayloadFromForm();
     if (!payload) return;
     setButtonLoadingState?.(btnRecurrentSaveEl, true, editingId ? "Guardando cambios..." : "Guardando...");
-    setStatus(editingId ? "Guardando cambios..." : "Guardando recurrente...");
-    showToast?.(editingId ? "Intentando actualizar recurrente..." : "Intentando guardar recurrente...");
+    setStatus(editingId ? "Guardando cambios..." : "Guardando movimiento programado...");
+    showToast?.(editingId ? "Intentando actualizar movimiento programado..." : "Intentando guardar movimiento programado...");
     try {
       console.log("[GastosMG] save recurrent payload", payload, { editingId });
     } catch {
@@ -152,7 +152,7 @@ export function createRecurrentesUi({
       resetForm();
       setStatus(editingId ? "Recurrente actualizado." : "Recurrente guardado.", "ok");
     } catch (error) {
-      const message = error?.message || "Error inesperado al guardar el recurrente.";
+      const message = error?.message || "Error inesperado al guardar el movimiento programado.";
       setStatus(message, "error");
       showToast?.("No se pudo completar el guardado");
       try {

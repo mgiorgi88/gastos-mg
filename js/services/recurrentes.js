@@ -176,7 +176,7 @@ export function createRecurrentesService({
         { method: "GET", trackSync: false }
       ));
     } catch {
-      showToast("Usando recurrentes guardados en este dispositivo");
+      showToast("Usando movimientos programados de este dispositivo");
       return sortRecurrentes(loadRecurrentesCache());
     }
 
@@ -188,9 +188,9 @@ export function createRecurrentesService({
         return [];
       }
       setFeatureAvailability?.(true);
-      showToast("No se pudieron cargar los recurrentes");
-      setFeatureStatus?.(`Error cargando recurrentes: ${msg}`, "error");
-      setStatus(`Error cargando recurrentes: ${msg}`, "error");
+      showToast("No se pudieron cargar los movimientos programados");
+      setFeatureStatus?.(`Error cargando movimientos programados: ${msg}`, "error");
+      setStatus(`Error cargando movimientos programados: ${msg}`, "error");
       return loadRecurrentesCache();
     }
 
@@ -204,9 +204,9 @@ export function createRecurrentesService({
   async function saveRecurrent(payload, editingId = null) {
     const currentUser = getCurrentUser();
     if (!currentUser) {
-      showToast("Inicia sesión para guardar recurrentes");
-      setFeatureStatus?.("Necesitas iniciar sesión para guardar recurrentes.", "error");
-      setStatus("Necesitas iniciar sesion para guardar recurrentes.", "error");
+      showToast("Inicia sesión para guardar movimientos programados");
+      setFeatureStatus?.("Necesitas iniciar sesión para guardar movimientos programados.", "error");
+      setStatus("Necesitas iniciar sesion para guardar movimientos programados.", "error");
       return { ok: false };
     }
 
@@ -225,15 +225,15 @@ export function createRecurrentesService({
     };
 
     if (localResult.duplicate && !editingId) {
-      showToast("Ese recurrente ya existía");
-      setFeatureStatus?.("Ese recurrente ya estaba guardado.", "ok");
-      setStatus("Ese recurrente ya estaba guardado.", "success");
+      showToast("Ese movimiento programado ya existía");
+      setFeatureStatus?.("Ese movimiento programado ya estaba guardado.", "ok");
+      setStatus("Ese movimiento programado ya estaba guardado.", "success");
       return { ok: true, rows: localRows };
     }
 
-    showToast(editingId ? "Recurrente actualizado" : "Recurrente guardado");
-    setFeatureStatus?.(editingId ? "Recurrente actualizado." : "Recurrente guardado.", "ok");
-    setStatus(editingId ? "Recurrente actualizado." : "Recurrente guardado.", "success");
+    showToast(editingId ? "Movimiento programado actualizado" : "Movimiento programado guardado");
+    setFeatureStatus?.(editingId ? "Movimiento programado actualizado." : "Movimiento programado guardado.", "ok");
+    setStatus(editingId ? "Movimiento programado actualizado." : "Movimiento programado guardado.", "success");
 
     void (async () => {
       try {
@@ -247,7 +247,7 @@ export function createRecurrentesService({
             setFeatureAvailability?.(true);
             return;
           }
-          setFeatureStatus?.(`Guardado local. La nube no respondió: ${msg}`, "error");
+      setFeatureStatus?.(`Guardado local. La nube no respondió: ${msg}`, "error");
           return;
         }
 
@@ -263,16 +263,16 @@ export function createRecurrentesService({
   async function deleteRecurrent(id) {
     const currentUser = getCurrentUser();
     if (!currentUser) {
-      showToast("Inicia sesión para borrar recurrentes");
-      setFeatureStatus?.("Necesitas iniciar sesión para borrar recurrentes.", "error");
-      setStatus("Necesitas iniciar sesion para borrar recurrentes.", "error");
+      showToast("Inicia sesión para borrar movimientos programados");
+      setFeatureStatus?.("Necesitas iniciar sesión para borrar movimientos programados.", "error");
+      setStatus("Necesitas iniciar sesion para borrar movimientos programados.", "error");
       return { ok: false };
     }
 
     const localRows = deleteLocalFallback(id);
-    showToast("Recurrente eliminado");
-    setFeatureStatus?.("Recurrente eliminado.", "ok");
-    setStatus("Recurrente eliminado.", "success");
+    showToast("Movimiento programado eliminado");
+    setFeatureStatus?.("Movimiento programado eliminado.", "ok");
+    setStatus("Movimiento programado eliminado.", "success");
 
     void (async () => {
       try {
@@ -296,15 +296,15 @@ export function createRecurrentesService({
   async function toggleRecurrent(id, nextActive) {
     const currentUser = getCurrentUser();
     if (!currentUser) {
-      showToast("Inicia sesión para actualizar recurrentes");
-      setFeatureStatus?.("Necesitas iniciar sesión para actualizar recurrentes.", "error");
-      setStatus("Necesitas iniciar sesion para actualizar recurrentes.", "error");
+      showToast("Inicia sesión para actualizar movimientos programados");
+      setFeatureStatus?.("Necesitas iniciar sesión para actualizar movimientos programados.", "error");
+      setStatus("Necesitas iniciar sesion para actualizar movimientos programados.", "error");
       return { ok: false };
     }
 
     const localRows = toggleLocalFallback(id, nextActive);
-    showToast(nextActive ? "Recurrente activado" : "Recurrente pausado");
-    setFeatureStatus?.(nextActive ? "Recurrente activado." : "Recurrente pausado.", "ok");
+    showToast(nextActive ? "Movimiento programado activado" : "Movimiento programado pausado");
+    setFeatureStatus?.(nextActive ? "Movimiento programado activado." : "Movimiento programado pausado.", "ok");
 
     void (async () => {
       try {

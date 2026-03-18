@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon.svg">
-  <link rel="stylesheet" href="styles.css?v=186">
+  <link rel="stylesheet" href="styles.css?v=187">
 </head>
 <body class="app-boot">
   <section id="entry-gate" class="entry-gate" hidden>
@@ -90,7 +90,7 @@
         <button id="btn-sync-retry" type="button" class="btn-secondary" hidden>Reintentar sincronizacion</button>
         <p id="sync-help" class="muted sync-help">Sin sesion, la app no puede recuperar movimientos de la nube.</p>
       </div>
-      <p class="build-version build-version-options">Version visible: v186</p>
+      <p class="build-version build-version-options">Version visible: v187</p>
     </section>
 
     <section id="account-mini" class="card card-opciones card-opciones-compact card-opciones-account-mini" data-panel="opciones" hidden>
@@ -153,21 +153,21 @@
     <section class="panel-group-intro" data-panel="opciones">
       <p class="panel-group-kicker">Finanzas</p>
       <h2 class="panel-group-title">Objetivos y control mensual</h2>
-      <p class="panel-group-copy">Define tu meta y tus límites mensuales sin mezclarlo con la cuenta o la importación.</p>
+      <p class="panel-group-copy">Define tu ahorro objetivo, tus límites y tus movimientos programados sin mezclarlo con la cuenta o la importación.</p>
     </section>
 
     <section id="options-planning-card" class="card card-opciones" data-panel="opciones">
-      <h2>Meta mensual</h2>
+      <h2>Meta de ahorro</h2>
       <div class="grid">
-        <label>Meta mensual
+        <label>Meta de ahorro mensual
           <input type="text" id="savings-goal-amount" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0.00">
         </label>
       </div>
       <div class="auth-actions">
-        <button id="btn-savings-goal-save" type="button" class="btn-primary">Guardar meta</button>
+        <button id="btn-savings-goal-save" type="button" class="btn-primary">Guardar meta de ahorro</button>
         <button id="btn-savings-goal-clear" type="button" class="btn-tertiary">Quitar meta</button>
       </div>
-      <p id="savings-goal-status" class="muted">La verás reflejada en el resumen del mes actual.</p>
+      <p id="savings-goal-status" class="muted">La verás reflejada en el resumen del mes actual como objetivo de ahorro.</p>
     </section>
 
     <section id="options-budget-card" class="card card-opciones" data-panel="opciones">
@@ -191,8 +191,8 @@
     </section>
 
     <section id="options-recurrent-card" class="card card-opciones" data-panel="opciones">
-      <h2>Recurrentes</h2>
-      <p id="recurrent-auth-hint" class="muted">Necesitas iniciar sesion para gestionar recurrentes.</p>
+      <h2>Movimientos programados</h2>
+      <p id="recurrent-auth-hint" class="muted">Necesitas iniciar sesión para gestionar movimientos programados.</p>
       <div id="recurrent-manager" hidden>
         <div class="grid">
           <label>Tipo
@@ -218,10 +218,10 @@
           </label>
         </div>
         <div class="auth-actions">
-          <button id="btn-recurrent-save" type="button" class="btn-primary">Guardar recurrente</button>
+          <button id="btn-recurrent-save" type="button" class="btn-primary">Guardar movimiento programado</button>
           <button id="btn-recurrent-cancel" type="button" class="btn-tertiary" hidden>Cancelar edición</button>
         </div>
-        <p id="recurrent-status" class="muted">Crea plantillas mensuales que luego podrás registrar desde Cargar.</p>
+        <p id="recurrent-status" class="muted">Crea movimientos mensuales programados. Más adelante podrás definir periodicidad, fecha fin y cuotas.</p>
         <ul id="recurrent-list" class="budget-list recurrent-list"></ul>
       </div>
     </section>
@@ -531,8 +531,8 @@
 
   <div id="toast" class="toast" hidden></div>
 
-  <script src="stats-utils.js?v=186"></script>
+  <script src="stats-utils.js?v=187"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script type="module" src="app.js?v=186"></script>
+  <script type="module" src="app.js?v=187"></script>
 </body>
 </html>

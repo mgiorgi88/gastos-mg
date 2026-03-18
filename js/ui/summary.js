@@ -383,13 +383,13 @@ export function createSummaryUi({
   function saveSavingsGoalFromUi() {
     const amount = parseDecimalInputValue(savingsGoalAmountEl ? savingsGoalAmountEl.value : "");
     if (!(amount > 0)) {
-      setSavingsGoalStatus("Ingresa una meta valida mayor a 0.", "error");
+      setSavingsGoalStatus("Ingresa una meta de ahorro válida mayor a 0.", "error");
       showToast("Meta invalida");
       return;
     }
     saveSavingsGoal(amount);
     refreshSavingsGoalEditor();
-    showToast("Meta guardada");
+    showToast("Meta de ahorro guardada");
     setStatus(`Meta de ahorro actualizada: ${money(amount)}.`);
     return true;
   }
@@ -397,7 +397,7 @@ export function createSummaryUi({
   function clearSavingsGoalFromUi() {
     saveSavingsGoal(0);
     refreshSavingsGoalEditor();
-    showToast("Meta quitada");
+    showToast("Meta de ahorro quitada");
     setStatus("Meta de ahorro eliminada.");
     return true;
   }
