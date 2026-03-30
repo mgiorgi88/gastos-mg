@@ -492,25 +492,70 @@ export function createSummaryUi({
         if (getMonth(x.fecha) !== CURRENT_MONTH) return;
         const amount = Number(x.monto || 0);
         if (!(amount > 0)) return;
-        byCategory[x.categoria] = (byCategory[x.categoria] || 0) + amount;
+        if (!byCategory[x.categoria]) {
+          byCategory[x.categoria] = {
+            total: 0,
+            items: []
+          };
+        }
+        byCategory[x.categoria].total += amount;
+        byCategory[x.categoria].items.push({
+          fecha: x.fecha,
+          detalle: x.detalle || "",
+          monto: amount
+        });
         total += amount;
       });
 
-      const rows = Object.entries(byCategory).sort((a, b) => b[1] - a[1]);
+      const rows = Object.entries(byCategory).sort((a, b) => b[1].total - a[1].total);
       if (rows.length === 0) {
         targetEl.innerHTML = `<li class="muted">${type === "Ingreso" ? "Sin ingresos cargados este mes." : "Sin gastos cargados este mes."}</li>`;
         return;
       }
 
-      targetEl.innerHTML = rows.map(([cat, value]) => {
+      targetEl.innerHTML = rows.map(([cat, bucket], idx) => {
+        const value = bucket.total;
         const pct = total > 0 ? ((value / total) * 100).toFixed(1) : "0.0";
+        const items = [...bucket.items].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
+        const previewItems = items.slice(0, 3);
+        const remainingItems = items.slice(3);
         return `
           <li>
-            <button type="button" class="category-breakdown-item" data-month-category="${cat}" data-month-category-type="${type}">
-              <span class="category-breakdown-label">${CATEGORY_ICONS[cat] || "\u2022"} ${cat}</span>
-              <strong>${money(value)}</strong>
-              <small>${pct}% del total</small>
-            </button>
+            <details class="category-breakdown-group" ${idx === 0 ? "open" : ""}>
+              <summary class="category-breakdown-summary">
+                <span class="category-breakdown-label">${CATEGORY_ICONS[cat] || "\u2022"} ${cat}</span>
+                <strong>${money(value)}</strong>
+                <small>${items.length} mov. · ${pct}% del total</small>
+              </summary>
+              <div class="category-breakdown-detail">
+                <ul class="category-breakdown-movements">
+                  ${previewItems.map((item) => `
+                    <li class="category-breakdown-movement">
+                      <span>${item.detalle || "Sin detalle"}</span>
+                      <small>${item.fecha}</small>
+                      <strong>${money(item.monto)}</strong>
+                    </li>
+                  `).join("")}
+                </ul>
+                ${remainingItems.length > 0 ? `
+                  <details class="category-breakdown-more">
+                    <summary>Ver ${remainingItems.length} movimiento${remainingItems.length === 1 ? "" : "s"} más</summary>
+                    <ul class="category-breakdown-movements category-breakdown-movements-more">
+                      ${remainingItems.map((item) => `
+                        <li class="category-breakdown-movement">
+                          <span>${item.detalle || "Sin detalle"}</span>
+                          <small>${item.fecha}</small>
+                          <strong>${money(item.monto)}</strong>
+                        </li>
+                      `).join("")}
+                    </ul>
+                  </details>
+                ` : ""}
+                <button type="button" class="category-breakdown-link" data-month-category="${cat}" data-month-category-type="${type}">
+                  Ver movimientos de ${cat}
+                </button>
+              </div>
+            </details>
           </li>
         `;
       }).join("");

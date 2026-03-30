@@ -151,7 +151,7 @@ async def main() -> None:
             current_label = await page.locator("#current-month-label").inner_text()
             assert current_label.startswith("Mes actual:"), f"Unexpected summary label: {current_label}"
 
-            expense_breakdown = page.locator("#month-expense-category-list .category-breakdown-item").first
+            expense_breakdown = page.locator("#month-expense-category-list .category-breakdown-link").first
             await expense_breakdown.wait_for(timeout=3000)
             expense_category = (await expense_breakdown.get_attribute("data-month-category")) or ""
             assert expense_category, "Expense breakdown did not expose a category"
@@ -171,7 +171,7 @@ async def main() -> None:
 
             await page.click('[data-tab="resumen"]')
             await page.wait_for_timeout(250)
-            income_breakdown = page.locator("#month-income-category-list .category-breakdown-item").first
+            income_breakdown = page.locator("#month-income-category-list .category-breakdown-link").first
             await income_breakdown.wait_for(timeout=3000)
             income_category = (await income_breakdown.get_attribute("data-month-category")) or ""
             assert income_category, "Income breakdown did not expose a category"
