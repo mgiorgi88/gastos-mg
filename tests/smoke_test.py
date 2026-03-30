@@ -151,6 +151,8 @@ async def main() -> None:
             current_label = await page.locator("#current-month-label").inner_text()
             assert current_label.startswith("Mes actual:"), f"Unexpected summary label: {current_label}"
 
+            await page.locator(".stats-card-expense .stats-card-toggle").click()
+            await page.wait_for_timeout(250)
             expense_group = page.locator("#month-expense-category-list .category-breakdown-group").first
             await expense_group.wait_for(timeout=3000)
             await expense_group.locator("summary").click()
@@ -173,6 +175,8 @@ async def main() -> None:
             )
 
             await page.click('[data-tab="resumen"]')
+            await page.wait_for_timeout(250)
+            await page.locator(".stats-card-income .stats-card-toggle").click()
             await page.wait_for_timeout(250)
             income_group = page.locator("#month-income-category-list .category-breakdown-group").first
             await income_group.wait_for(timeout=3000)

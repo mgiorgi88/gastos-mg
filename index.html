@@ -325,14 +325,26 @@
       <h2>Resumen mes actual</h2>
       <p id="current-month-label" class="muted section-subtitle"></p>
       <div class="stats">
-        <article class="stats-card stats-card-income">
-          <span>Ingresos</span>
-          <strong id="ingresos">$0.00</strong>
-        </article>
-        <article class="stats-card stats-card-expense">
-          <span>Gastos</span>
-          <strong id="gastos">$0.00</strong>
-        </article>
+        <details class="stats-card stats-card-income stats-card-expandable">
+          <summary class="stats-card-toggle">
+            <span>Ingresos</span>
+            <strong id="ingresos">$0.00</strong>
+            <small class="stats-card-hint">Toca para ver el detalle por categoría</small>
+          </summary>
+          <div class="stats-card-breakdown">
+            <ul id="month-income-category-list" class="category-breakdown-list"></ul>
+          </div>
+        </details>
+        <details class="stats-card stats-card-expense stats-card-expandable">
+          <summary class="stats-card-toggle">
+            <span>Gastos</span>
+            <strong id="gastos">$0.00</strong>
+            <small class="stats-card-hint">Toca para ver el detalle por categoría</small>
+          </summary>
+          <div class="stats-card-breakdown">
+            <ul id="month-expense-category-list" class="category-breakdown-list"></ul>
+          </div>
+        </details>
         <article id="balance-card" class="stats-card stats-card-balance">
           <span>Balance / Ahorro</span>
           <strong id="balance">$0.00</strong>
@@ -343,16 +355,6 @@
         <h3 class="muted top-expenses-title">Top 3 gastos del mes</h3>
         <ul id="top-expenses-list" class="top-expenses-list"></ul>
         <p id="top-expenses-note" class="summary-note muted">Sin datos suficientes para destacar categorias.</p>
-      </div>
-      <div class="category-breakdown">
-        <article class="category-breakdown-card">
-          <h3 class="muted top-expenses-title">Gastos por categoria del mes</h3>
-          <ul id="month-expense-category-list" class="category-breakdown-list"></ul>
-        </article>
-        <article class="category-breakdown-card">
-          <h3 class="muted top-expenses-title">Ingresos por categoria del mes</h3>
-          <ul id="month-income-category-list" class="category-breakdown-list"></ul>
-        </article>
       </div>
       <p id="spending-alert" class="summary-alert summary-alert-neutral">Sin datos suficientes para comparar gasto mensual.</p>
       <div id="budget-summary-list" class="budget-summary-list"></div>
