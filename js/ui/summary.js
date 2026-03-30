@@ -513,7 +513,7 @@ export function createSummaryUi({
         return;
       }
 
-      targetEl.innerHTML = rows.map(([cat, bucket], idx) => {
+      targetEl.innerHTML = rows.map(([cat, bucket]) => {
         const value = bucket.total;
         const pct = total > 0 ? ((value / total) * 100).toFixed(1) : "0.0";
         const items = [...bucket.items].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
@@ -521,7 +521,7 @@ export function createSummaryUi({
         const remainingItems = items.slice(3);
         return `
           <li>
-            <details class="category-breakdown-group" ${idx === 0 ? "open" : ""}>
+            <details class="category-breakdown-group">
               <summary class="category-breakdown-summary">
                 <span class="category-breakdown-label">${CATEGORY_ICONS[cat] || "\u2022"} ${cat}</span>
                 <strong>${money(value)}</strong>
