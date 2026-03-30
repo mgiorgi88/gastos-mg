@@ -18,6 +18,7 @@ export function createRefreshController({
   updateMonthlySummaryUI,
   updateLoadMonthlySummaryUI,
   renderSavingsGoalSummary,
+  renderMonthCategoryBreakdown,
   renderTopExpensesCurrentMonth,
   drawBalanceSparkline,
   renderRecurrentSuggestions,
@@ -127,6 +128,7 @@ export function createRefreshController({
     updateLoadMonthlySummaryUI(summary);
     renderSavingsGoalSummary(summary.balanceValue);
     renderTopExpensesCurrentMonth(all);
+    renderMonthCategoryBreakdown(all);
     if (currentMonthLabelEl) currentMonthLabelEl.textContent = `Mes actual: ${monthLabel(CURRENT_MONTH)}`;
     drawBalanceSparkline(all);
     renderRecurrentSuggestions();

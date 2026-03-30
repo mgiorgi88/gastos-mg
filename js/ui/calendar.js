@@ -26,6 +26,16 @@ export function createCalendarUi({
   getMonth,
   currentMonthKey
 }) {
+  function hasActiveDetailFilters() {
+    return (
+      (detailTypeEl?.value || "Todos") !== "Todos"
+      || (detailCategoryEl?.value || "Todos") !== "Todos"
+      || Boolean(detailFromEl?.value)
+      || Boolean(detailToEl?.value)
+      || Boolean(String(detailSearchEl?.value || "").trim())
+    );
+  }
+
   function resetDetailFilters() {
     if (detailTypeEl) detailTypeEl.value = "Todos";
     if (detailCategoryEl) detailCategoryEl.value = "Todos";
@@ -90,11 +100,12 @@ export function createCalendarUi({
     if (!lista || !vacio || !dayTitleEl) return;
     const selectedDayKey = getSelectedDayKey();
     const showAllFilteredRows = getShowAllFilteredRows();
+    const filtersActive = hasActiveDetailFilters();
 
     let dayRows = [];
-    if (showAllFilteredRows) {
+    if (showAllFilteredRows || filtersActive) {
       dayRows = rows;
-      dayTitleEl.textContent = "Movimientos filtrados";
+      dayTitleEl.textContent = filtersActive ? "Movimientos filtrados" : "Movimientos del filtro rapido";
     } else if (selectedDayKey) {
       dayRows = rows.filter((x) => String(x.fecha).slice(0, 10) === selectedDayKey);
       dayTitleEl.textContent = `Movimientos del ${formatDateLabel(selectedDayKey)}`;
@@ -148,10 +159,11 @@ export function createCalendarUi({
     const filterFrom = detailFromEl?.value || "";
     const filterTo = detailToEl?.value || "";
     const filterSearch = String(detailSearchEl?.value || "").trim().toLowerCase();
+    const filtersActive = hasActiveDetailFilters();
 
     let detailRows = [...all];
 
-    if (!showAllFilteredRows && selectedDayKey) {
+    if (!showAllFilteredRows && !filtersActive && selectedDayKey) {
       detailRows = detailRows.filter((x) => String(x.fecha).slice(0, 10) === selectedDayKey);
     }
     if (filterType !== "Todos") {

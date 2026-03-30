@@ -13,6 +13,8 @@ export function createAuthUi({
   btnSignup,
   btnLogin,
   btnRecover,
+  btnResetPassword,
+  btnCancelRecovery,
   btnLogout,
   btnLogoutMini,
   btnGateSignin,
@@ -21,9 +23,15 @@ export function createAuthUi({
   emailHintEl,
   passwordEl,
   passwordHintEl,
+  authRecoveryBoxEl,
+  authRecoveryNoteEl,
+  authRecoveryTitleEl,
+  authRecoveryTextEl,
   entryGateEl,
   getCurrentUser,
   getCurrentTab,
+  getRecoveryMode,
+  getRecoveryFeedback,
   getAuthActionInFlight,
   setAuthActionInFlight,
   resetSyncError,
@@ -49,9 +57,11 @@ export function createAuthUi({
   }
 
   function validatePasswordField({ required = false, minLength = 0 } = {}) {
+    const recoveryMode = Boolean(getRecoveryMode?.());
     const value = passwordEl?.value || "";
     if (!value) {
-      setFieldState(passwordEl, passwordHintEl, required ? "invalid" : "idle", required ? "Introduce tu contrase\u00f1a." : "");
+      const requiredMessage = recoveryMode ? "Escribe tu nueva contraseña." : "Introduce tu contraseña.";
+      setFieldState(passwordEl, passwordHintEl, required ? "invalid" : "idle", required ? requiredMessage : "");
       return !required;
     }
     if (minLength > 0 && value.length < minLength) {
@@ -66,8 +76,11 @@ export function createAuthUi({
     const currentUser = getCurrentUser();
     const logged = Boolean(currentUser);
     const activeTab = getCurrentTab();
-    if (authCardEl) authCardEl.hidden = logged || activeTab !== "opciones";
-    if (accountMiniEl) accountMiniEl.hidden = !logged || activeTab !== "opciones";
+    const recoveryMode = Boolean(getRecoveryMode?.());
+    const recoveryFeedback = getRecoveryFeedback?.() || null;
+    const showRecoveryBox = recoveryMode || Boolean(recoveryFeedback);
+    if (authCardEl) authCardEl.hidden = (!showRecoveryBox && logged) || activeTab !== "opciones";
+    if (accountMiniEl) accountMiniEl.hidden = recoveryMode || !logged || activeTab !== "opciones";
     if (accountMiniEmailEl) accountMiniEmailEl.textContent = logged ? currentUser.email : "";
     if (cloudIndicatorEl) {
       cloudIndicatorEl.textContent = logged ? `Cuenta: ${currentUser.email}` : "Cuenta: sin sesion";
@@ -77,16 +90,49 @@ export function createAuthUi({
       heroSessionIndicatorEl.textContent = logged ? `Cuenta conectada: ${currentUser.email}` : "Cuenta: sin sesion";
       heroSessionIndicatorEl.classList.toggle("ok", logged);
     }
-    if (btnSignup) btnSignup.disabled = logged || getAuthActionInFlight();
-    if (btnLogin) btnLogin.disabled = logged || getAuthActionInFlight();
-    if (btnRecover) btnRecover.disabled = logged || getAuthActionInFlight();
-    if (btnLogout) {
-      btnLogout.disabled = !logged;
-      btnLogout.hidden = !logged;
+    if (btnSignup) {
+      btnSignup.disabled = recoveryMode || logged || getAuthActionInFlight();
+      btnSignup.hidden = recoveryMode;
     }
-    if (emailEl) emailEl.disabled = logged;
-    if (passwordEl) passwordEl.disabled = logged;
+    if (btnLogin) {
+      btnLogin.disabled = recoveryMode || logged || getAuthActionInFlight();
+      btnLogin.hidden = recoveryMode;
+    }
+    if (btnRecover) {
+      btnRecover.disabled = recoveryMode || logged || getAuthActionInFlight();
+      btnRecover.hidden = recoveryMode;
+    }
+    if (btnResetPassword) {
+      btnResetPassword.disabled = !recoveryMode || getAuthActionInFlight();
+      btnResetPassword.hidden = !recoveryMode;
+    }
+    if (btnCancelRecovery) {
+      btnCancelRecovery.disabled = !recoveryMode || getAuthActionInFlight();
+      btnCancelRecovery.hidden = !recoveryMode;
+    }
+    if (btnLogout) {
+      btnLogout.disabled = recoveryMode || !logged;
+      btnLogout.hidden = recoveryMode || !logged;
+    }
+    if (emailEl) emailEl.disabled = recoveryMode || logged;
+    if (passwordEl) passwordEl.disabled = false;
+    if (passwordEl) passwordEl.placeholder = recoveryMode ? "Escribe tu nueva contraseña" : "Minimo 6 caracteres";
+    if (authRecoveryBoxEl) authRecoveryBoxEl.hidden = !showRecoveryBox;
+    if (authRecoveryNoteEl) authRecoveryNoteEl.hidden = !recoveryMode;
+    if (authRecoveryTitleEl) {
+      authRecoveryTitleEl.textContent = recoveryFeedback?.title || "El enlace fue reconocido";
+    }
+    if (authRecoveryTextEl) {
+      authRecoveryTextEl.innerHTML = recoveryFeedback?.body
+        || 'Escribe tu nueva contraseña en el campo de abajo y pulsa <strong>Guardar nueva contraseña</strong>.';
+    }
     if (btnLogoutMini) btnLogoutMini.disabled = !logged;
+    if (recoveryMode && activeTab === "opciones" && passwordEl && document.activeElement !== passwordEl) {
+      requestAnimationFrame(() => {
+        passwordEl.focus();
+        if (typeof passwordEl.select === "function") passwordEl.select();
+      });
+    }
     if (!logged) resetSyncError();
     refreshSyncIndicator();
     updateEntryGate();
@@ -100,7 +146,7 @@ export function createAuthUi({
   function setAuthActionBusy(activeButton = null, loadingText = "Procesando...") {
     const busy = Boolean(activeButton);
     setAuthActionInFlight(busy);
-    const authButtons = [btnLogin, btnSignup, btnRecover];
+    const authButtons = [btnLogin, btnSignup, btnRecover, btnResetPassword, btnCancelRecovery];
     authButtons.forEach((btn) => {
       if (!btn) return;
       const isActive = btn === activeButton;
@@ -114,7 +160,7 @@ export function createAuthUi({
 
   function clearAuthActionBusy() {
     setAuthActionInFlight(false);
-    [btnLogin, btnSignup, btnRecover].forEach((btn) => {
+    [btnLogin, btnSignup, btnRecover, btnResetPassword, btnCancelRecovery].forEach((btn) => {
       if (!btn) return;
       setButtonLoadingState(btn, false);
     });

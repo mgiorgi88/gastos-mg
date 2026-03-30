@@ -61,6 +61,8 @@ export function bindAppEvents({
   resetDetailFilters,
   setTopExpenseTempFilterActive,
   topExpensesListEl,
+  monthExpenseCategoryListEl,
+  monthIncomeCategoryListEl,
   CURRENT_MONTH,
   toDateKeyLocal,
   monthLabel,
@@ -84,6 +86,10 @@ export function bindAppEvents({
   login,
   btnRecover,
   recoverPassword,
+  btnResetPassword,
+  updatePassword,
+  btnCancelRecovery,
+  cancelRecovery,
   btnLogout,
   logout,
   btnLogoutMini,
@@ -116,6 +122,28 @@ export function bindAppEvents({
   getBudgets,
   saveBudgets
 }) {
+  function applyMonthlyCategoryFilter(type, category) {
+    const [yy, mm] = CURRENT_MONTH.split("-").map(Number);
+    const monthFrom = `${yy}-${String(mm).padStart(2, "0")}-01`;
+    const monthTo = toDateKeyLocal(new Date(yy, mm, 0));
+
+    if (detailTypeEl) detailTypeEl.value = type;
+    if (detailCategoryEl) detailCategoryEl.value = category;
+    if (detailFromEl) detailFromEl.value = monthFrom;
+    if (detailToEl) detailToEl.value = monthTo;
+    if (detailSearchEl) detailSearchEl.value = "";
+
+    setTopExpenseTempFilterActive(type === "Gasto");
+    setShowAllFilteredRows(true);
+    setSelectedDayKey(null);
+    setCalendarMonthDate(new Date(yy, mm - 1, 1));
+
+    setActiveTab("mas");
+    refresh();
+    scrollToMovimientosSection();
+    setStatus(`Filtro aplicado: ${type === "Ingreso" ? "ingresos" : "gastos"} de ${category} en ${monthLabel(CURRENT_MONTH)}.`);
+  }
+
   form.addEventListener("submit", handleFormSubmit);
 
   filtroMes.addEventListener("change", () => {
@@ -297,27 +325,21 @@ export function bindAppEvents({
       if (!btn) return;
       const cat = btn.getAttribute("data-top-expense-cat");
       if (!cat) return;
-
-      if (detailTypeEl) detailTypeEl.value = "Gasto";
-      const [yy, mm] = CURRENT_MONTH.split("-").map(Number);
-      const monthFrom = `${yy}-${String(mm).padStart(2, "0")}-01`;
-      const monthTo = toDateKeyLocal(new Date(yy, mm, 0));
-      if (detailFromEl) detailFromEl.value = monthFrom;
-      if (detailToEl) detailToEl.value = monthTo;
-      if (detailSearchEl) detailSearchEl.value = "";
-      if (detailCategoryEl) detailCategoryEl.value = cat;
-
-      setTopExpenseTempFilterActive(true);
-      setShowAllFilteredRows(true);
-      setSelectedDayKey(null);
-      setCalendarMonthDate(new Date());
-
-      setActiveTab("mas");
-      refresh();
-      scrollToMovimientosSection();
-      setStatus(`Filtro aplicado: ${cat} (${monthLabel(CURRENT_MONTH)}).`);
+      applyMonthlyCategoryFilter("Gasto", cat);
     });
   }
+
+  [monthExpenseCategoryListEl, monthIncomeCategoryListEl].forEach((listEl) => {
+    if (!listEl) return;
+    listEl.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-month-category][data-month-category-type]");
+      if (!btn) return;
+      const category = btn.getAttribute("data-month-category");
+      const type = btn.getAttribute("data-month-category-type");
+      if (!category || !type) return;
+      applyMonthlyCategoryFilter(type, category);
+    });
+  });
 
   if (budgetSummaryListEl) {
     budgetSummaryListEl.addEventListener("click", (e) => {
@@ -395,6 +417,27 @@ export function bindAppEvents({
     }, (err) => `Fallo en Recuperar contrase\u00f1a: ${err?.message || String(err)}`);
     clearAuthActionBusy();
   });
+
+  if (btnResetPassword) {
+    btnResetPassword.addEventListener("click", async () => {
+      await runAsyncAction(async () => {
+        setAuthActionBusy(btnResetPassword, "Guardando nueva contraseña...");
+        setStatus("Actualizando contraseña...", "info");
+        await updatePassword();
+      }, (err) => `Fallo en Actualizar contraseña: ${err?.message || String(err)}`);
+      clearAuthActionBusy();
+    });
+  }
+
+  if (btnCancelRecovery) {
+    btnCancelRecovery.addEventListener("click", async () => {
+      await runAsyncAction(
+        async () => cancelRecovery(),
+        (err) => `Fallo en Cancelar recuperación: ${err?.message || String(err)}`
+      );
+      clearAuthActionBusy();
+    });
+  }
 
   btnLogout.addEventListener("click", async () => {
     await runAsyncAction(

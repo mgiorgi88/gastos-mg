@@ -124,7 +124,11 @@ export function createSupabaseService({
       return { ok: false, transient: isTransient };
     }
 
-    saveSession(data);
+    saveSession({
+      ...authSession,
+      ...data,
+      user: data.user || authSession.user || null
+    });
     return { ok: true, transient: false };
   }
 
@@ -172,6 +176,7 @@ export function createSupabaseService({
     getPayloadErrorMessage,
     sbFetch,
     sbAuthFetch,
+    refreshAuthToken,
     fetchCurrentUser,
     fetchCurrentUserState
   };

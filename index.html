@@ -8,10 +8,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Mis Gastos">
   <title>Mis Gastos</title>
-  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="manifest" href="manifest.webmanifest?v=209-auth">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon.svg">
-  <link rel="stylesheet" href="styles.css?v=195">
+  <link rel="stylesheet" href="styles.css?v=209-auth">
 </head>
 <body class="app-boot">
   <section id="entry-gate" class="entry-gate" hidden>
@@ -30,6 +30,7 @@
     <header class="hero">
       <div class="hero-surface">
         <div class="hero-copy-block">
+          <p class="build-banner">BUILD LOCAL v209-auth</p>
           <p class="hero-kicker">Panel personal</p>
           <div class="hero-head">
             <h1>Mis Gastos</h1>
@@ -56,6 +57,11 @@
 
     <section id="auth-card" class="card card-opciones card-opciones-account" data-panel="opciones">
       <h2>Cuenta</h2>
+      <div id="auth-recovery-box" class="auth-recovery-box" hidden>
+        <p class="auth-recovery-kicker">Restablecer contraseña</p>
+        <h3 id="auth-recovery-title">El enlace fue reconocido</h3>
+        <p id="auth-recovery-text">Escribe tu nueva contraseña en el campo de abajo y pulsa <strong>Guardar nueva contraseña</strong>.</p>
+      </div>
       <div class="grid">
         <label>Email
           <input type="email" id="auth-email" placeholder="tu@email.com">
@@ -74,9 +80,12 @@
         <button id="btn-login" type="button" class="btn-primary">Iniciar sesi&oacute;n</button>
         <button id="btn-signup" type="button" class="btn-secondary">Crear cuenta</button>
         <button id="btn-recover" type="button" class="btn-tertiary">Recuperar contrase&ntilde;a</button>
+        <button id="btn-reset-password" type="button" class="btn-primary" hidden>Guardar nueva contrase&ntilde;a</button>
+        <button id="btn-cancel-recovery" type="button" class="btn-tertiary" hidden>Cancelar recuperaci&oacute;n</button>
         <button id="btn-logout" type="button" class="danger btn-tertiary">Cerrar sesi&oacute;n</button>
       </div>
       <p class="muted">Si olvidaste tu clave, puedes recuperarla desde aquí.</p>
+      <p id="auth-recovery-note" class="muted" hidden>Enlace de recuperación detectado. Escribe tu nueva contraseña y guárdala desde aquí.</p>
       <p id="auth-status" class="muted">Conecta tu cuenta para activar la nube.</p>
     </section>
 
@@ -90,7 +99,7 @@
         <button id="btn-sync-retry" type="button" class="btn-secondary" hidden>Reintentar sincronizacion</button>
         <p id="sync-help" class="muted sync-help">Sin sesion, la app no puede recuperar movimientos de la nube.</p>
       </div>
-      <p class="build-version build-version-options">Version visible: v207</p>
+      <p class="build-version build-version-options">Version visible: v209-auth</p>
     </section>
 
     <section id="account-mini" class="card card-opciones card-opciones-compact card-opciones-account-mini" data-panel="opciones" hidden>
@@ -335,6 +344,16 @@
         <ul id="top-expenses-list" class="top-expenses-list"></ul>
         <p id="top-expenses-note" class="summary-note muted">Sin datos suficientes para destacar categorias.</p>
       </div>
+      <div class="category-breakdown">
+        <article class="category-breakdown-card">
+          <h3 class="muted top-expenses-title">Gastos por categoria del mes</h3>
+          <ul id="month-expense-category-list" class="category-breakdown-list"></ul>
+        </article>
+        <article class="category-breakdown-card">
+          <h3 class="muted top-expenses-title">Ingresos por categoria del mes</h3>
+          <ul id="month-income-category-list" class="category-breakdown-list"></ul>
+        </article>
+      </div>
       <p id="spending-alert" class="summary-alert summary-alert-neutral">Sin datos suficientes para comparar gasto mensual.</p>
       <div id="budget-summary-list" class="budget-summary-list"></div>
     </section>
@@ -571,8 +590,8 @@
 
   <div id="toast" class="toast" hidden></div>
 
-  <script src="stats-utils.js?v=207"></script>
+  <script src="stats-utils.js?v=209-auth"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script type="module" src="app.js?v=207"></script>
+  <script type="module" src="app.js?v=209-auth"></script>
 </body>
 </html>

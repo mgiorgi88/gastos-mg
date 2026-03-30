@@ -20,6 +20,8 @@ export function createSummaryUi({
   yoyBalanceEl,
   topExpensesListEl,
   topExpensesNoteEl,
+  monthExpenseCategoryListEl,
+  monthIncomeCategoryListEl,
   budgetSummaryListEl,
   budgetListEl,
   savingsGoalAmountEl,
@@ -479,6 +481,45 @@ export function createSummaryUi({
     }
   }
 
+  function renderMonthCategoryBreakdown(all) {
+    const renderList = (targetEl, type) => {
+      if (!targetEl) return;
+
+      const byCategory = {};
+      let total = 0;
+      all.forEach((x) => {
+        if (x.tipo !== type) return;
+        if (getMonth(x.fecha) !== CURRENT_MONTH) return;
+        const amount = Number(x.monto || 0);
+        if (!(amount > 0)) return;
+        byCategory[x.categoria] = (byCategory[x.categoria] || 0) + amount;
+        total += amount;
+      });
+
+      const rows = Object.entries(byCategory).sort((a, b) => b[1] - a[1]);
+      if (rows.length === 0) {
+        targetEl.innerHTML = `<li class="muted">${type === "Ingreso" ? "Sin ingresos cargados este mes." : "Sin gastos cargados este mes."}</li>`;
+        return;
+      }
+
+      targetEl.innerHTML = rows.map(([cat, value]) => {
+        const pct = total > 0 ? ((value / total) * 100).toFixed(1) : "0.0";
+        return `
+          <li>
+            <button type="button" class="category-breakdown-item" data-month-category="${cat}" data-month-category-type="${type}">
+              <span class="category-breakdown-label">${CATEGORY_ICONS[cat] || "\u2022"} ${cat}</span>
+              <strong>${money(value)}</strong>
+              <small>${pct}% del total</small>
+            </button>
+          </li>
+        `;
+      }).join("");
+    };
+
+    renderList(monthExpenseCategoryListEl, "Gasto");
+    renderList(monthIncomeCategoryListEl, "Ingreso");
+  }
+
   return {
     clearSavingsGoalFromUi,
     computeMonthlySummary,
@@ -487,6 +528,7 @@ export function createSummaryUi({
     renderBudgetStatus,
     renderBudgetSummary,
     renderLast3Months,
+    renderMonthCategoryBreakdown,
     renderMonthlyComparison,
     renderSavingsGoalSummary,
     renderSpendingAlert,

@@ -9,7 +9,7 @@ import {
   QUICK_CATEGORY_DEFAULTS,
   SUPABASE_ANON_KEY,
   SUPABASE_URL
-} from "./js/config/constants.js";
+} from "./js/config/constants.js?v=209-auth";
 import {
   accountMiniEl,
   accountMiniEmailEl,
@@ -19,6 +19,10 @@ import {
   arsRateEl,
   arsResultEl,
   authCardEl,
+  authRecoveryBoxEl,
+  authRecoveryNoteEl,
+  authRecoveryTitleEl,
+  authRecoveryTextEl,
   authStatusEl,
   balanceEl,
   balanceCardEl,
@@ -54,6 +58,8 @@ import {
   btnQuickSuper,
   btnRecurrentToggleEl,
   btnRecover,
+  btnResetPassword,
+  btnCancelRecovery,
   btnRefreshRate,
   btnSavingsGoalClear,
   btnSavingsGoalSave,
@@ -156,6 +162,8 @@ import {
   themeEl,
   tipoEl,
   toastEl,
+  monthExpenseCategoryListEl,
+  monthIncomeCategoryListEl,
   topExpensesListEl,
   topExpensesNoteEl,
   trend3mEl,
@@ -171,7 +179,7 @@ import {
   yoyPeriodBEl,
   yoySummaryEl,
   yoyTitleEl
-} from "./js/core/dom.js";
+} from "./js/core/dom.js?v=209-auth";
 import {
   clearRecurrentesCache,
   clearSessionStorage,
@@ -202,29 +210,29 @@ import {
   saveThemeValue,
   saveTx,
   writeJsonStorage
-} from "./js/services/storage.js";
+} from "./js/services/storage.js?v=209-auth";
 import {
   hideSyncBadgeState,
   setButtonLoadingState,
   setStatusMessage,
   showSyncBadgeState,
   showToastMessage
-} from "./js/ui/status.js";
-import { createSupabaseService } from "./js/services/supabase.js";
-import { createAuthService } from "./js/services/auth.js";
-import { createTransactionsService } from "./js/services/transactions.js";
-import { createImportExportService } from "./js/services/import-export.js";
-import { createRecurrentesService } from "./js/services/recurrentes.js";
-import { createFormUi } from "./js/ui/form-ui.js";
-import { createAuthUi } from "./js/ui/auth-ui.js";
-import { createQuickActionsUi } from "./js/ui/quick-actions.js";
-import { createCalendarUi } from "./js/ui/calendar.js";
-import { createChartsUi } from "./js/ui/charts.js";
-import { createSummaryUi } from "./js/ui/summary.js";
-import { createRecurrentesUi } from "./js/ui/recurrentes.js";
-import { createRecurrentSuggestionsUi } from "./js/ui/recurrent-suggestions.js";
-import { createRefreshController } from "./js/app/refresh.js";
-import { bindAppEvents } from "./js/app/events.js";
+} from "./js/ui/status.js?v=209-auth";
+import { createSupabaseService } from "./js/services/supabase.js?v=209-auth";
+import { createAuthService } from "./js/services/auth.js?v=209-auth";
+import { createTransactionsService } from "./js/services/transactions.js?v=209-auth";
+import { createImportExportService } from "./js/services/import-export.js?v=209-auth";
+import { createRecurrentesService } from "./js/services/recurrentes.js?v=209-auth";
+import { createFormUi } from "./js/ui/form-ui.js?v=209-auth";
+import { createAuthUi } from "./js/ui/auth-ui.js?v=209-auth";
+import { createQuickActionsUi } from "./js/ui/quick-actions.js?v=209-auth";
+import { createCalendarUi } from "./js/ui/calendar.js?v=209-auth";
+import { createChartsUi } from "./js/ui/charts.js?v=209-auth";
+import { createSummaryUi } from "./js/ui/summary.js?v=209-auth";
+import { createRecurrentesUi } from "./js/ui/recurrentes.js?v=209-auth";
+import { createRecurrentSuggestionsUi } from "./js/ui/recurrent-suggestions.js?v=209-auth";
+import { createRefreshController } from "./js/app/refresh.js?v=209-auth";
+import { bindAppEvents } from "./js/app/events.js?v=209-auth";
 import {
   buildMonthOptions,
   formatDateLabel,
@@ -232,10 +240,10 @@ import {
   getMonth,
   monthLabel,
   toDateKeyLocal
-} from "./js/utils/date.js";
-import { escapeHtml, formatMoney } from "./js/utils/formatters.js";
-import { parseDecimalExpression } from "./js/utils/number-input.js";
-import { buildInitialQuickCategories, createAppState } from "./js/core/state.js";
+} from "./js/utils/date.js?v=209-auth";
+import { escapeHtml, formatMoney } from "./js/utils/formatters.js?v=209-auth";
+import { parseDecimalExpression } from "./js/utils/number-input.js?v=209-auth";
+import { buildInitialQuickCategories, createAppState } from "./js/core/state.js?v=209-auth";
 
 /**
  * @typedef {Object} Transaction
@@ -288,7 +296,11 @@ const state = createAppState({
   syncUiReady: false,
   initialDataReady: false,
   panelAnimationsReady: false,
-  scheduledGenerationInFlight: false
+  scheduledGenerationInFlight: false,
+  syncRecoveryTimer: null,
+  syncRecoveryInFlight: false,
+  recoveryMode: false,
+  recoveryFeedback: null
 });
 
 if (fechaEl) fechaEl.valueAsDate = new Date();
@@ -609,6 +621,7 @@ function saveSession(session) {
 
 function clearSession() {
   state.authSession = null;
+  clearSyncRecoveryTimer();
   clearSessionStorage();
 }
 
@@ -834,6 +847,7 @@ const {
   getResponseErrorMessage,
   sbFetch,
   sbAuthFetch,
+  refreshAuthToken,
   fetchCurrentUser,
   fetchCurrentUserState
 } = createSupabaseService({
@@ -1244,6 +1258,7 @@ const {
   renderBudgetStatus,
   renderBudgetSummary,
   renderLast3Months,
+  renderMonthCategoryBreakdown,
   renderMonthlyComparison,
   renderSavingsGoalSummary,
   renderSpendingAlert,
@@ -1275,6 +1290,8 @@ const {
   yoyBalanceEl,
   topExpensesListEl,
   topExpensesNoteEl,
+  monthExpenseCategoryListEl,
+  monthIncomeCategoryListEl,
   budgetSummaryListEl,
   budgetListEl,
   savingsGoalAmountEl,
@@ -1316,6 +1333,7 @@ const { refresh } = createRefreshController({
   updateMonthlySummaryUI,
   updateLoadMonthlySummaryUI,
   renderSavingsGoalSummary,
+  renderMonthCategoryBreakdown,
   renderTopExpensesCurrentMonth,
   drawBalanceSparkline,
   renderRecurrentSuggestions: renderSuggestions,
@@ -1355,6 +1373,8 @@ const {
   btnSignup,
   btnLogin,
   btnRecover,
+  btnResetPassword,
+  btnCancelRecovery,
   btnLogout,
   btnLogoutMini,
   btnGateSignin,
@@ -1363,9 +1383,15 @@ const {
   emailHintEl,
   passwordEl,
   passwordHintEl,
+  authRecoveryBoxEl,
+  authRecoveryNoteEl,
+  authRecoveryTitleEl,
+  authRecoveryTextEl,
   entryGateEl,
   getCurrentUser: () => state.currentUser,
   getCurrentTab,
+  getRecoveryMode: () => state.recoveryMode,
+  getRecoveryFeedback: () => state.recoveryFeedback,
   getAuthActionInFlight: () => state.authActionInFlight,
   setAuthActionInFlight: (value) => {
     state.authActionInFlight = value;
@@ -1377,7 +1403,7 @@ const {
   setStatus
 });
 
-const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
+const { signup, login, recoverPassword, updatePassword, cancelRecovery, logout, initAuth } = createAuthService({
   emailEl,
   passwordEl,
   validateEmailField,
@@ -1423,6 +1449,13 @@ const { signup, login, recoverPassword, logout, initAuth } = createAuthService({
   },
   updateEntryGate,
   isLocalDevelopment,
+  setRecoveryMode: (value) => {
+    state.recoveryMode = Boolean(value);
+  },
+  setRecoveryFeedback: (value) => {
+    state.recoveryFeedback = value || null;
+  },
+  refreshAuthToken,
   fetchCurrentUserState,
   getAuthSession: () => state.authSession,
   markSyncPending: setSyncPending
@@ -1451,16 +1484,60 @@ async function retrySyncFromUi() {
     return;
   }
 
-  setStatus("Reintentando sincronizacion...", "info");
-  await loadCloudData();
-  const recurrentRows = await loadRecurrentes();
-  setRecurrentes(recurrentRows);
-  renderRecurrentList();
-  renderSuggestions();
-  await processScheduledMovements();
+  await recoverCloudSession({ quiet: false, reason: "forced" });
   if (!state.hadRecentSyncError) {
     showToast("Sincronizacion actualizada");
   }
+}
+
+function clearSyncRecoveryTimer() {
+  if (!state.syncRecoveryTimer) return;
+  clearTimeout(state.syncRecoveryTimer);
+  state.syncRecoveryTimer = null;
+}
+
+async function recoverCloudSession(options = {}) {
+  const {
+    quiet = false,
+    reason = "retry"
+  } = options;
+
+  if (!state.currentUser || state.syncRecoveryInFlight) return false;
+  if (!state.syncPending && !state.hadRecentSyncError && reason !== "forced") return true;
+
+  state.syncRecoveryInFlight = true;
+  clearSyncRecoveryTimer();
+
+  try {
+    if (!quiet) {
+      setStatus("Reintentando sincronizacion...", "info");
+    }
+    await loadCloudData();
+    const recurrentRows = await loadRecurrentes();
+    setRecurrentes(recurrentRows);
+    renderRecurrentList();
+    renderSuggestions();
+    await processScheduledMovements();
+    return !state.syncPending && !state.hadRecentSyncError;
+  } finally {
+    state.syncRecoveryInFlight = false;
+    if (state.currentUser && (state.syncPending || state.hadRecentSyncError)) {
+      scheduleSyncRecovery(reason === "startup" ? 2000 : 4000);
+    }
+  }
+}
+
+function scheduleSyncRecovery(delayMs = 2500) {
+  if (!state.currentUser) return;
+  if (!state.syncPending && !state.hadRecentSyncError) {
+    clearSyncRecoveryTimer();
+    return;
+  }
+  clearSyncRecoveryTimer();
+  state.syncRecoveryTimer = setTimeout(() => {
+    state.syncRecoveryTimer = null;
+    void recoverCloudSession({ quiet: true, reason: "scheduled" });
+  }, Math.max(500, Number(delayMs) || 2500));
 }
 
 async function duplicateTransaction(id) {
@@ -1599,6 +1676,8 @@ bindAppEvents({
     state.topExpenseTempFilterActive = value;
   },
   topExpensesListEl,
+  monthExpenseCategoryListEl,
+  monthIncomeCategoryListEl,
   CURRENT_MONTH,
   toDateKeyLocal,
   monthLabel,
@@ -1622,6 +1701,10 @@ bindAppEvents({
   login,
   btnRecover,
   recoverPassword,
+  btnResetPassword,
+  updatePassword,
+  btnCancelRecovery,
+  cancelRecovery,
   btnLogout,
   logout,
   btnLogoutMini,
@@ -1663,6 +1746,20 @@ if (btnSyncRetryEl) {
     retrySyncFromUi();
   });
 }
+
+window.addEventListener("online", () => {
+  void recoverCloudSession({ quiet: true, reason: "online" });
+});
+
+window.addEventListener("focus", () => {
+  if (document.hidden) return;
+  void recoverCloudSession({ quiet: true, reason: "focus" });
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) return;
+  void recoverCloudSession({ quiet: true, reason: "visible" });
+});
 
 if (syncBadgeEl) {
   syncBadgeEl.addEventListener("click", () => {
@@ -1710,6 +1807,7 @@ if (syncBadgeEl) {
     state.syncUiReady = true;
     updateEntryGate();
     refreshSyncIndicator();
+    scheduleSyncRecovery(1500);
     requestAnimationFrame(() => {
       state.panelAnimationsReady = true;
     });
