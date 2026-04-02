@@ -1361,7 +1361,7 @@ button:focus {
 }
 
 .stats-card-breakdown {
-  margin: 0 18px 18px;
+  margin: 0 14px 16px;
   padding-top: 14px;
   border-top: 1px solid rgba(148, 163, 184, 0.16);
 }
@@ -1371,27 +1371,27 @@ button:focus {
 }
 
 .stats-card-breakdown .category-breakdown-group {
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.12) !important;
+  border-radius: 16px !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  box-shadow: none !important;
+  margin: 0 0 10px;
 }
 
 .stats-card-breakdown .category-breakdown-group:hover {
-  background: rgba(47, 111, 237, 0.04);
+  background: rgba(47, 111, 237, 0.04) !important;
 }
 
 .stats-card-breakdown .category-breakdown-list > li:last-child .category-breakdown-group {
-  border-bottom: 0;
+  margin-bottom: 0;
 }
 
 .stats-card-breakdown .category-breakdown-summary {
-  padding: 10px 0;
+  padding: 12px 14px !important;
 }
 
 .stats-card-breakdown .category-breakdown-detail {
-  padding: 0 0 12px;
+  padding: 0 14px 12px !important;
   border-top: 1px solid rgba(148, 163, 184, 0.1);
 }
 
@@ -3264,6 +3264,18 @@ details > .muted {
     grid-template-columns: 1fr;
     gap: 6px;
     padding: 13px 14px;
+  }
+
+  .stats-card-breakdown {
+    margin: 0 12px 14px;
+  }
+
+  .stats-card-breakdown .category-breakdown-summary {
+    padding: 12px 14px !important;
+  }
+
+  .stats-card-breakdown .category-breakdown-detail {
+    padding: 0 14px 12px !important;
   }
 
   .category-breakdown-summary strong {
