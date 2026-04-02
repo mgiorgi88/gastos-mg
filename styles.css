@@ -1528,7 +1528,7 @@ button:focus {
 
 .category-breakdown-group {
   border: 1px solid rgba(148, 163, 184, 0.18);
-  border-radius: 14px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.72);
   overflow: hidden;
 }
@@ -1542,9 +1542,9 @@ button:focus {
   list-style: none;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 4px 12px;
-  align-items: center;
-  padding: 12px 14px;
+  gap: 6px 14px;
+  align-items: start;
+  padding: 14px 16px;
   cursor: pointer;
 }
 
@@ -1554,18 +1554,22 @@ button:focus {
 
 .category-breakdown-label {
   min-width: 0;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.98rem;
+  letter-spacing: 0.02em;
 }
 
 .category-breakdown-summary strong {
   justify-self: end;
-  font-size: 0.98rem;
+  font-size: 1.06rem;
+  line-height: 1.1;
 }
 
 .category-breakdown-summary small {
   grid-column: 1 / -1;
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.84rem;
+  line-height: 1.35;
 }
 
 .category-breakdown-detail {
@@ -3254,6 +3258,25 @@ details > .muted {
 
   .load-summary-arrow {
     font-size: 1.2rem;
+  }
+
+  .category-breakdown-summary {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 13px 14px;
+  }
+
+  .category-breakdown-summary strong {
+    justify-self: start;
+    font-size: 1.02rem;
+  }
+
+  .category-breakdown-label {
+    font-size: 0.94rem;
+  }
+
+  .category-breakdown-summary small {
+    font-size: 0.82rem;
   }
 
   .load-summary-stats {
