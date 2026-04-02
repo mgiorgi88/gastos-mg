@@ -898,6 +898,7 @@ async function processScheduledMovements() {
   const existingSignatures = new Set((Array.isArray(state.txData) ? state.txData : []).map(txSignature));
   const generatedRows = [];
   const extraIds = [];
+  const keptScheduledSignatures = new Set();
 
   scheduled.forEach((item) => {
     const occurrences = buildScheduledOccurrences(item, new Date());
@@ -929,9 +930,16 @@ async function processScheduledMovements() {
       const matchSignature = scheduleMatchSignature(tx);
       const desiredDates = desiredDatesBySignature.get(matchSignature);
       if (!desiredDates) return;
+      const exactSignature = txSignature(tx);
       if (!desiredDates.has(String(tx.fecha || ""))) {
         extraIds.push(tx.id);
+        return;
       }
+      if (keptScheduledSignatures.has(exactSignature)) {
+        extraIds.push(tx.id);
+        return;
+      }
+      keptScheduledSignatures.add(exactSignature);
     });
 
     if (extraIds.length > 0) {
