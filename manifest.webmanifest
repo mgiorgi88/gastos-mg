@@ -1,7 +1,7 @@
 {
   "name": "Mis Gastos Personales",
   "short_name": "Mis Gastos",
-  "start_url": "./index.html?v=209-auth",
+  "start_url": "./index.html?v=210",
   "display": "standalone",
   "background_color": "#f8fafc",
   "theme_color": "#0f766e",

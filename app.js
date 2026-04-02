@@ -9,7 +9,7 @@ import {
   QUICK_CATEGORY_DEFAULTS,
   SUPABASE_ANON_KEY,
   SUPABASE_URL
-} from "./js/config/constants.js?v=209-auth";
+} from "./js/config/constants.js?v=210";
 import {
   accountMiniEl,
   accountMiniEmailEl,
@@ -179,7 +179,7 @@ import {
   yoyPeriodBEl,
   yoySummaryEl,
   yoyTitleEl
-} from "./js/core/dom.js?v=209-auth";
+} from "./js/core/dom.js?v=210";
 import {
   clearRecurrentesCache,
   clearSessionStorage,
@@ -210,29 +210,29 @@ import {
   saveThemeValue,
   saveTx,
   writeJsonStorage
-} from "./js/services/storage.js?v=209-auth";
+} from "./js/services/storage.js?v=210";
 import {
   hideSyncBadgeState,
   setButtonLoadingState,
   setStatusMessage,
   showSyncBadgeState,
   showToastMessage
-} from "./js/ui/status.js?v=209-auth";
-import { createSupabaseService } from "./js/services/supabase.js?v=209-auth";
-import { createAuthService } from "./js/services/auth.js?v=209-auth";
-import { createTransactionsService } from "./js/services/transactions.js?v=209-auth";
-import { createImportExportService } from "./js/services/import-export.js?v=209-auth";
-import { createRecurrentesService } from "./js/services/recurrentes.js?v=209-auth";
-import { createFormUi } from "./js/ui/form-ui.js?v=209-auth";
-import { createAuthUi } from "./js/ui/auth-ui.js?v=209-auth";
-import { createQuickActionsUi } from "./js/ui/quick-actions.js?v=209-auth";
-import { createCalendarUi } from "./js/ui/calendar.js?v=209-auth";
-import { createChartsUi } from "./js/ui/charts.js?v=209-auth";
-import { createSummaryUi } from "./js/ui/summary.js?v=209-auth";
-import { createRecurrentesUi } from "./js/ui/recurrentes.js?v=209-auth";
-import { createRecurrentSuggestionsUi } from "./js/ui/recurrent-suggestions.js?v=209-auth";
-import { createRefreshController } from "./js/app/refresh.js?v=209-auth";
-import { bindAppEvents } from "./js/app/events.js?v=209-auth";
+} from "./js/ui/status.js?v=210";
+import { createSupabaseService } from "./js/services/supabase.js?v=210";
+import { createAuthService } from "./js/services/auth.js?v=210";
+import { createTransactionsService } from "./js/services/transactions.js?v=210";
+import { createImportExportService } from "./js/services/import-export.js?v=210";
+import { createRecurrentesService } from "./js/services/recurrentes.js?v=210";
+import { createFormUi } from "./js/ui/form-ui.js?v=210";
+import { createAuthUi } from "./js/ui/auth-ui.js?v=210";
+import { createQuickActionsUi } from "./js/ui/quick-actions.js?v=210";
+import { createCalendarUi } from "./js/ui/calendar.js?v=210";
+import { createChartsUi } from "./js/ui/charts.js?v=210";
+import { createSummaryUi } from "./js/ui/summary.js?v=210";
+import { createRecurrentesUi } from "./js/ui/recurrentes.js?v=210";
+import { createRecurrentSuggestionsUi } from "./js/ui/recurrent-suggestions.js?v=210";
+import { createRefreshController } from "./js/app/refresh.js?v=210";
+import { bindAppEvents } from "./js/app/events.js?v=210";
 import {
   buildMonthOptions,
   formatDateLabel,
@@ -240,10 +240,10 @@ import {
   getMonth,
   monthLabel,
   toDateKeyLocal
-} from "./js/utils/date.js?v=209-auth";
-import { escapeHtml, formatMoney } from "./js/utils/formatters.js?v=209-auth";
-import { parseDecimalExpression } from "./js/utils/number-input.js?v=209-auth";
-import { buildInitialQuickCategories, createAppState } from "./js/core/state.js?v=209-auth";
+} from "./js/utils/date.js?v=210";
+import { escapeHtml, formatMoney } from "./js/utils/formatters.js?v=210";
+import { parseDecimalExpression } from "./js/utils/number-input.js?v=210";
+import { buildInitialQuickCategories, createAppState } from "./js/core/state.js?v=210";
 
 /**
  * @typedef {Object} Transaction
