@@ -1401,6 +1401,40 @@ button:focus {
   border-bottom: 0;
 }
 
+.stats-card-breakdown .category-breakdown-more {
+  margin: 0 0 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.stats-card-breakdown .category-breakdown-more summary {
+  padding: 4px 0;
+  font-size: 0.84rem;
+}
+
+.stats-card-breakdown .category-breakdown-more[open] summary {
+  margin-bottom: 6px;
+}
+
+.stats-card-breakdown .category-breakdown-link {
+  width: auto;
+  padding: 4px 0 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--primary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.stats-card-breakdown .category-breakdown-link:hover {
+  background: transparent;
+  text-decoration: underline;
+}
+
 .build-banner {
   display: inline-flex;
   align-items: center;
