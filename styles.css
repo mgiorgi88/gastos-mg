@@ -1335,6 +1335,11 @@ button:focus {
 .stats-card-expandable {
   overflow: hidden;
   padding: 0 !important;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.04) !important;
+}
+
+.stats-card-expandable:hover {
+  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.06) !important;
 }
 
 .stats-card-toggle {
