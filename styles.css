@@ -2800,6 +2800,27 @@ button:focus {
   border-color: rgba(77, 134, 255, 0.26);
 }
 
+:root[data-theme="dark"] .stats-card-breakdown .category-breakdown-group {
+  background: transparent;
+  border-color: rgba(71, 85, 105, 0.28);
+  box-shadow: none;
+}
+
+:root[data-theme="dark"] .stats-card-breakdown .category-breakdown-group:hover {
+  background: rgba(77, 134, 255, 0.06);
+  border-color: rgba(71, 85, 105, 0.28);
+}
+
+:root[data-theme="dark"] .stats-card-breakdown .category-breakdown-detail {
+  border-top-color: rgba(71, 85, 105, 0.24);
+}
+
+:root[data-theme="dark"] .stats-card-breakdown .category-breakdown-more,
+:root[data-theme="dark"] .stats-card-breakdown .category-breakdown-link {
+  background: transparent;
+  border-color: transparent;
+}
+
 :root[data-theme="dark"] .category-breakdown-more {
   border-color: rgba(71, 85, 105, 0.42);
 }
