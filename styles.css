@@ -1371,19 +1371,21 @@ button:focus {
 }
 
 .stats-card-breakdown .category-breakdown-group {
-  border: 1px solid rgba(148, 163, 184, 0.12) !important;
-  border-radius: 16px !important;
-  background: rgba(255, 255, 255, 0.02) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
   box-shadow: none !important;
   margin: 0 0 10px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12) !important;
 }
 
 .stats-card-breakdown .category-breakdown-group:hover {
-  background: rgba(47, 111, 237, 0.04) !important;
+  background: rgba(47, 111, 237, 0.03) !important;
 }
 
 .stats-card-breakdown .category-breakdown-list > li:last-child .category-breakdown-group {
   margin-bottom: 0;
+  border-bottom: 0 !important;
 }
 
 .stats-card-breakdown .category-breakdown-summary {
