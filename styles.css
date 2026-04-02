@@ -1334,11 +1334,15 @@ button:focus {
 
 .stats-card-expandable {
   overflow: hidden;
+  padding: 0 !important;
 }
 
 .stats-card-toggle {
   list-style: none;
   cursor: pointer;
+  display: block;
+  padding: 18px;
+  min-height: 100%;
 }
 
 .stats-card-toggle::-webkit-details-marker {
@@ -1358,7 +1362,7 @@ button:focus {
 }
 
 .stats-card-breakdown {
-  margin-top: 14px;
+  margin: 0 18px 18px;
   padding-top: 14px;
   border-top: 1px solid rgba(148, 163, 184, 0.16);
 }
