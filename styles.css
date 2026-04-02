@@ -1342,7 +1342,6 @@ button:focus {
   cursor: pointer;
   display: block;
   padding: 18px;
-  min-height: 100%;
 }
 
 .stats-card-toggle::-webkit-details-marker {
