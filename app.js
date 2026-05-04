@@ -1107,6 +1107,11 @@ const {
     state.editingTxId = id;
   },
   setActiveTab,
+  onOpenCurrentMonthSummary: () => {
+    state.hasUserChosenMonth = false;
+    if (filtroMes) filtroMes.value = CURRENT_MONTH;
+    refresh();
+  },
   monthLabel,
   CURRENT_MONTH
 });

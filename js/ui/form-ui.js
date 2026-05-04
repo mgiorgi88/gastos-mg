@@ -34,6 +34,7 @@ export function createFormUi({
   money,
   onEditingChange,
   setActiveTab,
+  onOpenCurrentMonthSummary,
   monthLabel,
   CURRENT_MONTH
 }) {
@@ -53,6 +54,7 @@ export function createFormUi({
   function bindLoadSummaryCard() {
     cargarMonthSummaryBtnEl?.addEventListener("click", () => {
       if (typeof setActiveTab === "function") setActiveTab("resumen");
+      if (typeof onOpenCurrentMonthSummary === "function") onOpenCurrentMonthSummary();
     });
   }
 
