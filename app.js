@@ -9,7 +9,7 @@ import {
   QUICK_CATEGORY_DEFAULTS,
   SUPABASE_ANON_KEY,
   SUPABASE_URL
-} from "./js/config/constants.js?v=210";
+} from "./js/config/constants.js?v=211";
 import {
   accountMiniEl,
   accountMiniEmailEl,
@@ -28,6 +28,7 @@ import {
   balanceCardEl,
   balanceSparklineEl,
   balanceTrendEl,
+  buildVersionLabelEl,
   budgetAmountEl,
   budgetCategoryEl,
   budgetListEl,
@@ -93,6 +94,8 @@ import {
   cmpSummaryEl,
   cmpTitleEl,
   currentMonthLabelEl,
+  summaryMonthPrevEl,
+  summaryMonthNextEl,
   currencyEl,
   dayTitleEl,
   detalleEl,
@@ -165,6 +168,7 @@ import {
   monthExpenseCategoryListEl,
   monthIncomeCategoryListEl,
   topExpensesListEl,
+  topExpensesTitleEl,
   topExpensesNoteEl,
   trend3mEl,
   txFormModeEl,
@@ -179,7 +183,7 @@ import {
   yoyPeriodBEl,
   yoySummaryEl,
   yoyTitleEl
-} from "./js/core/dom.js?v=210";
+} from "./js/core/dom.js?v=211";
 import {
   clearRecurrentesCache,
   clearSessionStorage,
@@ -210,29 +214,29 @@ import {
   saveThemeValue,
   saveTx,
   writeJsonStorage
-} from "./js/services/storage.js?v=210";
+} from "./js/services/storage.js?v=211";
 import {
   hideSyncBadgeState,
   setButtonLoadingState,
   setStatusMessage,
   showSyncBadgeState,
   showToastMessage
-} from "./js/ui/status.js?v=210";
-import { createSupabaseService } from "./js/services/supabase.js?v=210";
-import { createAuthService } from "./js/services/auth.js?v=210";
-import { createTransactionsService } from "./js/services/transactions.js?v=210";
-import { createImportExportService } from "./js/services/import-export.js?v=210";
-import { createRecurrentesService } from "./js/services/recurrentes.js?v=210";
-import { createFormUi } from "./js/ui/form-ui.js?v=210";
-import { createAuthUi } from "./js/ui/auth-ui.js?v=210";
-import { createQuickActionsUi } from "./js/ui/quick-actions.js?v=210";
-import { createCalendarUi } from "./js/ui/calendar.js?v=210";
-import { createChartsUi } from "./js/ui/charts.js?v=210";
-import { createSummaryUi } from "./js/ui/summary.js?v=210";
-import { createRecurrentesUi } from "./js/ui/recurrentes.js?v=210";
-import { createRecurrentSuggestionsUi } from "./js/ui/recurrent-suggestions.js?v=210";
-import { createRefreshController } from "./js/app/refresh.js?v=210";
-import { bindAppEvents } from "./js/app/events.js?v=210";
+} from "./js/ui/status.js?v=211";
+import { createSupabaseService } from "./js/services/supabase.js?v=211";
+import { createAuthService } from "./js/services/auth.js?v=211";
+import { createTransactionsService } from "./js/services/transactions.js?v=211";
+import { createImportExportService } from "./js/services/import-export.js?v=211";
+import { createRecurrentesService } from "./js/services/recurrentes.js?v=211";
+import { createFormUi } from "./js/ui/form-ui.js?v=211";
+import { createAuthUi } from "./js/ui/auth-ui.js?v=211";
+import { createQuickActionsUi } from "./js/ui/quick-actions.js?v=211";
+import { createCalendarUi } from "./js/ui/calendar.js?v=211";
+import { createChartsUi } from "./js/ui/charts.js?v=211";
+import { createSummaryUi } from "./js/ui/summary.js?v=211";
+import { createRecurrentesUi } from "./js/ui/recurrentes.js?v=211";
+import { createRecurrentSuggestionsUi } from "./js/ui/recurrent-suggestions.js?v=211";
+import { createRefreshController } from "./js/app/refresh.js?v=211";
+import { bindAppEvents } from "./js/app/events.js?v=211";
 import {
   buildMonthOptions,
   formatDateLabel,
@@ -240,10 +244,10 @@ import {
   getMonth,
   monthLabel,
   toDateKeyLocal
-} from "./js/utils/date.js?v=210";
-import { escapeHtml, formatMoney } from "./js/utils/formatters.js?v=210";
-import { parseDecimalExpression } from "./js/utils/number-input.js?v=210";
-import { buildInitialQuickCategories, createAppState } from "./js/core/state.js?v=210";
+} from "./js/utils/date.js?v=211";
+import { escapeHtml, formatMoney } from "./js/utils/formatters.js?v=211";
+import { parseDecimalExpression } from "./js/utils/number-input.js?v=211";
+import { buildInitialQuickCategories, createAppState } from "./js/core/state.js?v=211";
 
 /**
  * @typedef {Object} Transaction
@@ -391,6 +395,15 @@ if (currencyEl) {
 
 function money(value) {
   return formatMoney(value, state.selectedCurrency);
+}
+
+function updateBuildVersionLabel() {
+  if (!buildVersionLabelEl) return;
+  const { hostname, port, origin } = window.location;
+  const isLocal = hostname === "localhost" || hostname === "127.0.0.1";
+  const modeLabel = isLocal ? "LOCAL 211" : "VERCEL/REMOTA";
+  const hostLabel = isLocal ? `${hostname}:${port || "80"}` : origin;
+  buildVersionLabelEl.textContent = `Estado de la app: ${modeLabel} · ${hostLabel}`;
 }
 
 refreshAmountPreviews();
@@ -1284,6 +1297,7 @@ const {
   gastosEl,
   balanceEl,
   balanceCardEl,
+  currentMonthLabelEl,
   cmpTitleEl,
   cmpIngresosEl,
   cmpGastosEl,
@@ -1297,6 +1311,7 @@ const {
   yoyGastosEl,
   yoyBalanceEl,
   topExpensesListEl,
+  topExpensesTitleEl,
   topExpensesNoteEl,
   monthExpenseCategoryListEl,
   monthIncomeCategoryListEl,
@@ -1323,6 +1338,8 @@ const {
 
 const { refresh } = createRefreshController({
   filtroMes,
+  summaryMonthPrevEl,
+  summaryMonthNextEl,
   yoyPeriodAEl,
   yoyPeriodBEl,
   cargarEmptyStateEl,
@@ -1615,6 +1632,8 @@ bindAppEvents({
   form,
   handleFormSubmit,
   filtroMes,
+  summaryMonthPrevEl,
+  summaryMonthNextEl,
   setHasUserChosenMonth: (value) => {
     state.hasUserChosenMonth = value;
   },
@@ -1687,6 +1706,10 @@ bindAppEvents({
   monthExpenseCategoryListEl,
   monthIncomeCategoryListEl,
   CURRENT_MONTH,
+  getSummaryMonthKey: () => {
+    const value = filtroMes?.value;
+    return value && value !== "Todos" ? value : CURRENT_MONTH;
+  },
   toDateKeyLocal,
   monthLabel,
   scrollToMovimientosSection,
@@ -1805,6 +1828,7 @@ if (syncBadgeEl) {
     if (themeEl) themeEl.value = state.selectedTheme;
     if (rememberEl) rememberEl.checked = loadRememberMe();
     applyTheme(state.selectedTheme);
+    updateBuildVersionLabel();
     setActiveTab("cargar");
     updateArsConvertVisibility();
     refresh();

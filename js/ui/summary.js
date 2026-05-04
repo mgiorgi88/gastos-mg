@@ -18,7 +18,9 @@ export function createSummaryUi({
   yoyIngresosEl,
   yoyGastosEl,
   yoyBalanceEl,
+  currentMonthLabelEl,
   topExpensesListEl,
+  topExpensesTitleEl,
   topExpensesNoteEl,
   monthExpenseCategoryListEl,
   monthIncomeCategoryListEl,
@@ -126,17 +128,19 @@ export function createSummaryUi({
     trend3mEl.innerHTML = cards.join("");
   }
 
-  function renderSpendingAlert(all) {
+  function renderSpendingAlert(all, selectedMonth = CURRENT_MONTH) {
     if (!spendingAlertEl) return;
     spendingAlertEl.className = "summary-alert";
 
+    const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
     const statsByMonth = StatsUtils.buildMonthlyStats(all);
-    const current = StatsUtils.getMonthStats(statsByMonth, CURRENT_MONTH).gastos;
+    const current = StatsUtils.getMonthStats(statsByMonth, monthKey).gastos;
     const last3Keys = (() => {
       const keys = [];
-      const now = new Date();
+      const [yy, mm] = monthKey.split("-").map(Number);
+      const baseDate = yy && mm ? new Date(yy, mm - 1, 1) : new Date();
       for (let i = 1; i <= 3; i += 1) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const d = new Date(baseDate.getFullYear(), baseDate.getMonth() - i, 1);
         keys.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
       }
       return keys;
@@ -163,7 +167,7 @@ export function createSummaryUi({
     const absPct = Math.abs(pct).toFixed(1);
     const avgLabel = money(avg);
 
-    const currentRows = all.filter((x) => x.tipo === "Gasto" && getMonth(x.fecha) === CURRENT_MONTH);
+    const currentRows = all.filter((x) => x.tipo === "Gasto" && getMonth(x.fecha) === monthKey);
     const byCategory = {};
     currentRows.forEach((x) => {
       byCategory[x.categoria] = (byCategory[x.categoria] || 0) + Number(x.monto || 0);
@@ -173,17 +177,17 @@ export function createSummaryUi({
 
     if (pct <= -10) {
       spendingAlertEl.classList.add("summary-alert-good");
-      spendingAlertEl.textContent = `Gasto del mes ${absPct}% por debajo del promedio 3M (${avgLabel}).${topCategorySuffix}`;
+      spendingAlertEl.textContent = `Gasto de ${monthLabel(monthKey)} ${absPct}% por debajo del promedio 3M (${avgLabel}).${topCategorySuffix}`;
       return;
     }
     if (pct >= 10) {
       spendingAlertEl.classList.add("summary-alert-bad");
-      spendingAlertEl.textContent = `Alerta: gasto del mes ${absPct}% por encima del promedio 3M (${avgLabel}).${topCategorySuffix}`;
+      spendingAlertEl.textContent = `Alerta: gasto de ${monthLabel(monthKey)} ${absPct}% por encima del promedio 3M (${avgLabel}).${topCategorySuffix}`;
       return;
     }
 
     spendingAlertEl.classList.add("summary-alert-warn");
-    spendingAlertEl.textContent = `Gasto del mes en linea con el promedio 3M (${avgLabel}).${topCategorySuffix}`;
+    spendingAlertEl.textContent = `Gasto de ${monthLabel(monthKey)} en linea con el promedio 3M (${avgLabel}).${topCategorySuffix}`;
   }
 
   function renderYearOverYearCategory(all, periodA = CURRENT_MONTH, periodB = previousYearMonthKey(CURRENT_MONTH)) {
@@ -251,19 +255,20 @@ export function createSummaryUi({
     yoyBalanceEl.textContent = b.text;
   }
 
-  function renderBudgetStatus(all) {
+  function renderBudgetStatus(all, selectedMonth = CURRENT_MONTH) {
     if (!budgetListEl) return;
     const budgets = getBudgets();
+    const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
     const spentByCategory = {};
     all.forEach((x) => {
       if (x.tipo !== "Gasto") return;
-      if (getMonth(x.fecha) !== CURRENT_MONTH) return;
+      if (getMonth(x.fecha) !== monthKey) return;
       spentByCategory[x.categoria] = (spentByCategory[x.categoria] || 0) + Number(x.monto);
     });
 
     const categoriesWithBudget = CATEGORIAS.Gasto.filter((c) => Number(budgets[c] || 0) > 0);
     if (categoriesWithBudget.length === 0) {
-      budgetListEl.innerHTML = `<li class="muted">No hay presupuestos cargados para el mes actual.</li>`;
+      budgetListEl.innerHTML = `<li class="muted">No hay presupuestos cargados para ${monthLabel(monthKey)}.</li>`;
       return;
     }
 
@@ -275,7 +280,7 @@ export function createSummaryUi({
       return `
         <li class="budget-item">
           <span>${cat}</span>
-          <small>Presupuesto: ${money(budget)} - Gastado: ${money(spent)}</small>
+          <small>${monthLabel(monthKey)} · Presupuesto: ${money(budget)} - Gastado: ${money(spent)}</small>
           <strong class="${statusClass}">${diff >= 0 ? "Restante" : "Exceso"}: ${money(Math.abs(diff))}</strong>
         </li>
       `;
@@ -342,9 +347,10 @@ export function createSummaryUi({
     else setSavingsGoalStatus("Define una meta y la veras en el resumen del mes actual.", "neutral");
   }
 
-  function renderSavingsGoalSummary(balanceValue) {
+  function renderSavingsGoalSummary(balanceValue, selectedMonth = CURRENT_MONTH) {
     if (!savingsGoalSummaryEl) return;
     const savingsGoal = getSavingsGoal();
+    const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
     if (!(savingsGoal > 0)) {
       savingsGoalSummaryEl.hidden = true;
       savingsGoalSummaryEl.innerHTML = "";
@@ -373,7 +379,7 @@ export function createSummaryUi({
     }
 
     savingsGoalSummaryEl.innerHTML = `
-      <h3>Meta de ahorro mensual</h3>
+      <h3>Meta de ahorro de ${monthLabel(monthKey)}</h3>
       <p>Meta: ${money(goal)} - Actual: ${money(balanceValue)} (${pct.toFixed(1)}%)</p>
       <div class="savings-goal-progress">
         <div class="savings-goal-progress-bar" style="width:${progress}%;"></div>
@@ -418,8 +424,9 @@ export function createSummaryUi({
     return { ingresos, gastos, balanceValue, rows };
   }
 
-  function updateMonthlySummaryUI(summary) {
+  function updateMonthlySummaryUI(summary, selectedMonth = CURRENT_MONTH) {
     const { ingresos, gastos, balanceValue } = summary;
+    const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
     ingresosEl.textContent = money(ingresos);
     ingresosEl.classList.remove("saldo-neg", "saldo-neu");
     ingresosEl.classList.add("saldo-pos");
@@ -433,16 +440,23 @@ export function createSummaryUi({
       balanceCardEl.classList.remove("is-positive", "is-negative", "is-neutral");
       balanceCardEl.classList.add(balanceValue > 0 ? "is-positive" : balanceValue < 0 ? "is-negative" : "is-neutral");
     }
+    if (currentMonthLabelEl) {
+      currentMonthLabelEl.textContent = monthKey === CURRENT_MONTH
+        ? `Mes actual: ${monthLabel(monthKey)}`
+        : `Viendo: ${monthLabel(monthKey)}`;
+    }
   }
 
-  function renderTopExpensesCurrentMonth(all) {
+  function renderTopExpensesCurrentMonth(all, selectedMonth = CURRENT_MONTH) {
     if (!topExpensesListEl) return;
+    const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
+    if (topExpensesTitleEl) topExpensesTitleEl.textContent = `Top 3 gastos de ${monthLabel(monthKey)}`;
 
     const byCategory = {};
     let total = 0;
     all.forEach((x) => {
       if (x.tipo !== "Gasto") return;
-      if (getMonth(x.fecha) !== CURRENT_MONTH) return;
+      if (getMonth(x.fecha) !== monthKey) return;
       const amount = Number(x.monto || 0);
       if (!(amount > 0)) return;
       byCategory[x.categoria] = (byCategory[x.categoria] || 0) + amount;
@@ -454,8 +468,8 @@ export function createSummaryUi({
       .slice(0, 3);
 
     if (top.length === 0) {
-      topExpensesListEl.innerHTML = '<li class="muted">Sin gastos cargados este mes.</li>';
-      if (topExpensesNoteEl) topExpensesNoteEl.textContent = "Aun no hay categorias para detectar concentracion de gasto.";
+      topExpensesListEl.innerHTML = `<li class="muted">Sin gastos cargados en ${monthLabel(monthKey)}.</li>`;
+      if (topExpensesNoteEl) topExpensesNoteEl.textContent = `Aun no hay categorias para detectar concentracion de gasto en ${monthLabel(monthKey)}.`;
       return;
     }
 
@@ -477,11 +491,12 @@ export function createSummaryUi({
     if (topExpensesNoteEl) {
       const topShare = total > 0 ? (top.reduce((acc, [, val]) => acc + val, 0) / total) * 100 : 0;
       const [topCategory, topValue] = top[0];
-      topExpensesNoteEl.textContent = `${topCategory} es la categoria que mas pesa este mes con ${money(topValue)}. El top 3 concentra ${topShare.toFixed(0)}% del gasto total.`;
+      topExpensesNoteEl.textContent = `${topCategory} es la categoria que mas pesa en ${monthLabel(monthKey)} con ${money(topValue)}. El top 3 concentra ${topShare.toFixed(0)}% del gasto total.`;
     }
   }
 
-  function renderMonthCategoryBreakdown(all) {
+  function renderMonthCategoryBreakdown(all, selectedMonth = CURRENT_MONTH) {
+    const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
     const renderList = (targetEl, type) => {
       if (!targetEl) return;
 
@@ -489,7 +504,7 @@ export function createSummaryUi({
       let total = 0;
       all.forEach((x) => {
         if (x.tipo !== type) return;
-        if (getMonth(x.fecha) !== CURRENT_MONTH) return;
+        if (getMonth(x.fecha) !== monthKey) return;
         const amount = Number(x.monto || 0);
         if (!(amount > 0)) return;
         if (!byCategory[x.categoria]) {
@@ -509,7 +524,7 @@ export function createSummaryUi({
 
       const rows = Object.entries(byCategory).sort((a, b) => b[1].total - a[1].total);
       if (rows.length === 0) {
-        targetEl.innerHTML = `<li class="muted">${type === "Ingreso" ? "Sin ingresos cargados este mes." : "Sin gastos cargados este mes."}</li>`;
+        targetEl.innerHTML = `<li class="muted">${type === "Ingreso" ? `Sin ingresos cargados en ${monthLabel(monthKey)}.` : `Sin gastos cargados en ${monthLabel(monthKey)}.`}</li>`;
         return;
       }
 

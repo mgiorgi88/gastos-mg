@@ -2,6 +2,8 @@ export function bindAppEvents({
   form,
   handleFormSubmit,
   filtroMes,
+  summaryMonthPrevEl,
+  summaryMonthNextEl,
   setHasUserChosenMonth,
   setCalendarMonthDate,
   setSelectedDayKey,
@@ -64,6 +66,7 @@ export function bindAppEvents({
   monthExpenseCategoryListEl,
   monthIncomeCategoryListEl,
   CURRENT_MONTH,
+  getSummaryMonthKey,
   toDateKeyLocal,
   monthLabel,
   scrollToMovimientosSection,
@@ -122,10 +125,20 @@ export function bindAppEvents({
   getBudgets,
   saveBudgets
 }) {
+  function getSummaryMonthRange() {
+    const monthKey = typeof getSummaryMonthKey === "function" ? getSummaryMonthKey() : CURRENT_MONTH;
+    const [yy, mm] = monthKey.split("-").map(Number);
+    return {
+      monthKey,
+      yy,
+      mm,
+      monthFrom: `${yy}-${String(mm).padStart(2, "0")}-01`,
+      monthTo: toDateKeyLocal(new Date(yy, mm, 0))
+    };
+  }
+
   function applyMonthlyCategoryFilter(type, category) {
-    const [yy, mm] = CURRENT_MONTH.split("-").map(Number);
-    const monthFrom = `${yy}-${String(mm).padStart(2, "0")}-01`;
-    const monthTo = toDateKeyLocal(new Date(yy, mm, 0));
+    const { monthKey, yy, mm, monthFrom, monthTo } = getSummaryMonthRange();
 
     if (detailTypeEl) detailTypeEl.value = type;
     if (detailCategoryEl) detailCategoryEl.value = category;
@@ -141,7 +154,28 @@ export function bindAppEvents({
     setActiveTab("mas");
     refresh();
     scrollToMovimientosSection();
-    setStatus(`Filtro aplicado: ${type === "Ingreso" ? "ingresos" : "gastos"} de ${category} en ${monthLabel(CURRENT_MONTH)}.`);
+    setStatus(`Filtro aplicado: ${type === "Ingreso" ? "ingresos" : "gastos"} de ${category} en ${monthLabel(monthKey)}.`);
+  }
+
+  function moveSummaryMonth(direction) {
+    const monthKeys = Array.from(filtroMes?.options || [])
+      .map((option) => option.value)
+      .filter((value) => value && value !== "Todos");
+    const currentMonth = filtroMes.value && filtroMes.value !== "Todos" ? filtroMes.value : CURRENT_MONTH;
+    const currentIndex = monthKeys.indexOf(currentMonth);
+    if (currentIndex < 0) return;
+
+    const nextIndex = currentIndex + direction;
+    if (nextIndex < 0 || nextIndex >= monthKeys.length) return;
+
+    filtroMes.value = monthKeys[nextIndex];
+    setHasUserChosenMonth(true);
+    const [yy, mm] = filtroMes.value.split("-").map(Number);
+    if (yy && mm) {
+      setCalendarMonthDate(new Date(yy, mm - 1, 1));
+      setSelectedDayKey(null);
+    }
+    refresh();
   }
 
   form.addEventListener("submit", handleFormSubmit);
@@ -157,6 +191,18 @@ export function bindAppEvents({
     }
     refresh();
   });
+
+  if (summaryMonthPrevEl) {
+    summaryMonthPrevEl.addEventListener("click", () => {
+      moveSummaryMonth(-1);
+    });
+  }
+
+  if (summaryMonthNextEl) {
+    summaryMonthNextEl.addEventListener("click", () => {
+      moveSummaryMonth(1);
+    });
+  }
 
   if (currencyEl) {
     currencyEl.addEventListener("change", async () => {
@@ -347,9 +393,12 @@ export function bindAppEvents({
       if (!btn) return;
       const cat = btn.getAttribute("data-budget-cat");
       if (!cat) return;
+      const { monthFrom, monthTo } = getSummaryMonthRange();
       setActiveTab("mas");
       if (detailTypeEl) detailTypeEl.value = "Gasto";
       if (detailCategoryEl) detailCategoryEl.value = cat;
+      if (detailFromEl) detailFromEl.value = monthFrom;
+      if (detailToEl) detailToEl.value = monthTo;
       if (detailSearchEl) detailSearchEl.value = "";
       setSelectedDayKey(null);
       refresh();

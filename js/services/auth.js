@@ -184,7 +184,7 @@ export function createAuthService({
     }
 
     const redirectUrl = new URL(window.location.pathname, window.location.origin);
-    redirectUrl.searchParams.set("v", "210");
+    redirectUrl.searchParams.set("v", "211");
     const appParam = new URLSearchParams(window.location.search).get("app");
     if (appParam) redirectUrl.searchParams.set("app", appParam);
     const redirectTo = redirectUrl.toString();

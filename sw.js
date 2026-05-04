@@ -1,4 +1,4 @@
-const CACHE_NAME = "mis-gastos-cache-v210";
+const CACHE_NAME = "mis-gastos-cache-v211";
 const APP_ASSETS = [
   "./",
   "./index.html",

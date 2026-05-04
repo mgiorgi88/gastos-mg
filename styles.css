@@ -385,6 +385,12 @@ body.app-boot #sync-badge {
   margin-top: 12px;
 }
 
+#build-version-label {
+  white-space: normal;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
 .cloud-indicator {
   margin: 0;
   font-size: 0.86rem;
@@ -826,6 +832,58 @@ body.app-boot #sync-badge {
   line-height: 1.15;
   font-weight: 700;
   letter-spacing: -0.02em;
+}
+
+.summary-month-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.summary-month-copy {
+  min-width: 0;
+}
+
+.summary-month-copy h2 {
+  margin-bottom: 6px;
+}
+
+.summary-month-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.summary-month-nav-btn {
+  margin-top: 0;
+  width: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  padding: 0;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 250, 253, 0.92)),
+    var(--soft);
+  color: var(--ink);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+}
+
+.summary-month-nav-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(47, 111, 237, 0.28);
+  box-shadow: 0 14px 24px rgba(59, 130, 246, 0.1);
+}
+
+.summary-month-nav-btn:disabled {
+  opacity: 0.45;
+  box-shadow: none;
 }
 
 /* Normalize vertical rhythm for settings/more panels */
@@ -2697,6 +2755,19 @@ button:focus {
     var(--card);
 }
 
+:root[data-theme="dark"] .summary-month-nav-btn {
+  background:
+    linear-gradient(180deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.8)),
+    var(--soft);
+  border-color: rgba(71, 85, 105, 0.42);
+  box-shadow: none;
+}
+
+:root[data-theme="dark"] .summary-month-nav-btn:hover:not(:disabled) {
+  border-color: rgba(77, 134, 255, 0.3);
+  box-shadow: 0 10px 20px rgba(2, 6, 23, 0.2);
+}
+
 :root[data-theme="dark"] .card-movimientos {
   background:
     radial-gradient(circle at top right, rgba(59, 130, 246, 0.11), transparent 34%),
@@ -3434,6 +3505,15 @@ details > .muted {
   .hero-head {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .summary-month-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .summary-month-nav {
+    justify-content: flex-end;
   }
 
   .hero-surface {

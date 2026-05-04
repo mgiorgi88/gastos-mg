@@ -1,5 +1,7 @@
 export function createRefreshController({
   filtroMes,
+  summaryMonthPrevEl,
+  summaryMonthNextEl,
   yoyPeriodAEl,
   yoyPeriodBEl,
   cargarEmptyStateEl,
@@ -38,6 +40,25 @@ export function createRefreshController({
   renderBudgetSummary,
   renderBudgetStatus
 }) {
+  function getNavigableMonthKeys() {
+    return Array.from(filtroMes?.options || [])
+      .map((option) => option.value)
+      .filter((value) => value && value !== "Todos");
+  }
+
+  function updateSummaryMonthNavigation(selectedMonth) {
+    const monthKey = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
+    const monthKeys = getNavigableMonthKeys();
+    const selectedIndex = monthKeys.indexOf(monthKey);
+
+    if (summaryMonthPrevEl) {
+      summaryMonthPrevEl.disabled = selectedIndex <= 0;
+    }
+    if (summaryMonthNextEl) {
+      summaryMonthNextEl.disabled = selectedIndex < 0 || selectedIndex >= monthKeys.length - 1;
+    }
+  }
+
   function updateMonthFilterOptions(all) {
     const options = buildMonthOptions(all, CURRENT_MONTH);
     const previous = filtroMes.value || CURRENT_MONTH;
@@ -49,6 +70,7 @@ export function createRefreshController({
     const validValues = new Set(options.map((x) => x.value));
     const nextValue = getHasUserChosenMonth() && validValues.has(previous) ? previous : CURRENT_MONTH;
     filtroMes.value = nextValue;
+    updateSummaryMonthNavigation(nextValue);
     return nextValue;
   }
 
@@ -96,17 +118,18 @@ export function createRefreshController({
     yoyPeriodA = CURRENT_MONTH,
     yoyPeriodB = previousYearMonthKey(CURRENT_MONTH)
   ) {
+    const summaryMonth = monthKey === "Todos" ? CURRENT_MONTH : monthKey;
     renderCalendar(all);
     renderSelectedDayRows(detailRows);
     drawMonthlyIncomeExpenseChart(all, monthKey);
     drawCategoryDonutChart(all, monthKey);
     renderMonthlyComparison(all, monthKey);
     renderLast3Months(all, monthKey);
-    renderSpendingAlert(all);
+    renderSpendingAlert(all, summaryMonth);
     renderYearOverYearTotals(all, yoyPeriodA, yoyPeriodB);
     renderYearOverYearCategory(all, yoyPeriodA, yoyPeriodB);
     renderBudgetSummary(all, monthKey);
-    renderBudgetStatus(all);
+    renderBudgetStatus(all, summaryMonth);
   }
 
   function refresh() {
@@ -122,14 +145,18 @@ export function createRefreshController({
 
     const selectedMonth = updateMonthFilterOptions(all);
     const yoyPeriods = updateYoyPeriodOptions(all);
+    const summaryMonth = selectedMonth === "Todos" ? CURRENT_MONTH : selectedMonth;
 
-    const summary = computeMonthlySummary(all, CURRENT_MONTH);
-    updateMonthlySummaryUI(summary);
-    updateLoadMonthlySummaryUI(summary);
-    renderSavingsGoalSummary(summary.balanceValue);
-    renderTopExpensesCurrentMonth(all);
-    renderMonthCategoryBreakdown(all);
-    if (currentMonthLabelEl) currentMonthLabelEl.textContent = `Mes actual: ${monthLabel(CURRENT_MONTH)}`;
+    const summary = computeMonthlySummary(all, summaryMonth);
+    const currentMonthSummary = computeMonthlySummary(all, CURRENT_MONTH);
+    updateMonthlySummaryUI(summary, summaryMonth);
+    updateLoadMonthlySummaryUI(currentMonthSummary);
+    renderSavingsGoalSummary(summary.balanceValue, summaryMonth);
+    renderTopExpensesCurrentMonth(all, summaryMonth);
+    renderMonthCategoryBreakdown(all, summaryMonth);
+    if (currentMonthLabelEl && !currentMonthLabelEl.textContent) {
+      currentMonthLabelEl.textContent = `Mes actual: ${monthLabel(CURRENT_MONTH)}`;
+    }
     drawBalanceSparkline(all);
     renderRecurrentSuggestions();
 
