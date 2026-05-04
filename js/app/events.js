@@ -165,7 +165,7 @@ export function bindAppEvents({
     const currentIndex = monthKeys.indexOf(currentMonth);
     if (currentIndex < 0) return;
 
-    const nextIndex = currentIndex + direction;
+    const nextIndex = currentIndex - direction;
     if (nextIndex < 0 || nextIndex >= monthKeys.length) return;
 
     filtroMes.value = monthKeys[nextIndex];

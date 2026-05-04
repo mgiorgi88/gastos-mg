@@ -52,10 +52,10 @@ export function createRefreshController({
     const selectedIndex = monthKeys.indexOf(monthKey);
 
     if (summaryMonthPrevEl) {
-      summaryMonthPrevEl.disabled = selectedIndex <= 0;
+      summaryMonthPrevEl.disabled = selectedIndex < 0 || selectedIndex >= monthKeys.length - 1;
     }
     if (summaryMonthNextEl) {
-      summaryMonthNextEl.disabled = selectedIndex < 0 || selectedIndex >= monthKeys.length - 1;
+      summaryMonthNextEl.disabled = selectedIndex <= 0;
     }
   }
 
